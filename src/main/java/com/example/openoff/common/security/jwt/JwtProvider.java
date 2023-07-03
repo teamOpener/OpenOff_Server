@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -91,9 +90,10 @@ public class JwtProvider {
         try {
             jwtParser.parse(token);
         } catch (MalformedJwtException | SignatureException | IllegalArgumentException e){
-            throw new InvalidTokenException(Error.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
+            throw new InvalidTokenException(Error.INVALID_TOKEN);
         } catch (ExpiredJwtException e){
-            throw new ExpiredTokenException(Error.EXPIRED_TOKEN, HttpStatus.UNAUTHORIZED);
+            throw new ExpiredTokenException(Error.EXPIRED_TOKEN);
+
         }
     }
 
@@ -116,7 +116,7 @@ public class JwtProvider {
         final String email = extractEmail(refreshToken);
         final String storedRefreshToken = getRefreshToken(email);
         if(!Objects.equals(refreshToken, storedRefreshToken)){
-            throw new InvalidTokenException(Error.INVALID_TOKEN, HttpStatus.UNAUTHORIZED);
+            throw new InvalidTokenException(Error.INVALID_TOKEN);
         }
         return email;
     }

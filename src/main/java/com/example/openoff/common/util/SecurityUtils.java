@@ -5,7 +5,6 @@ import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.security.exception.TokenNotFoundException;
 import com.example.openoff.common.security.jwt.JwtAuthenticationToken;
 import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 
@@ -19,7 +18,7 @@ public class SecurityUtils {
                 .filter(header -> header.startsWith(ApplicationConst.JWT_AUTHORIZATION_TYPE))
                 .filter(StringUtils::hasText)
                 .map(header -> header.replace(ApplicationConst.JWT_AUTHORIZATION_TYPE, ""))
-                .orElseThrow(() -> new TokenNotFoundException(Error.INVALID_TOKEN, HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new TokenNotFoundException(Error.INVALID_TOKEN));
     }
 
     public static String getUserEmail(){
