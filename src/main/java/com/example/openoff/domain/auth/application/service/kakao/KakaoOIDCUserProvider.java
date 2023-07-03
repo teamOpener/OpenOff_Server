@@ -1,5 +1,7 @@
 package com.example.openoff.domain.auth.application.service.kakao;
 
+import com.example.openoff.common.exception.Error;
+import com.example.openoff.domain.auth.application.exception.KakaoOIDCException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,17 +34,17 @@ public class KakaoOIDCUserProvider {
                     .build()
                     .parseClaimsJwt(getUnsignedToken(token));
         } catch (ExpiredJwtException e) {
-            throw new TokenExpiredException("토큰이 만료되었습니다.");
+            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new InvalidTokenException("토큰이 올바르지 않습니다.");
+            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED2);
         }
     }
 
     private String getUnsignedToken(String token) {
         String[] splitToken = token.split("\\.");
         if (splitToken.length != 3) {
-            throw new InvalidTokenException("토큰이 올바르지 않습니다.");
+            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED2);
         }
         return splitToken[0] + "." + splitToken[1] + ".";
     }
@@ -54,10 +56,10 @@ public class KakaoOIDCUserProvider {
                     .build()
                     .parseClaimsJws(token);
         } catch (ExpiredJwtException e) {
-            throw new TokenExpiredException("토큰이 만료되었습니다.");
+            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED);
         } catch (Exception e) {
             log.error(e.toString());
-            throw new InvalidTokenException("토큰이 올바르지 않습니다.");
+            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED2);
         }
     }
 

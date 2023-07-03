@@ -10,8 +10,8 @@ public enum Error {
     // OAuth
     GOOGLE_OAUTH_FAILED("Google에서 토큰을 검색하지 못했습니다.", 900),
     GOOGLE_OAUTH_FAILED2("Google에서 사용자 정보를 검색하지 못했습니다.", 901),
-    KAKAO_OAUTH_FAILED("KAKAO에서 토큰을 검색하지 못했습니다.", 910),
-    KAKAO_OAUTH_FAILED2("KAKAO에서 사용자 정보를 검색하지 못했습니다.", 911),
+    KAKAO_OAUTH_FAILED("KAKAO 토큰이 만료되었습니다.", 910),
+    KAKAO_OAUTH_FAILED2("KAKAO 토큰이 올바르지 않습니다.", 911),
     APPLE_OIDC_FAILED("Apple OAuth Identity Token 형식이 올바르지 않습니다.", 920),
     APPLE_OIDC_FAILED2("Apple OAuth 로그인 중 Identity Token 유효기간이 만료됐습니다.", 921),
     APPLE_OIDC_FAILED3("Apple OAuth Identity Token 값이 올바르지 않습니다.", 922),
