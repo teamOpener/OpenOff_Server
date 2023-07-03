@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Error {
+
     DATA_NOT_FOUND("데이터를 찾을 수 없습니다.", 800),
 
     // OAuth

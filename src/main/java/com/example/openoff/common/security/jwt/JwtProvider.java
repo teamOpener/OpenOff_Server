@@ -93,6 +93,7 @@ public class JwtProvider {
             throw new InvalidTokenException(Error.INVALID_TOKEN);
         } catch (ExpiredJwtException e){
             throw new ExpiredTokenException(Error.EXPIRED_TOKEN);
+
         }
     }
 
