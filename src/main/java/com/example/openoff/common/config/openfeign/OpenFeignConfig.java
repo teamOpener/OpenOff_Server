@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableFeignClients("com.example.openoff")
+@EnableFeignClients(basePackages = {"com.example.openoff"})
 public class OpenFeignConfig {
 
     @Bean
