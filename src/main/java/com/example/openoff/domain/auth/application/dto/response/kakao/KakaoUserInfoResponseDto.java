@@ -1,11 +1,11 @@
-package com.example.openoff.domain.auth.application.service.kakao;
+package com.example.openoff.domain.auth.application.dto.response.kakao;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class OidcDecodePayload {
+public class KakaoUserInfoResponseDto {
     /**
      * issuer ex https://kauth.kakao.com
      */
