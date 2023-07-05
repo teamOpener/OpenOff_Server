@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class KakaoPublicKey {
     private String kid;
+    private String kty;
     private String alg;
     private String use;
     private String n;
