@@ -20,13 +20,13 @@ public class UserQueryService {
                 .orElseGet(() -> {
                     switch (socialType){
                         case "kakao":
-                            return userRepository.save(User.builder().kakaoAccount(socialAccount).build());
+                            return userRepository.save(User.builder().kakaoAccount(socialAccount).isActive(true).build());
                         case "google":
-                            return userRepository.save(User.builder().googleAccount(socialAccount).build());
+                            return userRepository.save(User.builder().googleAccount(socialAccount).isActive(true).build());
                         case "apple":
-                            return userRepository.save(User.builder().appleAccount(socialAccount).build());
+                            return userRepository.save(User.builder().appleAccount(socialAccount).isActive(true).build());
                         case "normal":
-                            return userRepository.save(User.builder().normalAccount(socialAccount).build());
+                            return userRepository.save(User.builder().normalAccount(socialAccount).isActive(true).build());
                         default:
                             throw new UserNotFoundException(Error.USER_NOT_FOUND);
                     }
