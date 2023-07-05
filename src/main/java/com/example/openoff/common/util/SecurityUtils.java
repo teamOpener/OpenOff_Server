@@ -21,7 +21,7 @@ public class SecurityUtils {
                 .orElseThrow(() -> new TokenNotFoundException(Error.INVALID_TOKEN));
     }
 
-    public static String getUserEmail(){
+    public static String getUserUUID(){
         return (String)getAuthentication().getPrincipal();
     }
 
