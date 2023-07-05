@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     @Embedded
     private Birth birth;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private GenderType gender;
 
     @Column(name = "phone_number", unique = true)
