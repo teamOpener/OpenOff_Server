@@ -34,27 +34,27 @@ public class JwtProvider {
         return Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
 
-    private String buildAccessToken(String email, Date now) {
+    private String buildAccessToken(String uuid, Date now) {
         return buildToken(now)
                 .setExpiration(new Date(now.getTime() + jwtProperties.getAccessTokenPeriod()))
-                .setSubject(email)
+                .setSubject(uuid)
                 .claim(TOKEN_TYPE, ACCESS_TOKEN)
                 .compact();
     }
 
-    private String buildRefreshToken(String email, Date now) {
+    private String buildRefreshToken(String uuid, Date now) {
         final String refreshToken = buildToken(now)
                 .setExpiration(new Date(now.getTime() + jwtProperties.getRefreshTokenPeriod()))
-                .setSubject(email)
+                .setSubject(uuid)
                 .claim(TOKEN_TYPE, REFRESH_TOKEN)
                 .compact();
-        storeRefreshToken(email, refreshToken);
+        storeRefreshToken(uuid, refreshToken);
         return refreshToken;
     }
 
-    private void storeRefreshToken(String email, String refreshToken) {
+    private void storeRefreshToken(String uuid, String refreshToken) {
         redisTemplate.opsForValue().set(
-                email,
+                uuid,
                 refreshToken,
                 jwtProperties.getRefreshTokenPeriod(),
                 TimeUnit.MILLISECONDS);
@@ -67,14 +67,14 @@ public class JwtProvider {
                 .signWith(key);
     }
 
-    public String generateAccessToken(String email) {
+    public String generateAccessToken(String uuid) {
         final Date now = new Date();
-        return buildAccessToken(email, now);
+        return buildAccessToken(uuid, now);
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(String uuid) {
         final Date now = new Date();
-        return buildRefreshToken(email, now);
+        return buildRefreshToken(uuid, now);
     }
 
     /**
@@ -97,7 +97,7 @@ public class JwtProvider {
         }
     }
 
-    public String extractEmail(String token){
+    public String extractUUID(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(getSecretKey())
                 .build()
@@ -113,7 +113,7 @@ public class JwtProvider {
 
     public String validateRefreshToken(String refreshToken) {
         validateToken(refreshToken);
-        final String email = extractEmail(refreshToken);
+        final String email = extractUUID(refreshToken);
         final String storedRefreshToken = getRefreshToken(email);
         if(!Objects.equals(refreshToken, storedRefreshToken)){
             throw new InvalidTokenException(Error.INVALID_TOKEN);
