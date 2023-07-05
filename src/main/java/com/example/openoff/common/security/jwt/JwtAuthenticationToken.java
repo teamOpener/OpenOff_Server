@@ -7,11 +7,11 @@ import java.util.Collection;
 
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
-    private final String email;
+    private final String uuid;
 
-    public JwtAuthenticationToken(Collection<? extends GrantedAuthority> authorities, String email) {
+    public JwtAuthenticationToken(Collection<? extends GrantedAuthority> authorities, String uuid) {
         super(authorities);
-        this.email = email;
+        this.uuid = uuid;
         setAuthenticated(true);
     }
 
@@ -22,6 +22,6 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return email;
+        return uuid;
     }
 }

@@ -67,10 +67,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void setAuthentication(final String accessToken) {
-        final String email = jwtProvider.extractEmail(accessToken);
+        final String uuid = jwtProvider.extractUUID(accessToken);
         List<GrantedAuthority> grantedAuthorities = Collections.singletonList(
                 new SimpleGrantedAuthority("ROLE_USER"));
-        JwtAuthenticationToken authentication = new JwtAuthenticationToken(grantedAuthorities, email);
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(grantedAuthorities, uuid);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

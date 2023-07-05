@@ -1,86 +1,41 @@
 package com.example.openoff.domain.auth.application.service.kakao;
 
-import com.example.openoff.common.exception.Error;
-import com.example.openoff.domain.auth.application.exception.KakaoOIDCException;
-import io.jsonwebtoken.*;
+import com.example.openoff.common.config.openfeign.KakaoClient;
+import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
-
-@RequiredArgsConstructor
 @Component
-@Slf4j
+@RequiredArgsConstructor
 public class KakaoOIDCUserProvider {
 
-    private final String KID = "kid";
+    private final KakaoClient kakaoClient;
+    @Value("${oauth.kakao.iss}")
+    private String iss;
 
-    public String getKidFromUnsignedTokenHeader(String token, String iss, String aud) {
-        return (String) getUnsignedTokenClaims(token, iss, aud).getHeader().get(KID);
+    private final KakaoOIDCTokenParser kakaoOIDCTokenParser;
+    @Value("${oauth.kakao.client-id}")
+    private String aud;
+
+    // kid를 토큰에서 가져온다.
+    private String getKidFromUnsignedIdToken(String token, String iss, String aud) {
+        return kakaoOIDCTokenParser.getKidFromUnsignedTokenHeader(token, iss, aud);
     }
 
-    private Jwt<Header, Claims> getUnsignedTokenClaims(String token, String iss, String aud) {
-        try {
-            return Jwts.parserBuilder()
-                    .requireAudience(aud)
-                    .requireIssuer(iss)
-                    .build()
-                    .parseClaimsJwt(getUnsignedToken(token));
-        } catch (ExpiredJwtException e) {
-            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED);
-        } catch (Exception e) {
-            log.error(e.toString());
-            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED2);
-        }
-    }
+    public KakaoUserInfoResponseDto getPayloadFromIdToken(String token) {
+        String kid = getKidFromUnsignedIdToken(token, iss, aud);
+        KakaoPublicKeys kakaoPublicKeys = kakaoClient.getKakaoOIDCOpenKeys();
 
-    private String getUnsignedToken(String token) {
-        String[] splitToken = token.split("\\.");
-        if (splitToken.length != 3) {
-            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED2);
-        }
-        return splitToken[0] + "." + splitToken[1] + ".";
-    }
-
-    public Jws<Claims> getOIDCTokenJws(String token, String modulus, String exponent) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getRSAPublicKey(modulus, exponent))
-                    .build()
-                    .parseClaimsJws(token);
-        } catch (ExpiredJwtException e) {
-            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED);
-        } catch (Exception e) {
-            log.error(e.toString());
-            throw new KakaoOIDCException(Error.KAKAO_OAUTH_FAILED2);
-        }
-    }
-
-    public OidcDecodePayload getOIDCTokenBody(String token, String modulus, String exponent) {
-        Claims body = getOIDCTokenJws(token, modulus, exponent).getBody();
-        return new OidcDecodePayload(
-                body.getIssuer(),
-                body.getAudience(),
-                body.getSubject(),
-                body.get("email", String.class));
-    }
-
-    private Key getRSAPublicKey(String modulus, String exponent)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        byte[] decodeN = Base64.getUrlDecoder().decode(modulus);
-        byte[] decodeE = Base64.getUrlDecoder().decode(exponent);
-        BigInteger n = new BigInteger(1, decodeN);
-        BigInteger e = new BigInteger(1, decodeE);
-
-        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(n, e);
-        return keyFactory.generatePublic(keySpec);
+        // KakaoOauthHelper 에서 공개키를 조회했고 해당 DTO를 넘겨준다.
+        KakaoPublicKey kakaoPublicKey =
+                kakaoPublicKeys.getKeys().stream()
+                        // 같은 kid를 가져온다.
+                        .filter(o -> o.getKid().equals(kid))
+                        .findFirst()
+                        .orElseThrow();
+        // 검증이 된 토큰에서 바디를 꺼내온다.
+        return kakaoOIDCTokenParser.getOIDCTokenBody(
+                token, kakaoPublicKey.getN(), kakaoPublicKey.getE());
     }
 }

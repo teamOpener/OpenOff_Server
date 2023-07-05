@@ -8,6 +8,7 @@ public enum Error {
     DATA_NOT_FOUND("데이터를 찾을 수 없습니다.", 800),
 
     // OAuth
+    OAUTH_FAILED("잘못된 소셜 로그인 요청입니다. KAKAO, GOOGLE, APPLE 연동만이 가능합니다.", 890),
     GOOGLE_OAUTH_FAILED("Google에서 토큰을 검색하지 못했습니다.", 900),
     GOOGLE_OAUTH_FAILED2("Google에서 사용자 정보를 검색하지 못했습니다.", 901),
     KAKAO_OAUTH_FAILED("KAKAO 토큰이 만료되었습니다.", 910),
