@@ -1,9 +1,13 @@
 package com.example.openoff;
 
+import com.example.openoff.common.security.jwt.JwtProperties;
+import com.example.openoff.domain.auth.application.service.google.GoogleOAuthProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties({JwtProperties.class, GoogleOAuthProperties.class})
 public class OpenoffApplication {
 
     public static void main(String[] args) {
