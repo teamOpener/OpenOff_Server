@@ -6,5 +6,5 @@ import com.example.openoff.common.exception.Error;
 public class JwtException extends BusinessException {
     public JwtException(Error error) {
         super(error);
-
+    }
 }

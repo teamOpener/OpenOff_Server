@@ -5,5 +5,5 @@ import com.example.openoff.common.exception.Error;
 public class ExpiredTokenException extends JwtException{
     public ExpiredTokenException(Error error) {
         super(error);
-
+    }
 }
