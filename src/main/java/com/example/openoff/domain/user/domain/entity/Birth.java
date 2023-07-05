@@ -11,21 +11,21 @@ import javax.persistence.Embeddable;
 @Data
 @NoArgsConstructor
 public class Birth {
-    private int year;
-    private int month;
-    private int day;
+    private Integer year;  // Integer로 변경
+    private Integer month; // Integer로 변경
+    private Integer day;   // Integer로 변경
     @Column(name = "is_adult")
-    private boolean isAdult;
+    private Boolean isAdult;  // Boolean으로 변경
 
     @Builder
-    public Birth(int year, int month, int day, boolean isAdult) {
+    public Birth(Integer year, Integer month, Integer day, Boolean isAdult) {
         this.year = year;
         this.month = month;
         this.day = day;
         this.isAdult = false;
     }
 
-    public static Birth makeBirth(int year, int month, int day){
+    public static Birth makeBirth(Integer year, Integer month, Integer day) {
         return Birth.builder()
                 .year(year)
                 .month(month)
