@@ -20,4 +20,5 @@ public class KakaoUserInfoResponseDto {
     private String sub;
 
     private String email;
+    private String nickname;
 }
