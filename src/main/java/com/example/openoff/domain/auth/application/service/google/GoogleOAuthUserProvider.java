@@ -5,7 +5,6 @@ import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAut
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleOAuthResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.exception.GoogleOAuthException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GoogleOAuthService {
+public class GoogleOAuthUserProvider {
     private static final String GRANT_TYPE = "authorization_code";
     private static final String TOKEN_ENDPOINT = "/token";
     private static final String TOKEN_INFO_ENDPOINT = "/tokeninfo";
@@ -32,7 +31,7 @@ public class GoogleOAuthService {
         return reqUrl;
     }
 
-    public GoogleUserInfoResponseDto getGoogleUserInfo(String code) throws JsonProcessingException {
+    public GoogleUserInfoResponseDto getGoogleUserInfo(String code) {
         GoogleOAuthRequestDto googleOAuthRequest = GoogleOAuthRequestDto
                 .builder()
                 .clientId(googleOAuthProperties.getClientId())
