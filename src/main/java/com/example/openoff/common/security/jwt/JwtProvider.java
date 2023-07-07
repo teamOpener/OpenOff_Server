@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import static com.example.openoff.common.consts.ApplicationConst.*;
 
 /**
- * TODO : 예외처리에서 사용자 정보를 담어서 로그를 남겨야함, 토큰에 저장할 정보 email로 할지 정하기, refreshToken을 재발급하는 과정을 filter사용할지 아니면 컨트롤러에서 처리할지 정하기
+ * TODO : 예외처리에서 사용자 정보를 담어서 로그를 남겨야함, 토큰에 저장할 정보 uuid로 할지 정하기, refreshToken을 재발급하는 과정을 filter사용할지 아니면 컨트롤러에서 처리할지 정하기
  */
 @Slf4j
 @Component
@@ -107,22 +107,22 @@ public class JwtProvider {
     }
 
     public String reIssue(String refreshToken){
-        String email = validateRefreshToken(refreshToken);
-        return generateAccessToken(email);
+        String uuid = validateRefreshToken(refreshToken);
+        return generateAccessToken(uuid);
     }
 
     public String validateRefreshToken(String refreshToken) {
         validateToken(refreshToken);
-        final String email = extractUUID(refreshToken);
-        final String storedRefreshToken = getRefreshToken(email);
+        final String uuid = extractUUID(refreshToken);
+        final String storedRefreshToken = getRefreshToken(uuid);
         if(!Objects.equals(refreshToken, storedRefreshToken)){
             throw new InvalidTokenException(Error.INVALID_TOKEN);
         }
-        return email;
+        return uuid;
     }
 
-    private String getRefreshToken(String email) {
-        return redisTemplate.opsForValue().get(email);
+    private String getRefreshToken(String uuid) {
+        return String.valueOf(redisTemplate.opsForValue().get(uuid));
     }
 
 
