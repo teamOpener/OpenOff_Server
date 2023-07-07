@@ -32,7 +32,7 @@ public class User extends BaseEntity {
     @Embedded
     private Birth birth;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private GenderType gender;
 
     @Column(name = "phone_number", unique = true)
@@ -86,6 +86,7 @@ public class User extends BaseEntity {
                 .year(year)
                 .month(month)
                 .day(day)
+                .isAdult(false)
                 .build();
         this.gender = gender;
     }

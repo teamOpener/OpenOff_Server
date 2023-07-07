@@ -4,21 +4,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
-import org.springframework.stereotype.Component;
 
 @Getter
-@Component
 @RequiredArgsConstructor
 @ConstructorBinding
 @ConfigurationProperties(prefix = "google")
 public class GoogleOAuthProperties {
-    private String authUrl;
+    private final String authUrl;
 
-    private String loginUrl;
+    private final String loginUrl;
 
-    private String redirectUrl;
+    private final String redirectUrl;
 
-    private String clientId;
+    private final String clientId;
 
-    private String clientSecret;
+    private final String clientSecret;
 }

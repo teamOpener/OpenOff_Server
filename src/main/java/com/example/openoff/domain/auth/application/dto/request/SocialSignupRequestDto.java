@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class SignupRequestDto {
+public class SocialSignupRequestDto {
 
     @NotBlank(message = "1012:공백일 수 없습니다.")
     private String token;

@@ -43,11 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        return super.shouldNotFilter(request);
-//    }
-
     private boolean checkNotIgnoredPath(String requestURI, String method) {
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         for (String ignoredPath : IgnoredPathConst.IGNORED_PATHS) {

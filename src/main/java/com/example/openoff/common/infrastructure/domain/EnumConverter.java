@@ -16,11 +16,12 @@ public class EnumConverter<E extends Enum<E> & CodeValue> implements AttributeCo
 
     @Override
     public String convertToDatabaseColumn(E attribute) {
-        return attribute.getCode();
+        return attribute != null ? attribute.getCode() : null;
     }
 
     @Override
     public E convertToEntityAttribute(String dbData) {
+        if (dbData == null) return null;
         return EnumSet.allOf(clz).stream()
                 .filter(e->e.getCode().equals(dbData))
                 .findAny()

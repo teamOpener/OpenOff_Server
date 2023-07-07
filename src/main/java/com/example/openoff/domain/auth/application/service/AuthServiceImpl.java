@@ -2,7 +2,7 @@ package com.example.openoff.domain.auth.application.service;
 
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.security.jwt.JwtProvider;
-import com.example.openoff.domain.auth.application.dto.request.SignupRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.apple.AppleOIDCRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAuthCodeRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.kakao.KakaoOIDCRequestDto;
@@ -22,6 +22,7 @@ import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -36,13 +37,14 @@ public class AuthServiceImpl implements AuthService{
     private final UserQueryService userQueryService;
     private final JwtProvider jwtProvider;
     @Override
-    public TokenResponseDto initSocialSignIn(SignupRequestDto signupRequestDto, String socialType) {
+    @Transactional
+    public TokenResponseDto initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String socialType) {
         // provider를 보고 어떤 소셜 로그인인지 판단하고 정보 가져옴
         // 가져온 정보로 socialAccount save (이미 있는지 확인)
         SocialAccount socialAccount = null;
         switch (socialType) {
             case "google":
-                GoogleUserInfoResponseDto googleUserInfoResponseDto = getGoogleUserInfoByAuthCode(new GoogleOAuthCodeRequestDto(signupRequestDto.getToken()));
+                GoogleUserInfoResponseDto googleUserInfoResponseDto = getGoogleUserInfoByAuthCode(new GoogleOAuthCodeRequestDto(socialSignupRequestDto.getToken()));
                 socialAccount = socialAccountService.checkAndSaveSocialAccount(
                         AccountType.GOOGLE,
                         UUID.randomUUID().toString(), // google id로 변경해야함
@@ -50,16 +52,16 @@ public class AuthServiceImpl implements AuthService{
                         googleUserInfoResponseDto.getName());
                 break;
             case "kakao":
-                KakaoUserInfoResponseDto kakaoUserInfoResponseDto = getKakaoUserInfoByIdToken(new KakaoOIDCRequestDto(signupRequestDto.getToken()));
-                socialAccount =socialAccountService.checkAndSaveSocialAccount(
+                KakaoUserInfoResponseDto kakaoUserInfoResponseDto = getKakaoUserInfoByIdToken(new KakaoOIDCRequestDto(socialSignupRequestDto.getToken()));
+                socialAccount = socialAccountService.checkAndSaveSocialAccount(
                         AccountType.KAKAO,
                         kakaoUserInfoResponseDto.getSub(),
                         kakaoUserInfoResponseDto.getEmail(),
-                        UUID.randomUUID().toString()); // name으로 변경해야함
+                        kakaoUserInfoResponseDto.getNickname());
                 break;
             case "apple":
-                AppleUserInfoResponseDto appleUserInfoResponseDto = getAppleUserInfoByIdToken(new AppleOIDCRequestDto(signupRequestDto.getToken()));
-                socialAccount =socialAccountService.checkAndSaveSocialAccount(
+                AppleUserInfoResponseDto appleUserInfoResponseDto = getAppleUserInfoByIdToken(new AppleOIDCRequestDto(socialSignupRequestDto.getToken()));
+                socialAccount = socialAccountService.checkAndSaveSocialAccount(
                         AccountType.APPLE,
                         appleUserInfoResponseDto.getPlatformId(),
                         appleUserInfoResponseDto.getEmail(),
@@ -68,7 +70,7 @@ public class AuthServiceImpl implements AuthService{
             default:
                 throw new OAuthException(Error.OAUTH_FAILED);
         }
-
+        log.info("socialAccount : {}", socialAccount);
         // User saveOrFind
         User user = userQueryService.initUserSave(socialAccount, socialType);
 

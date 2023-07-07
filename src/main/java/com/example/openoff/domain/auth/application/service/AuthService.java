@@ -1,6 +1,6 @@
 package com.example.openoff.domain.auth.application.service;
 
-import com.example.openoff.domain.auth.application.dto.request.SignupRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.apple.AppleOIDCRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAuthCodeRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.kakao.KakaoOIDCRequestDto;
@@ -11,7 +11,7 @@ import com.example.openoff.domain.auth.application.dto.response.token.TokenRespo
 
 public interface AuthService {
     // Sign In
-    TokenResponseDto initSocialSignIn(SignupRequestDto signupRequestDto, String provider);
+    TokenResponseDto initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String provider);
 
     // GOOGLE
     GoogleUserInfoResponseDto getGoogleUserInfoByAuthCode(GoogleOAuthCodeRequestDto googleOAuthCodeRequestDto);

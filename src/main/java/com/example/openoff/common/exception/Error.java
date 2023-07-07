@@ -20,6 +20,7 @@ public enum Error {
     APPLE_OIDC_FAILED5("Apple OAuth 통신 암호화 과정 중 문제가 발생했습니다.", 924),
     APPLE_OIDC_FAILED6("Apple OAuth 로그인 중 public key 생성에 문제가 발생했습니다.", 925),
     APPLE_OIDC_FAILED7("Apple OAuth Claims 값이 올바르지 않습니다.", 926),
+    NCP_SMS_FAILED("SMS 전송 에러입니다. 다시 시도해주세요", 950),
 
     // 사용자
     USER_NOT_FOUND("사용자를 찾을 수 없습니다.", 1000),

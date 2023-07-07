@@ -6,7 +6,6 @@ import com.example.openoff.domain.auth.domain.entity.SocialAccount;
 import com.example.openoff.domain.auth.domain.repository.SocialAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @DomainService
@@ -14,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class SocialAccountService {
     private final SocialAccountRepository socialAccountRepository;
 
-    @Transactional
+//    @Transactional
     public SocialAccount checkAndSaveSocialAccount(AccountType accountType, String socialId, String email, String socialName) {
         return socialAccountRepository.findBySocialId(socialId)
-                .orElseGet(() -> socialAccountRepository.save(SocialAccount.toEntity(accountType, socialId, email, socialName)));
+                .orElseGet(() -> socialAccountRepository.saveAndFlush(SocialAccount.toEntity(accountType, socialId, email, socialName)));
     }
 
 }

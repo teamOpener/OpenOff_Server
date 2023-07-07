@@ -70,7 +70,8 @@ public class KakaoOIDCTokenParser {
                 body.getIssuer(),
                 body.getAudience(),
                 body.getSubject(),
-                body.get("email", String.class));
+                body.get("email", String.class),
+                body.get("nickname", String.class));
     }
 
     private Key getRSAPublicKey(String modulus, String exponent)
