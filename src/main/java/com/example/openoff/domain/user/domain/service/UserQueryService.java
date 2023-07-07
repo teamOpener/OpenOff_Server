@@ -2,17 +2,21 @@ package com.example.openoff.domain.user.domain.service;
 
 import com.example.openoff.common.annotation.DomainService;
 import com.example.openoff.common.exception.Error;
+import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
+import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.exception.UserNotFoundException;
 import com.example.openoff.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @DomainService
 @RequiredArgsConstructor
 public class UserQueryService {
+    private final UserUtils userUtils;
     private final UserRepository userRepository;
 
     public User initUserSave(SocialAccount socialAccount, String socialType) {
@@ -33,4 +37,11 @@ public class UserQueryService {
                 });
     }
 
+    @Transactional
+    public void updateOnboardingData(UserOnboardingRequestDto userOnboardingRequestDto) {
+        User user = userUtils.getUser();
+        user.updateBasicUserInfo(userOnboardingRequestDto.getNickname(), userOnboardingRequestDto.getUsername(),
+                userOnboardingRequestDto.getYear(), userOnboardingRequestDto.getMonth(), userOnboardingRequestDto.getDay(),
+                userOnboardingRequestDto.getGender());
+    }
 }

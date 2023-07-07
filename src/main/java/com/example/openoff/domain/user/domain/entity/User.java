@@ -86,6 +86,7 @@ public class User extends BaseEntity {
                 .year(year)
                 .month(month)
                 .day(day)
+                .isAdult(false)
                 .build();
         this.gender = gender;
     }
