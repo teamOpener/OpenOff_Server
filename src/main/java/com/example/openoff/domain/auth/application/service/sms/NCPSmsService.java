@@ -7,6 +7,7 @@ import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsInfoReq
 import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsSendRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.sms.NCPSmsResponseDto;
 import com.example.openoff.domain.auth.application.exception.OAuthException;
+import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -114,5 +116,11 @@ public class NCPSmsService {
         } catch (InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException | JsonProcessingException | URISyntaxException e) {
             throw new OAuthException(Error.NCP_SMS_FAILED);
         }
+    }
+
+    public boolean checkSmsNum(UserSmsCheckRequestDto userSmsCheckRequestDto) {
+        String redisSMSNum = Optional.ofNullable(redisTemplate.opsForValue().get(userSmsCheckRequestDto.getPhoneNum()))
+                .orElseThrow(() -> OAuthException.of(Error.DATA_NOT_FOUND));
+        return redisSMSNum.equals(userSmsCheckRequestDto.getCheckNum());
     }
 }
