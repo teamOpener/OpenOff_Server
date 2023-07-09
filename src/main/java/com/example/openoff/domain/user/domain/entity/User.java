@@ -90,4 +90,12 @@ public class User extends BaseEntity {
                 .build();
         this.gender = gender;
     }
+
+    public void updateProfileImageUrl(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updatePhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
+    }
 }
