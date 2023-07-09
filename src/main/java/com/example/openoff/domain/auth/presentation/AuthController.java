@@ -3,7 +3,7 @@ package com.example.openoff.domain.auth.presentation;
 import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
-import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailRequestDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +38,8 @@ public class AuthController {
     }
 
     @GetMapping("/check/email")
-    public ResponseEntity<ResponseDto<CheckEmailRequestDto>> checkExistEmail(@RequestParam String email) {
-        ResponseDto<CheckEmailRequestDto> responseDto = authService.checkExistEmail(email);
+    public ResponseEntity<ResponseDto<CheckEmailResponseDto>> checkExistEmail(@RequestParam String email) {
+        ResponseDto<CheckEmailResponseDto> responseDto = authService.checkExistEmail(email);
         return ResponseEntity.ok().body(responseDto);
     }
 

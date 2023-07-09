@@ -9,7 +9,7 @@ import com.example.openoff.domain.auth.application.dto.request.normal.NormalSign
 import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
-import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailRequestDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 
 public interface AuthService {
@@ -26,7 +26,7 @@ public interface AuthService {
     AppleUserInfoResponseDto getAppleUserInfoByIdToken(AppleOIDCRequestDto appleOIDCRequestDto);
 
     // NORMAL
-    ResponseDto<CheckEmailRequestDto> checkExistEmail(String email);
+    ResponseDto<CheckEmailResponseDto> checkExistEmail(String email);
     ResponseDto<TokenResponseDto> initNormalSignUp(NormalSignInRequestDto normalSignupRequestDto);
     ResponseDto<TokenResponseDto> normalLogin(NormalSignInRequestDto normalSignupRequestDto);
 }

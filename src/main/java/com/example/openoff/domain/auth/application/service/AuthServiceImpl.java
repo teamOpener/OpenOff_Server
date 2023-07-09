@@ -11,7 +11,7 @@ import com.example.openoff.domain.auth.application.dto.request.normal.NormalSign
 import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
-import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailRequestDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.exception.OAuthException;
 import com.example.openoff.domain.auth.application.service.apple.AppleOIDCUserProvider;
@@ -100,10 +100,10 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public ResponseDto<CheckEmailRequestDto> checkExistEmail(String email) {
+    public ResponseDto<CheckEmailResponseDto> checkExistEmail(String email) {
         return socialAccountService.checkExistEmailInNormal(email) ?
-                ResponseDto.of(HttpStatus.OK.value(), "이미 존재하는 이메일입니다.", CheckEmailRequestDto.builder().check(false).build()) :
-                ResponseDto.of(HttpStatus.OK.value(), "가입 가능한 이메일입니다.", CheckEmailRequestDto.builder().check(true).build())
+                ResponseDto.of(HttpStatus.OK.value(), "이미 존재하는 이메일입니다.", CheckEmailResponseDto.builder().check(false).build()) :
+                ResponseDto.of(HttpStatus.OK.value(), "가입 가능한 이메일입니다.", CheckEmailResponseDto.builder().check(true).build())
                 ;
     }
 
