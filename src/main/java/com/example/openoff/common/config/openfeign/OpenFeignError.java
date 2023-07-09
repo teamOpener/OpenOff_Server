@@ -10,7 +10,7 @@ public class OpenFeignError implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         switch (response.status()) {
             case 400:
-                return new BusinessException(Error.DATA_NOT_FOUND);
+                return BusinessException.of(Error.DATA_NOT_FOUND);
         }
         return null;
     }

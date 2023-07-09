@@ -1,14 +1,17 @@
 package com.example.openoff.domain.auth.application.service;
 
+import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.security.jwt.JwtProvider;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.apple.AppleOIDCRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAuthCodeRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.kakao.KakaoOIDCRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.exception.OAuthException;
 import com.example.openoff.domain.auth.application.service.apple.AppleOIDCUserProvider;
@@ -21,6 +24,7 @@ import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +42,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtProvider jwtProvider;
     @Override
     @Transactional
-    public TokenResponseDto initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String socialType) {
+    public ResponseDto<TokenResponseDto> initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String socialType) {
         // provider를 보고 어떤 소셜 로그인인지 판단하고 정보 가져옴
         // 가져온 정보로 socialAccount save (이미 있는지 확인)
         SocialAccount socialAccount = null;
@@ -70,15 +74,14 @@ public class AuthServiceImpl implements AuthService{
             default:
                 throw new OAuthException(Error.OAUTH_FAILED);
         }
-        log.info("socialAccount : {}", socialAccount);
         // User saveOrFind
-        User user = userQueryService.initUserSave(socialAccount, socialType);
+        User user = userQueryService.initUserSaveOrFind(socialAccount, socialType);
 
         // JWT 생성부분(rt까지 만료된 상황에 호출될 것이므로 싹다 새로 발급)
         String accessToken = jwtProvider.generateAccessToken(user.getId());
         String refreshToken = jwtProvider.generateRefreshToken(user.getId());
         // token 발급
-        return TokenResponseDto.of(accessToken,refreshToken);
+        return ResponseDto.of(HttpStatus.OK.value(), "토큰 발행 성공!!" ,TokenResponseDto.of(accessToken,refreshToken));
     }
 
     @Override
@@ -94,5 +97,34 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public AppleUserInfoResponseDto getAppleUserInfoByIdToken(AppleOIDCRequestDto appleOIDCRequestDto) {
         return appleOIDCUserProvider.getApplePlatformMember(appleOIDCRequestDto.getToken());
+    }
+
+    @Override
+    public ResponseDto<CheckEmailResponseDto> checkExistEmail(String email) {
+        return socialAccountService.checkExistEmailInNormal(email) ?
+                ResponseDto.of(HttpStatus.OK.value(), "이미 존재하는 이메일입니다.", CheckEmailResponseDto.builder().check(false).build()) :
+                ResponseDto.of(HttpStatus.OK.value(), "가입 가능한 이메일입니다.", CheckEmailResponseDto.builder().check(true).build())
+                ;
+    }
+
+    @Override
+    public ResponseDto<TokenResponseDto> initNormalSignUp(NormalSignInRequestDto normalSignupRequestDto) {
+        SocialAccount socialAccount = socialAccountService.checkAndSaveNormalAccount(normalSignupRequestDto.getPassword(), normalSignupRequestDto.getEmail());
+        User user = userQueryService.initUserSaveOrFind(socialAccount, "normal");
+
+        String accessToken = jwtProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+        return ResponseDto.of(HttpStatus.OK.value(), "토큰 발행 성공!!" ,TokenResponseDto.of(accessToken,refreshToken));
+    }
+
+    @Override
+    public ResponseDto<TokenResponseDto> normalLogin(NormalSignInRequestDto normalSignupRequestDto) {
+        SocialAccount normalAccount = socialAccountService.findNormalAccount(normalSignupRequestDto.getPassword(), normalSignupRequestDto.getEmail());
+        User user = userQueryService.initUserSaveOrFind(normalAccount, "normal");
+        // JWT 생성부분(rt까지 만료된 상황에 호출될 것이므로 싹다 새로 발급)
+        String accessToken = jwtProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+        // token 발급
+        return ResponseDto.of(HttpStatus.OK.value(), "일반 로그인 성공!!" ,TokenResponseDto.of(accessToken,refreshToken));
     }
 }

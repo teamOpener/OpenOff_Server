@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<User, String> {
             "select u from User u " +
             "where u.kakaoAccount.id = :socialId or u.googleAccount.id = :socialId or u.appleAccount.id = :socialId or u.normalAccount.id = :socialId")
     Optional<User> findBySocialId(Long socialId);
+
+    Boolean existsByNickname(String nickname);
 }

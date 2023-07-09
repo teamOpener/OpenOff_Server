@@ -1,7 +1,7 @@
 package com.example.openoff.common.security.jwt;
 
 import com.example.openoff.common.consts.IgnoredPathConst;
-import com.example.openoff.common.exception.dto.ErrorResponse;
+import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.security.exception.JwtException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,7 @@ public class JwtAuthenticationEntryPoint extends OncePerRequestFilter {
         try{
             filterChain.doFilter(request, response);
         } catch (JwtException e){
-            log.info("JwtException: {} {}",e.getError().getMessage(), e.getError().getErrorCode());
-            setErrorCode(response, e);
+            throw JwtException.of(Error.INVALID_TOKEN);
         }
     }
 
@@ -47,13 +46,5 @@ public class JwtAuthenticationEntryPoint extends OncePerRequestFilter {
             }
         }
         return true;
-    }
-
-    private void setErrorCode(HttpServletResponse response, JwtException e) throws IOException {
-        ErrorResponse errorResponse = ErrorResponse.from(e);
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

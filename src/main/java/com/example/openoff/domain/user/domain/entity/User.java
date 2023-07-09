@@ -2,6 +2,8 @@ package com.example.openoff.domain.user.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
+import com.example.openoff.domain.interest.domain.entity.Interest;
+import com.example.openoff.domain.interest.domain.entity.InterestType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Entity
@@ -61,6 +65,9 @@ public class User extends BaseEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @OneToMany(mappedBy = "user")
+    private List<Interest> interests;
+
     @Builder
     public User(String userName, String nickname, String profileImageUrl, Birth birth, GenderType gender, String phoneNumber,
                 SocialAccount kakaoAccount, SocialAccount googleAccount, SocialAccount appleAccount, SocialAccount normalAccount,
@@ -89,5 +96,17 @@ public class User extends BaseEntity {
                 .isAdult(false)
                 .build();
         this.gender = gender;
+    }
+
+    public void updateProfileImageUrl(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void updatePhoneNumber(String phoneNumber){
+        this.phoneNumber = phoneNumber;
+    }
+
+    public List<InterestType> getUserInterestList(){
+        return this.interests.stream().map(Interest::getInterestType).collect(Collectors.toList());
     }
 }

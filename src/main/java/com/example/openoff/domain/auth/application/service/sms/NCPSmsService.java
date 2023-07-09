@@ -1,12 +1,14 @@
 package com.example.openoff.domain.auth.application.service.sms;
 
 import com.example.openoff.common.annotation.UseCase;
+import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsInfoRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsSendRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.sms.NCPSmsResponseDto;
 import com.example.openoff.domain.auth.application.exception.OAuthException;
+import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +31,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -70,7 +74,7 @@ public class NCPSmsService {
         return encodeBase64String;
     }
 
-    public NCPSmsResponseDto sendSms(NCPSmsInfoRequestDto ncpSmsInfoRequestDto) {
+    public ResponseDto<NCPSmsResponseDto> sendSms(NCPSmsInfoRequestDto ncpSmsInfoRequestDto) {
         try {
             Random random = new Random();
             StringBuilder randomNum = new StringBuilder();
@@ -110,9 +114,15 @@ public class NCPSmsService {
 
             restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
             NCPSmsResponseDto response = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/" + ncpSmsProperties.getServiceId() + "/messages"), httpBody, NCPSmsResponseDto.class);
-            return response;
+            return ResponseDto.of(HttpStatus.OK.value(), "인증 메세지 발송 성공", response);
         } catch (InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException | JsonProcessingException | URISyntaxException e) {
             throw new OAuthException(Error.NCP_SMS_FAILED);
         }
+    }
+
+    public boolean checkSmsNum(UserSmsCheckRequestDto userSmsCheckRequestDto) {
+        String redisSMSNum = Optional.ofNullable(redisTemplate.opsForValue().get(userSmsCheckRequestDto.getPhoneNum()))
+                .orElseThrow(() -> OAuthException.of(Error.DATA_NOT_FOUND));
+        return redisSMSNum.equals(userSmsCheckRequestDto.getCheckNum());
     }
 }
