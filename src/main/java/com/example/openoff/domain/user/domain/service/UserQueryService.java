@@ -10,8 +10,8 @@ import com.example.openoff.domain.user.application.dto.request.UserOnboardingReq
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
 import com.example.openoff.domain.user.domain.entity.User;
+import com.example.openoff.domain.user.domain.exception.UserException;
 import com.example.openoff.domain.user.domain.exception.UserNotCorrectSMSNumException;
-import com.example.openoff.domain.user.domain.exception.UserNotFoundException;
 import com.example.openoff.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class UserQueryService {
     private final NCPSmsService ncpSmsService;
     private final UserRepository userRepository;
 
-    public User initUserSave(SocialAccount socialAccount, String socialType) {
+    public User initUserSaveOrFind(SocialAccount socialAccount, String socialType) {
         return userRepository.findBySocialId(socialAccount.getId())
                 .orElseGet(() -> {
                     switch (socialType){
@@ -39,7 +39,7 @@ public class UserQueryService {
                         case "normal":
                             return userRepository.save(User.builder().normalAccount(socialAccount).isActive(true).build());
                         default:
-                            throw new UserNotFoundException(Error.USER_NOT_FOUND);
+                            throw UserException.of(Error.OAUTH_FAILED);
                     }
                 });
     }
@@ -47,7 +47,10 @@ public class UserQueryService {
     @Transactional
     public ResponseDto<UserInfoResponseDto> updateOnboardingData(UserOnboardingRequestDto userOnboardingRequestDto) {
         User user = userUtils.getUser();
-        user.updateBasicUserInfo(userOnboardingRequestDto.getNickname(), userOnboardingRequestDto.getUsername(),
+        if (userRepository.existsByNickname(userOnboardingRequestDto.getNickname())) {
+            throw UserException.of(Error.USER_NICKNAME_DUPLICATION);
+        }
+        user.updateBasicUserInfo(userOnboardingRequestDto.getUsername(), userOnboardingRequestDto.getNickname(),
                 userOnboardingRequestDto.getYear(), userOnboardingRequestDto.getMonth(), userOnboardingRequestDto.getDay(),
                 userOnboardingRequestDto.getGender());
         return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
