@@ -7,9 +7,11 @@ import com.example.openoff.domain.auth.application.dto.request.SocialSignupReque
 import com.example.openoff.domain.auth.application.dto.request.apple.AppleOIDCRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAuthCodeRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.kakao.KakaoOIDCRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.exception.OAuthException;
 import com.example.openoff.domain.auth.application.service.apple.AppleOIDCUserProvider;
@@ -73,7 +75,7 @@ public class AuthServiceImpl implements AuthService{
                 throw new OAuthException(Error.OAUTH_FAILED);
         }
         // User saveOrFind
-        User user = userQueryService.initUserSave(socialAccount, socialType);
+        User user = userQueryService.initUserSaveOrFind(socialAccount, socialType);
 
         // JWT 생성부분(rt까지 만료된 상황에 호출될 것이므로 싹다 새로 발급)
         String accessToken = jwtProvider.generateAccessToken(user.getId());
@@ -95,5 +97,34 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public AppleUserInfoResponseDto getAppleUserInfoByIdToken(AppleOIDCRequestDto appleOIDCRequestDto) {
         return appleOIDCUserProvider.getApplePlatformMember(appleOIDCRequestDto.getToken());
+    }
+
+    @Override
+    public ResponseDto<CheckEmailRequestDto> checkExistEmail(String email) {
+        return socialAccountService.checkExistEmailInNormal(email) ?
+                ResponseDto.of(HttpStatus.OK.value(), "이미 존재하는 이메일입니다.", CheckEmailRequestDto.builder().check(false).build()) :
+                ResponseDto.of(HttpStatus.OK.value(), "가입 가능한 이메일입니다.", CheckEmailRequestDto.builder().check(true).build())
+                ;
+    }
+
+    @Override
+    public ResponseDto<TokenResponseDto> initNormalSignUp(NormalSignInRequestDto normalSignupRequestDto) {
+        SocialAccount socialAccount = socialAccountService.checkAndSaveNormalAccount(normalSignupRequestDto.getPassword(), normalSignupRequestDto.getEmail());
+        User user = userQueryService.initUserSaveOrFind(socialAccount, "normal");
+
+        String accessToken = jwtProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+        return ResponseDto.of(HttpStatus.OK.value(), "토큰 발행 성공!!" ,TokenResponseDto.of(accessToken,refreshToken));
+    }
+
+    @Override
+    public ResponseDto<TokenResponseDto> normalLogin(NormalSignInRequestDto normalSignupRequestDto) {
+        SocialAccount normalAccount = socialAccountService.findNormalAccount(normalSignupRequestDto.getPassword(), normalSignupRequestDto.getEmail());
+        User user = userQueryService.initUserSaveOrFind(normalAccount, "normal");
+        // JWT 생성부분(rt까지 만료된 상황에 호출될 것이므로 싹다 새로 발급)
+        String accessToken = jwtProvider.generateAccessToken(user.getId());
+        String refreshToken = jwtProvider.generateRefreshToken(user.getId());
+        // token 발급
+        return ResponseDto.of(HttpStatus.OK.value(), "일반 로그인 성공!!" ,TokenResponseDto.of(accessToken,refreshToken));
     }
 }
