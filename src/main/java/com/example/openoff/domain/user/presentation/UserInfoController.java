@@ -28,8 +28,8 @@ public class UserInfoController {
     }
 
     @PostMapping("/sms")
-    public ResponseEntity<?> sendSms(@RequestBody NCPSmsInfoRequestDto ncpSmsInfoRequestDto) {
-        NCPSmsResponseDto ncpSmsResponseDto = ncpSmsService.sendSms(ncpSmsInfoRequestDto);
+    public ResponseEntity<ResponseDto<NCPSmsResponseDto>> sendSms(@RequestBody NCPSmsInfoRequestDto ncpSmsInfoRequestDto) {
+        ResponseDto<NCPSmsResponseDto> ncpSmsResponseDto = ncpSmsService.sendSms(ncpSmsInfoRequestDto);
         return ResponseEntity.ok().body(ncpSmsResponseDto);
     }
 
@@ -38,4 +38,5 @@ public class UserInfoController {
         ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.checkSmsNum(userSmsCheckRequestDto);
         return ResponseEntity.ok().body(userInfoResponseDto);
     }
+
 }
