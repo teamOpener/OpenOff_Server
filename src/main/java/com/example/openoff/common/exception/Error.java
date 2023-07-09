@@ -24,11 +24,13 @@ public enum Error {
 
     // 사용자
     USER_NOT_FOUND("사용자를 찾을 수 없습니다.", 1000),
-
+    USER_NOT_CORRECT_SMS_NUM("잘못된 인증 번호입니다.", 1001),
 
     // JWT
     INVALID_TOKEN("잘못된 토큰 요청", 7000),
-    EXPIRED_TOKEN("토큰 만료", 7001);
+    EXPIRED_TOKEN("토큰 만료", 7001),
+
+    ;
 
     private final String message;
     private final int errorCode;

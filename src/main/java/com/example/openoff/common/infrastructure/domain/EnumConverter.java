@@ -25,6 +25,6 @@ public class EnumConverter<E extends Enum<E> & CodeValue> implements AttributeCo
         return EnumSet.allOf(clz).stream()
                 .filter(e->e.getCode().equals(dbData))
                 .findAny()
-                .orElseThrow(()-> new BusinessException(Error.DATA_NOT_FOUND));
+                .orElseThrow(()-> BusinessException.of(Error.DATA_NOT_FOUND));
     }
 }
