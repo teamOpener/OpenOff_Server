@@ -1,5 +1,6 @@
 package com.example.openoff.domain.auth.presentation;
 
+import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.service.AuthService;
@@ -16,9 +17,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup/social/{socialType}")
-    public ResponseEntity<?> signupSocial(@PathVariable String socialType, @RequestBody SocialSignupRequestDto socialSignupRequestDto)
+    public ResponseEntity<ResponseDto<TokenResponseDto>> signupSocial(@PathVariable String socialType, @RequestBody SocialSignupRequestDto socialSignupRequestDto)
     {
-        TokenResponseDto tokenResponseDto = authService.initSocialSignIn(socialSignupRequestDto, socialType);
+        ResponseDto<TokenResponseDto> tokenResponseDto = authService.initSocialSignIn(socialSignupRequestDto, socialType);
         return ResponseEntity.ok().body(tokenResponseDto);
     }
 }

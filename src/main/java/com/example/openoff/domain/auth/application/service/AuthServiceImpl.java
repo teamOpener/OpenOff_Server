@@ -1,5 +1,6 @@
 package com.example.openoff.domain.auth.application.service;
 
+import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.security.jwt.JwtProvider;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
@@ -21,6 +22,7 @@ import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +40,7 @@ public class AuthServiceImpl implements AuthService{
     private final JwtProvider jwtProvider;
     @Override
     @Transactional
-    public TokenResponseDto initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String socialType) {
+    public ResponseDto<TokenResponseDto> initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String socialType) {
         // provider를 보고 어떤 소셜 로그인인지 판단하고 정보 가져옴
         // 가져온 정보로 socialAccount save (이미 있는지 확인)
         SocialAccount socialAccount = null;
@@ -70,7 +72,6 @@ public class AuthServiceImpl implements AuthService{
             default:
                 throw new OAuthException(Error.OAUTH_FAILED);
         }
-        log.info("socialAccount : {}", socialAccount);
         // User saveOrFind
         User user = userQueryService.initUserSave(socialAccount, socialType);
 
@@ -78,7 +79,7 @@ public class AuthServiceImpl implements AuthService{
         String accessToken = jwtProvider.generateAccessToken(user.getId());
         String refreshToken = jwtProvider.generateRefreshToken(user.getId());
         // token 발급
-        return TokenResponseDto.of(accessToken,refreshToken);
+        return ResponseDto.of(HttpStatus.OK.value(), "토큰 발행 성공!!" ,TokenResponseDto.of(accessToken,refreshToken));
     }
 
     @Override
