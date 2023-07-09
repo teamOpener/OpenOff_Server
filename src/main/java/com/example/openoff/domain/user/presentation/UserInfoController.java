@@ -1,9 +1,12 @@
 package com.example.openoff.domain.user.presentation;
 
+import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsInfoRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.sms.NCPSmsResponseDto;
 import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
+import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
+import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
 import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +22,20 @@ public class UserInfoController {
     private final NCPSmsService ncpSmsService;
 
     @PatchMapping("/onboarding")
-    public ResponseEntity<?> updateOnboardingData(@RequestBody UserOnboardingRequestDto userOnboardingRequestDto) {
-        userQueryService.updateOnboardingData(userOnboardingRequestDto);
-        return ResponseEntity.ok().body("onboarding success");
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> updateOnboardingData(@RequestBody UserOnboardingRequestDto userOnboardingRequestDto) {
+        ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.updateOnboardingData(userOnboardingRequestDto);
+        return ResponseEntity.ok().body(userInfoResponseDto);
     }
 
     @PostMapping("/sms")
     public ResponseEntity<?> sendSms(@RequestBody NCPSmsInfoRequestDto ncpSmsInfoRequestDto) {
         NCPSmsResponseDto ncpSmsResponseDto = ncpSmsService.sendSms(ncpSmsInfoRequestDto);
         return ResponseEntity.ok().body(ncpSmsResponseDto);
+    }
+
+    @PatchMapping("/sms")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> checkSmsNum(@RequestBody UserSmsCheckRequestDto userSmsCheckRequestDto) {
+        ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.checkSmsNum(userSmsCheckRequestDto);
+        return ResponseEntity.ok().body(userInfoResponseDto);
     }
 }
