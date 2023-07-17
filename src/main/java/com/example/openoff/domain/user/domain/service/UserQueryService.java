@@ -4,11 +4,14 @@ import com.example.openoff.common.annotation.DomainService;
 import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.auth.application.dto.response.SocialAccountInfoResponseDto;
 import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
+import com.example.openoff.domain.auth.domain.service.SocialAccountService;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
+import com.example.openoff.domain.user.application.dto.response.UserTotalInfoResponseDto;
 import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.exception.UserException;
 import com.example.openoff.domain.user.domain.exception.UserNotCorrectSMSNumException;
@@ -18,12 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Slf4j
 @DomainService
 @RequiredArgsConstructor
 public class UserQueryService {
     private final UserUtils userUtils;
     private final NCPSmsService ncpSmsService;
+    private final SocialAccountService socialAccountService;
     private final UserRepository userRepository;
 
     public User initUserSaveOrFind(SocialAccount socialAccount, String socialType) {
@@ -42,6 +51,27 @@ public class UserQueryService {
                             throw UserException.of(Error.OAUTH_FAILED);
                     }
                 });
+    }
+
+    public ResponseDto<UserTotalInfoResponseDto> getMyInfo() {
+        User user = userUtils.getUser();
+        List<SocialAccount> socialAccountList = Stream.of(
+                        Optional.ofNullable(user.getKakaoAccount()),
+                        Optional.ofNullable(user.getGoogleAccount()),
+                        Optional.ofNullable(user.getAppleAccount()),
+                        Optional.ofNullable(user.getNormalAccount()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        UserInfoResponseDto userInfoResponseDto = UserInfoResponseDto.from(user);
+        List<SocialAccountInfoResponseDto> allSocialAccountInfoList = socialAccountService.getSocialAccountInfos(socialAccountList);
+        return ResponseDto.of(HttpStatus.OK.value(), "GET USER INFO SUCCESS", UserTotalInfoResponseDto.from(userInfoResponseDto, allSocialAccountInfoList));
+    }
+
+    public ResponseDto<UserInfoResponseDto> getUserInfo(String uuid) {
+        User user = userRepository.findById(uuid)
+                .orElseThrow(() -> UserException.of(Error.USER_NOT_FOUND));
+        return ResponseDto.of(HttpStatus.OK.value(), "GET USER INFO SUCCESS", UserInfoResponseDto.from(user));
     }
 
     @Transactional
