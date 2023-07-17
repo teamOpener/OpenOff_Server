@@ -18,6 +18,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+    @PostMapping("/refresh")
+    public ResponseEntity<ResponseDto<TokenResponseDto>> tokenRefresh(@RequestBody TokenResponseDto tokenResponseDto)
+    {
+        ResponseDto<TokenResponseDto> responseDto = authService.tokenRefresh(tokenResponseDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
     @PostMapping("/signup/social/{socialType}")
     public ResponseEntity<ResponseDto<TokenResponseDto>> signupSocial(@PathVariable String socialType, @RequestBody SocialSignupRequestDto socialSignupRequestDto)
     {
