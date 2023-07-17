@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserInfoResponseDto {
+    private String uuid;
     private String userName;
     private String nickname;
     private String profileImageUrl;
@@ -23,7 +24,8 @@ public class UserInfoResponseDto {
     private List<InterestType> interestTypeList;
 
     @Builder
-    public UserInfoResponseDto(String userName, String nickname, String profileImageUrl, Birth birth, GenderType gender, String phoneNumber, List<InterestType> interestTypeList) {
+    public UserInfoResponseDto(String uuid, String userName, String nickname, String profileImageUrl, Birth birth, GenderType gender, String phoneNumber, List<InterestType> interestTypeList) {
+        this.uuid = uuid;
         this.userName = userName;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
@@ -36,6 +38,7 @@ public class UserInfoResponseDto {
     @Builder
     public static UserInfoResponseDto from(User user){
         return UserInfoResponseDto.builder()
+                .uuid(user.getId())
                 .userName(user.getUserName())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
