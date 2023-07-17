@@ -32,7 +32,7 @@ public enum Error {
     TOO_MANY_INTEREST("관심 분야를 4개 이상 설정할 수 없습니다.", 1003),
     // JWT
     INVALID_TOKEN("잘못된 토큰 요청", 7000),
-    EXPIRED_TOKEN("토큰 만료", 7001),
+    EXPIRED_TOKEN("토큰 만료되었습니다. 토큰 재발행 혹은 로그인을 다시 해주세요", 7001),
 
     ;
 

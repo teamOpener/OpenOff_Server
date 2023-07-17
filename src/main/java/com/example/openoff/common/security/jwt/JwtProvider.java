@@ -90,9 +90,9 @@ public class JwtProvider {
         try {
             jwtParser.parse(token);
         } catch (MalformedJwtException | SignatureException | IllegalArgumentException e){
-            throw new InvalidTokenException(Error.INVALID_TOKEN);
+            throw InvalidTokenException.of(Error.INVALID_TOKEN);
         } catch (ExpiredJwtException e){
-            throw new ExpiredTokenException(Error.EXPIRED_TOKEN);
+            throw ExpiredTokenException.of(Error.EXPIRED_TOKEN);
 
         }
     }
@@ -116,7 +116,7 @@ public class JwtProvider {
         final String uuid = extractUUID(refreshToken);
         final String storedRefreshToken = getRefreshToken(uuid);
         if(!Objects.equals(refreshToken, storedRefreshToken)){
-            throw new InvalidTokenException(Error.INVALID_TOKEN);
+            throw InvalidTokenException.of(Error.INVALID_TOKEN);
         }
         return uuid;
     }

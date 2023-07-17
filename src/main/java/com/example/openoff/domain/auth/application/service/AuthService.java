@@ -13,6 +13,8 @@ import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmai
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 
 public interface AuthService {
+    // Token issue
+    ResponseDto<TokenResponseDto> tokenRefresh(TokenResponseDto tokenResponseDto);
     // Sign In
     ResponseDto<TokenResponseDto> initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String provider);
 

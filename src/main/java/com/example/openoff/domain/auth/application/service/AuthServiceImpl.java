@@ -40,6 +40,16 @@ public class AuthServiceImpl implements AuthService{
     private final SocialAccountService socialAccountService;
     private final UserQueryService userQueryService;
     private final JwtProvider jwtProvider;
+
+    @Override
+    public ResponseDto<TokenResponseDto> tokenRefresh(TokenResponseDto tokenResponseDto) {
+        jwtProvider.validateToken(tokenResponseDto.getRefreshToken());
+        String uuid = jwtProvider.extractUUID(tokenResponseDto.getAccessToken());
+        String accessToken = jwtProvider.generateAccessToken(uuid);
+        String refreshToken = jwtProvider.generateRefreshToken(uuid);
+        return ResponseDto.of(HttpStatus.OK.value(), "Token Refresh SUCCESS!!" ,TokenResponseDto.of(accessToken,refreshToken));
+    }
+
     @Override
     @Transactional
     public ResponseDto<TokenResponseDto> initSocialSignIn(SocialSignupRequestDto socialSignupRequestDto, String socialType) {
