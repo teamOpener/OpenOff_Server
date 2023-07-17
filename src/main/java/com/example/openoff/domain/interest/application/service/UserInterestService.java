@@ -24,8 +24,8 @@ public class UserInterestService {
     @Transactional
     public ResponseDto<UserInfoResponseDto> saveInterests(AddInterestRequestDto addInterestRequestDto) {
         User user = userUtils.getUser();
-        if (addInterestRequestDto.getInterestTypeList().size() >= 4) { throw UserException.of(Error.TOO_MANY_INTEREST); }
-        interestService.saveInterests(user, addInterestRequestDto.getInterestTypeList());
+        if (addInterestRequestDto.getFieldTypeList().size() >= 4) { throw UserException.of(Error.TOO_MANY_INTEREST); }
+        interestService.saveInterests(user, addInterestRequestDto.getFieldTypeList());
         return ResponseDto.of(HttpStatus.OK.value(), "관심 분야 저장 성공!", UserInfoResponseDto.from(user));
     }
 }

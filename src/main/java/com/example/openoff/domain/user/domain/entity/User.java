@@ -2,8 +2,8 @@ package com.example.openoff.domain.user.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
-import com.example.openoff.domain.interest.domain.entity.Interest;
-import com.example.openoff.domain.interest.domain.entity.InterestType;
+import com.example.openoff.domain.interest.domain.entity.FieldType;
+import com.example.openoff.domain.interest.domain.entity.UserInterestField;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,7 +66,7 @@ public class User extends BaseEntity {
     private Boolean isActive;
 
     @OneToMany(mappedBy = "user")
-    private List<Interest> interests;
+    private List<UserInterestField> userInterestFields;
 
     @Builder
     public User(String userName, String nickname, String profileImageUrl, Birth birth, GenderType gender, String phoneNumber,
@@ -106,7 +106,7 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<InterestType> getUserInterestList(){
-        return this.interests.stream().map(Interest::getInterestType).collect(Collectors.toList());
+    public List<FieldType> getUserInterestList(){
+        return this.userInterestFields.stream().map(UserInterestField::getFieldType).collect(Collectors.toList());
     }
 }
