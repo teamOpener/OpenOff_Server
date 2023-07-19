@@ -7,6 +7,9 @@ public enum Error {
     INTERNAL_SERVER_ERROR("서버 내부 에러입니다.", 500),
 
     DATA_NOT_FOUND("데이터를 찾을 수 없습니다.", 800),
+    FILE_UPLOAD_ERROR("s3 upload 오류입니다.", 801),
+    FILE_EXTENTION_ERROR("파일 확장자 오류입니다.", 802),
+    FILE_DELETE_ERROR("파일 삭제 오류입니다.", 803),
 
     // OAuth
     OAUTH_FAILED("잘못된 소셜 로그인 요청입니다. KAKAO, GOOGLE, APPLE 연동만이 가능합니다.", 890),
@@ -29,7 +32,16 @@ public enum Error {
     USER_NOT_FOUND("사용자를 찾을 수 없습니다.", 1000),
     USER_NOT_CORRECT_SMS_NUM("잘못된 인증 번호입니다.", 1001),
     USER_NICKNAME_DUPLICATION("중복된 닉네임입니다.", 1002),
-    TOO_MANY_INTEREST("관심 분야를 4개 이상 설정할 수 없습니다.", 1003),
+
+
+    // Field
+    TOO_MANY_INTEREST("관심 분야를 4개 이상 설정할 수 없습니다.", 1100),
+    INVALID_FIELD_TYPE("잘못된 분야 상수 값 입니다.", 1101),
+
+    // EventInstance
+    TOO_MANY_EVENT_FIELD("이벤트 분야를 4개 이상 설정할 수 없습니다.", 1200),
+
+
     // JWT
     INVALID_TOKEN("잘못된 토큰 요청", 7000),
     EXPIRED_TOKEN("토큰 만료되었습니다. 토큰 재발행 혹은 로그인을 다시 해주세요", 7001),

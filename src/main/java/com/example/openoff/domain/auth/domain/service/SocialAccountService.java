@@ -3,6 +3,7 @@ package com.example.openoff.domain.auth.domain.service;
 import com.example.openoff.common.annotation.DomainService;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
+import com.example.openoff.domain.auth.application.dto.response.SocialAccountInfoResponseDto;
 import com.example.openoff.domain.auth.domain.entity.AccountType;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
 import com.example.openoff.domain.auth.domain.exception.SocialAccountException;
@@ -11,6 +12,7 @@ import com.example.openoff.domain.user.domain.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -40,5 +42,9 @@ public class SocialAccountService {
     public SocialAccount findNormalAccount(String password, String email) {
         return socialAccountRepository.findByEmailAndSocialIdAndAccountType(email, encryptionUtils.passwordEncrypt(email, password), AccountType.NOMAL)
                 .orElseThrow(() -> UserNotFoundException.of(Error.USER_NOT_FOUND));
+    }
+
+    public List<SocialAccountInfoResponseDto> getSocialAccountInfos(List<SocialAccount> socialAccountList) {
+        return SocialAccountInfoResponseDto.ofList(socialAccountList);
     }
 }

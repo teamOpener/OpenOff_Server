@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public enum InterestType implements CodeValue {
+public enum FieldType implements CodeValue {
     LCS("Lecture/Seminar/Conference", "강연/세미나/컨퍼런스"), // Lecture/Seminar/Conference
     EE("Exhibition/Expo", "전시/박람회"), // Exhibition/Expo
     S("Show", "공연"), // Show
@@ -19,7 +19,7 @@ public enum InterestType implements CodeValue {
     private final String code;
     private final String value;
 
-    InterestType(String code, String value) {
+    FieldType(String code, String value) {
         this.code = code;
         this.value = value;
     }
@@ -48,7 +48,7 @@ public enum InterestType implements CodeValue {
     }
 
     public static List<InterestTypeInfo> getAllInterestTypeInfo() {
-        return Arrays.stream(InterestType.values())
+        return Arrays.stream(FieldType.values())
                 .map(e -> InterestTypeInfo.builder().constName(e.name()).code(e.getCode()).value(e.getValue()).build())
                 .collect(Collectors.toList());
     }

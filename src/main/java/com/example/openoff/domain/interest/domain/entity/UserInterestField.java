@@ -11,9 +11,15 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_user_interest")
+@Table(name = "openoff_user_interest_field",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_user_interest_field_type",
+                        columnNames = {"user_id","field_type"}
+                )
+        })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Interest extends BaseEntity {
+public class UserInterestField extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_interest_id")
@@ -23,19 +29,20 @@ public class Interest extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "interest", nullable = false)
-    private InterestType interestType;
+    @Column(name = "field_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private FieldType fieldType;
 
     @Builder
-    public Interest(User user, InterestType interestType) {
+    public UserInterestField(User user, FieldType fieldType) {
         this.user = user;
-        this.interestType = interestType;
+        this.fieldType = fieldType;
     }
 
-    public static Interest toEntity(User user, InterestType interestType){
-        return Interest.builder()
+    public static UserInterestField toEntity(User user, FieldType fieldType){
+        return UserInterestField.builder()
                 .user(user)
-                .interestType(interestType)
+                .fieldType(fieldType)
                 .build();
     }
 }

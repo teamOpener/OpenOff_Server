@@ -1,6 +1,6 @@
 package com.example.openoff.domain.interest.application.dto.response;
 
-import com.example.openoff.domain.interest.domain.entity.InterestType;
+import com.example.openoff.domain.interest.domain.entity.FieldType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class InterestInfoResponseDto {
         this.interestValue = interestValue;
     }
 
-    public static InterestInfoResponseDto from(InterestType.InterestTypeInfo interestTypeInfo){
+    public static InterestInfoResponseDto from(FieldType.InterestTypeInfo interestTypeInfo){
         return InterestInfoResponseDto.builder()
                 .interestConstName(interestTypeInfo.getConstName())
                 .interestCode(interestTypeInfo.getCode())

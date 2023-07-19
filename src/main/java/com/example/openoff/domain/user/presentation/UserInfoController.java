@@ -7,6 +7,7 @@ import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
+import com.example.openoff.domain.user.application.dto.response.UserTotalInfoResponseDto;
 import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,18 @@ import org.springframework.web.bind.annotation.*;
 public class UserInfoController {
     private final UserQueryService userQueryService;
     private final NCPSmsService ncpSmsService;
+
+    @GetMapping("/my/info")
+    public ResponseEntity<ResponseDto<UserTotalInfoResponseDto>> getMyTotalInfo() {
+        ResponseDto<UserTotalInfoResponseDto> myTotalInfoResponseDto = userQueryService.getMyInfo();
+        return ResponseEntity.ok().body(myTotalInfoResponseDto);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> getUserInfo(@RequestParam String uuid) {
+        ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.getUserInfo(uuid);
+        return ResponseEntity.ok().body(userInfoResponseDto);
+    }
 
     @PatchMapping("/onboarding")
     public ResponseEntity<ResponseDto<UserInfoResponseDto>> updateOnboardingData(@RequestBody UserOnboardingRequestDto userOnboardingRequestDto) {
