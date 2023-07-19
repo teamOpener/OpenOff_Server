@@ -11,7 +11,13 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_user_interest_field")
+@Table(name = "openoff_user_interest_field",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_user_interest_field_type",
+                        columnNames = {"user_id","field_type"}
+                )
+        })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserInterestField extends BaseEntity {
     @Id
@@ -23,7 +29,8 @@ public class UserInterestField extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "interest", nullable = false)
+    @Column(name = "field_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private FieldType fieldType;
 
     @Builder
