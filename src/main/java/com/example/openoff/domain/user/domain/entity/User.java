@@ -2,8 +2,12 @@ package com.example.openoff.domain.user.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
+import com.example.openoff.domain.bookmark.domain.entity.EventBookmark;
+import com.example.openoff.domain.eventInstance.domain.entity.EventExtraAnswer;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.interest.domain.entity.UserInterestField;
+import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
+import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +47,12 @@ public class User extends BaseEntity {
     @Pattern(regexp = "^010-?\\d{4}-?\\d{4}$", message = "올바른 한국 휴대폰 번호 형식이 아닙니다.")
     private String phoneNumber;
 
+    @Column(name = "terms_conditions_agreement")
+    private Boolean termsConditionsAgreement;
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kakao_account_id")
     private SocialAccount kakaoAccount;
@@ -59,14 +69,20 @@ public class User extends BaseEntity {
     @JoinColumn(name = "normal_account_id")
     private SocialAccount normalAccount;
 
-    @Column(name = "terms_conditions_agreement")
-    private Boolean termsConditionsAgreement;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive;
-
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserInterestField> userInterestFields;
+
+    @OneToMany(mappedBy = "eventApplicant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventApplicantLadger> eventApplicantLadgerList;
+
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventStaff> eventStaffList;
+
+    @OneToMany(mappedBy = "answerer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventExtraAnswer> eventExtraAnswerList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventBookmark> eventBookmarkList;
 
     @Builder
     public User(String userName, String nickname, String profileImageUrl, Birth birth, GenderType gender, String phoneNumber,
