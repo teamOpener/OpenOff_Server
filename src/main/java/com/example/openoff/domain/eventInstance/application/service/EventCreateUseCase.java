@@ -34,7 +34,7 @@ public class EventCreateUseCase {
     private final FieldService fieldService;
     private final EventStaffService eventStaffService;
 
-
+    // TODO: 통째로 비동기처리 하기 -> mapper 에서 비동기 처리하기
     public CreateNewEventResponseDto createEvent(CreateNewEventRequestDto createNewEventRequestDto) {
         if(createNewEventRequestDto.getFieldTypeList().size() >= 4) {
             throw TooManyFieldException.of(Error.TOO_MANY_EVENT_FIELD);
