@@ -2,6 +2,7 @@ package com.example.openoff.domain.eventInstance.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
+import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class EventInfo extends BaseEntity {
     @Column(name = "event_description")
     private String eventDescription;
 
+    @Column(name = "event_apply_permit")
+    private Boolean eventApplyPermit;
+
     @Column(name = "event_apply_start_date", nullable = false)
     private LocalDateTime eventApplyStartDate;
 
@@ -54,14 +58,18 @@ public class EventInfo extends BaseEntity {
     @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
     private List<EventInterestField> eventInterestFields;
 
+    @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
+    private List<EventStaff> eventStaffs;
+
     @Builder
     public EventInfo(String eventTitle, Integer eventFee, Integer eventMaxPeople, String eventDescription,
-                     LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate, Boolean isApproval,
+                     Boolean eventApplyPermit, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate, Boolean isApproval,
                      Double latitude, Double longitude, String streetNameAddress, String detailAddress) {
         this.eventTitle = eventTitle;
         this.eventFee = eventFee;
         this.eventMaxPeople = eventMaxPeople;
         this.eventDescription = eventDescription;
+        this.eventApplyPermit = eventApplyPermit;
         this.eventApplyStartDate = eventApplyStartDate;
         this.eventApplyEndDate = eventApplyEndDate;
         this.isApproval = isApproval;
@@ -76,6 +84,7 @@ public class EventInfo extends BaseEntity {
                 .eventFee(eventFee)
                 .eventMaxPeople(eventMaxPeople)
                 .eventDescription(eventDescription)
+                .eventApplyPermit(true)
                 .eventApplyStartDate(eventApplyStartDate)
                 .eventApplyEndDate(eventApplyEndDate)
                 .isApproval(false)
