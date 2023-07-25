@@ -1,4 +1,4 @@
-package com.example.openoff.domain.eventInstance.infrastructure;
+package com.example.openoff.domain.eventInstance.infrastructure.querydsl;
 
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
