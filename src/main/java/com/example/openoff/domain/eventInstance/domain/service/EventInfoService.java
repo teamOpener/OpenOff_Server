@@ -22,7 +22,7 @@ public class EventInfoService {
                 createNewEventRequestDto.getDescription(),
                 createNewEventRequestDto.getApplicationStartDate(),
                 createNewEventRequestDto.getApplicationEndDate(),
-                11.11, 22.22, createNewEventRequestDto.getStreetLoadAddress(), createNewEventRequestDto.getDetailAddress());
+                37.498020, 126.026702, createNewEventRequestDto.getStreetLoadAddress(), createNewEventRequestDto.getDetailAddress());
         return eventInfoRepository.save(eventInfo);
     }
 }
