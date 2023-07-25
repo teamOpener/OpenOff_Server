@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Getter
 @Entity
+@BatchSize(size = 100)
 @Table(name = "openoff_event_info")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventInfo extends BaseEntity {

@@ -1,16 +1,20 @@
 package com.example.openoff.domain.eventInstance.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
+import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
+@BatchSize(size = 30)
 @Table(name = "openoff_event_index")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventIndex extends BaseEntity {
@@ -28,6 +32,9 @@ public class EventIndex extends BaseEntity {
 
     @Column(name = "is_close", nullable = false)
     private Boolean isClose;
+
+    @OneToMany(mappedBy = "eventIndex", cascade = CascadeType.ALL)
+    private List<EventApplicantLadger> eventApplicantLadgers;
 
     @Builder
     public EventIndex(EventInfo eventInfo, LocalDateTime eventDate, Boolean isClose) {
