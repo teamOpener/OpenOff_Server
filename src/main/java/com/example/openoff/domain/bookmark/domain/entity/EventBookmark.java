@@ -12,7 +12,13 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_event_bookmark")
+@Table(name = "openoff_event_bookmark",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_event_bookmark_user_id",
+                        columnNames = {"event_info_id","user_id"}
+                )
+        })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventBookmark extends BaseEntity {
     @Id
