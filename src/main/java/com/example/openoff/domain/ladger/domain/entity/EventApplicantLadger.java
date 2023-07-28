@@ -11,17 +11,33 @@ import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Entity
 @BatchSize(size = 30)
-@Table(name = "openoff_event_applicant_ladger")
+@Table(name = "openoff_event_applicant_ladger",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_event_applicant_ladger_index_id_applicant_id",
+                        columnNames = {"event_index_id","event_applicant_id"}
+                )
+        })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventApplicantLadger extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_applicant_ladger_id")
     private Long id;
+
+    @Column(name = "ticket_index", columnDefinition = "VARCHAR(20)", unique = true, updatable = false)
+    private String ticketIndex;
+
+    @Column(name = "ticket_type")
+    private TicketType ticketType;
+
+    @Column(name = "qr_code_image_url")
+    private String qrCodeImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_index_id")
@@ -34,9 +50,6 @@ public class EventApplicantLadger extends BaseEntity {
     @Column(name = "is_accept", nullable = false)
     private Boolean isAccept;
 
-    @Column(name = "qr_code_image_url")
-    private String qrCodeImageUrl;
-
     @Column(name = "is_join", nullable = false)
     private Boolean isJoin;
 
@@ -44,8 +57,10 @@ public class EventApplicantLadger extends BaseEntity {
     private LocalDateTime joinAt;
 
     @Builder
-    public EventApplicantLadger(Long id, EventIndex eventIndex, User eventApplicant, Boolean isAccept, Boolean isJoin, LocalDateTime joinAt, String qrCodeImageUrl) {
+    public EventApplicantLadger(Long id, String ticketIndex, TicketType ticketType, EventIndex eventIndex, User eventApplicant, Boolean isAccept, Boolean isJoin, LocalDateTime joinAt, String qrCodeImageUrl) {
         this.id = id;
+        this.ticketIndex = ticketIndex;
+        this.ticketType = ticketType;
         this.eventIndex = eventIndex;
         this.eventApplicant = eventApplicant;
         this.isAccept = isAccept;
@@ -56,11 +71,17 @@ public class EventApplicantLadger extends BaseEntity {
 
     public static EventApplicantLadger toEntity(EventIndex eventIndex, User eventApplicant){
         return EventApplicantLadger.builder()
+                .ticketIndex("E-" + UUID.randomUUID().toString().replace("-", "").substring(0, 10).toUpperCase())
+                .ticketType(TicketType.getRandomTicketType())
                 .eventIndex(eventIndex)
                 .eventApplicant(eventApplicant)
                 .isAccept(false)
                 .isJoin(false)
                 .build();
+    }
+
+    public void updateTicketIndex(String ticketIndex) {
+        this.ticketIndex = ticketIndex;
     }
 
     public void updateIsAcceptAndQrCodeUrl(Boolean isAccept, String qrCodeImageUrl) {
