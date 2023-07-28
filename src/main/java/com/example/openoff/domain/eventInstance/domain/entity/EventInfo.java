@@ -1,6 +1,7 @@
 package com.example.openoff.domain.eventInstance.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
+import com.example.openoff.domain.bookmark.domain.entity.EventBookmark;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
 import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import lombok.AccessLevel;
@@ -33,6 +34,9 @@ public class EventInfo extends BaseEntity {
     @Column(name = "event_max_people")
     private Integer eventMaxPeople;
 
+    @Column(name = "total_register_count")
+    private Integer totalRegisterCount;
+
     @Column(name = "event_description")
     private String eventDescription;
 
@@ -63,13 +67,17 @@ public class EventInfo extends BaseEntity {
     @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
     private List<EventStaff> eventStaffs;
 
+    @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
+    private List<EventBookmark> eventBookmarks;
+
     @Builder
-    public EventInfo(String eventTitle, Integer eventFee, Integer eventMaxPeople, String eventDescription,
+    public EventInfo(String eventTitle, Integer eventFee, Integer eventMaxPeople, Integer totalRegisterCount, String eventDescription,
                      Boolean eventApplyPermit, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate, Boolean isApproval,
                      Double latitude, Double longitude, String streetNameAddress, String detailAddress) {
         this.eventTitle = eventTitle;
         this.eventFee = eventFee;
         this.eventMaxPeople = eventMaxPeople;
+        this.totalRegisterCount = totalRegisterCount;
         this.eventDescription = eventDescription;
         this.eventApplyPermit = eventApplyPermit;
         this.eventApplyStartDate = eventApplyStartDate;
@@ -85,6 +93,7 @@ public class EventInfo extends BaseEntity {
                 .eventTitle(eventTitle)
                 .eventFee(eventFee)
                 .eventMaxPeople(eventMaxPeople)
+                .totalRegisterCount(0)
                 .eventDescription(eventDescription)
                 .eventApplyPermit(true)
                 .eventApplyStartDate(eventApplyStartDate)
