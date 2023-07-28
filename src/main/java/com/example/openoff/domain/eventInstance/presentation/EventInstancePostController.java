@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/event-instance")
 @RequiredArgsConstructor
-public class EventInstanceController {
+public class EventInstancePostController {
     private final EventCreateUseCase eventCreateUseCase;
 
     @PostMapping(value = "/create")

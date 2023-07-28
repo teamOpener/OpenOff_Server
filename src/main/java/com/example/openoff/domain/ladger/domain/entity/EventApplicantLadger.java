@@ -7,12 +7,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@BatchSize(size = 30)
 @Table(name = "openoff_event_applicant_ladger")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventApplicantLadger extends BaseEntity {
