@@ -44,6 +44,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .leftJoin(QEventInfo.eventInfo.eventIndexes, QEventIndex.eventIndex)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
                         distanceJudgment(eventSearchRequestDto.getLatitude(), eventSearchRequestDto.getLongitude()),
                         eventDateJudgment(eventSearchRequestDto.getStartDate(), eventSearchRequestDto.getEndDate()),
                         keywordContains(eventSearchRequestDto.getKeyword()),
@@ -71,6 +72,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
                         ltEventInfoId(eventInfoId),
                         eventInfoMappedField(fieldType)
                 )
@@ -96,6 +98,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
                         ltVogueEventInfo(eventInfoId, count)
                 )
                 .orderBy(QEventInfo.eventInfo.totalRegisterCount.desc(), QEventInfo.eventInfo.createdDate.desc())
