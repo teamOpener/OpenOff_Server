@@ -22,6 +22,7 @@ public class DetailEventInfoResponseDto {
     private String description;
     private List<ImageInfo> imageList;
     private List<IndexInfo> indexList;
+    private List<ExtraQuestionInfo> extraQuestionList;
 
     @Getter
     @Builder
@@ -58,8 +59,24 @@ public class DetailEventInfoResponseDto {
         }
     }
 
+    @Getter
     @Builder
-    public DetailEventInfoResponseDto(Long eventId, String title, String streetLoadAddress, String detailAddress, Integer eventFee, String description, Integer maxCapacity, List<ImageInfo> imageList, List<IndexInfo> indexList) {
+    public static class ExtraQuestionInfo {
+        private Long eventExtraQuestionId;
+        private String question;
+
+        public static ExtraQuestionInfo of(Long eventExtraQuestionId, String question) {
+            return ExtraQuestionInfo.builder()
+                    .eventExtraQuestionId(eventExtraQuestionId)
+                    .question(question)
+                    .build();
+        }
+    }
+
+    @Builder
+    public DetailEventInfoResponseDto(Long eventId, String title, String streetLoadAddress, String detailAddress,
+                                      Integer eventFee, String description, Integer maxCapacity,
+                                      List<ImageInfo> imageList, List<IndexInfo> indexList, List<ExtraQuestionInfo> extraQuestionList) {
         this.eventId = eventId;
         this.title = title;
         this.streetLoadAddress = streetLoadAddress;
@@ -69,5 +86,6 @@ public class DetailEventInfoResponseDto {
         this.maxCapacity = maxCapacity;
         this.imageList = imageList;
         this.indexList = indexList;
+        this.extraQuestionList = extraQuestionList;
     }
 }

@@ -70,6 +70,9 @@ public class EventInfo extends BaseEntity {
     @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
     private List<EventBookmark> eventBookmarks;
 
+    @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
+    private List<EventExtraQuestion> eventExtraQuestions;
+
     @Builder
     public EventInfo(String eventTitle, Integer eventFee, Integer eventMaxPeople, Integer totalRegisterCount, String eventDescription,
                      Boolean eventApplyPermit, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate, Boolean isApproval,
@@ -105,5 +108,13 @@ public class EventInfo extends BaseEntity {
 
     public void updateIsApproval(Boolean isApproval) {
         this.isApproval = isApproval;
+    }
+
+    public void updateApplyPermit(Boolean eventApplyPermit) {
+        this.eventApplyPermit = eventApplyPermit;
+    }
+
+    public void updateTotalRegisterCount() {
+        this.totalRegisterCount += 1;
     }
 }
