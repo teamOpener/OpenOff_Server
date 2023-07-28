@@ -3,6 +3,7 @@ package com.example.openoff.domain.auth.application.service.apple;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.auth.application.exception.AppleOIDCException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class AppleJwtParser {
         try {
             String encodedHeader = identityToken.split(IDENTITY_TOKEN_VALUE_DELIMITER)[HEADER_INDEX];
             String decodedHeader = new String(Base64Utils.decodeFromUrlSafeString(encodedHeader));
-            return OBJECT_MAPPER.readValue(decodedHeader, Map.class);
+            return OBJECT_MAPPER.readValue(decodedHeader, new TypeReference<Map<String, String>>() {});
         } catch (JsonProcessingException | ArrayIndexOutOfBoundsException e) {
             throw new AppleOIDCException(Error.APPLE_OIDC_FAILED);
         }

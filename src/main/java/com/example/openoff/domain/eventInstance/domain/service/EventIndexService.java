@@ -1,6 +1,8 @@
 package com.example.openoff.domain.eventInstance.domain.service;
 
 import com.example.openoff.common.annotation.DomainService;
+import com.example.openoff.common.exception.BusinessException;
+import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventIndexRepository;
@@ -27,5 +29,9 @@ public class EventIndexService {
                 .map(date -> EventIndex.toEntity(eventInfo, date))
                 .collect(Collectors.toList());
         return eventIndexRepository.saveAll(eventIndexList).stream().map(EventIndex::getId).collect(Collectors.toList());
+    }
+
+    public EventIndex findById(Long eventIndexId) {
+        return eventIndexRepository.findById(eventIndexId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
     }
 }

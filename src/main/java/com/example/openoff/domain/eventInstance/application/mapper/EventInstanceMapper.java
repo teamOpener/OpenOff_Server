@@ -67,6 +67,9 @@ public class EventInstanceMapper {
                         .map(eventImage -> DetailEventInfoResponseDto.ImageInfo.of(eventImage.getEventImageUrl(), eventImage.getIsMain()))
                         .collect(Collectors.toList()))
                 .indexList(DetailEventInfoResponseDto.IndexInfo.of(eventIndexStatisticsDtos))
+                .extraQuestionList(eventInfo.getEventExtraQuestions().stream()
+                        .map(eventQuestion -> DetailEventInfoResponseDto.ExtraQuestionInfo.of(eventQuestion.getId(), eventQuestion.getQuestion()))
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

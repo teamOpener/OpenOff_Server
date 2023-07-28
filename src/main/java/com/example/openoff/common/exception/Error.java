@@ -6,6 +6,10 @@ import lombok.Getter;
 public enum Error {
     INTERNAL_SERVER_ERROR("서버 내부 에러입니다.", 500),
 
+    // JWT
+    INVALID_TOKEN("잘못된 토큰 요청", 600),
+    EXPIRED_TOKEN("토큰 만료되었습니다. 토큰 재발행 혹은 로그인을 다시 해주세요", 601),
+
     DATA_NOT_FOUND("데이터를 찾을 수 없습니다.", 800),
     FILE_UPLOAD_ERROR("s3 upload 오류입니다.", 801),
     FILE_EXTENTION_ERROR("파일 확장자 오류입니다.", 802),
@@ -40,13 +44,14 @@ public enum Error {
 
     // EventInstance
     TOO_MANY_EVENT_FIELD("이벤트 분야를 4개 이상 설정할 수 없습니다.", 1200),
+    ALREADY_APPLIED_EVENT("이미 신청한 이벤트입니다.", 1201),
 
 
-    // JWT
-    INVALID_TOKEN("잘못된 토큰 요청", 7000),
-    EXPIRED_TOKEN("토큰 만료되었습니다. 토큰 재발행 혹은 로그인을 다시 해주세요", 7001),
+    // Ladger
+    EVENT_APPLICANT_FULL("이벤트 신청 인원이 가득 찻습니다.", 1300),
 
     ;
+
 
     private final String message;
     private final int errorCode;

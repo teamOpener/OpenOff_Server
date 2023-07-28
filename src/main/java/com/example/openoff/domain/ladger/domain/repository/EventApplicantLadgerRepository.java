@@ -4,4 +4,5 @@ import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EventApplicantLadgerRepository extends JpaRepository<EventApplicantLadger, Long>, EventApplicantLadgerRepositoryCustom {
+    long countByEventIndex_IdAndIsAcceptTrue(Long eventIndexId);
 }

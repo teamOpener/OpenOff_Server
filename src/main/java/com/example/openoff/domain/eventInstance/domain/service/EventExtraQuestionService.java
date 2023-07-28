@@ -22,4 +22,8 @@ public class EventExtraQuestionService {
                 .collect(Collectors.toList());
         return eventExtraQuestionRepository.saveAll(extraQuestions).stream().map(EventExtraQuestion::getId).collect(Collectors.toList());
     }
+
+    public List<EventExtraQuestion> findExtraQuestions(List<Long> extraQuestionIds) {
+        return eventExtraQuestionRepository.findAllByIdIn(extraQuestionIds);
+    }
 }
