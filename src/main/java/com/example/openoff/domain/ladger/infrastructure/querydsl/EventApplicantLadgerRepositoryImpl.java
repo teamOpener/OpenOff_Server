@@ -5,15 +5,15 @@ import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.repository.EventApplicantLadgerRepositoryCustom;
 import com.example.openoff.domain.ladger.presentation.SortType;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
 
     @Override
     public Page<EventInfo> findAllApplyInfos(Long eventInfoId, FieldType fieldType, String userId, Pageable pageable) {
-        QueryResults<EventInfo> eventInfos = queryFactory
+        List<EventInfo> eventInfos = queryFactory
                 .select(eventApplicantLadger.eventInfo)
                 .from(eventApplicantLadger)
                 .where(
@@ -43,16 +43,27 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 .groupBy(eventApplicantLadger.eventInfo.id)
                 .orderBy(eventApplicantLadger.eventInfo.createdDate.desc())
                 .limit(pageable.getPageSize() + 1)
-                .fetchResults();
-        boolean hasNext = eventInfos.getResults().size() > pageable.getPageSize();
-        if (hasNext) { eventInfos.getResults().remove(eventInfos.getResults().size()-1); }
-        return new PageImpl<>(eventInfos.getResults(), pageable, eventInfos.getTotal());
+                .fetch();
+        boolean hasNext = eventInfos.size() > pageable.getPageSize();
+        if (hasNext) { eventInfos.remove(eventInfos.size()-1); }
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(eventApplicantLadger.eventInfo.count())
+                .from(eventApplicantLadger)
+                .where(
+                        eventApplicantLadger.eventApplicant.id.eq(userId),
+                        ltEventInfoId(eventInfoId),
+                        eventInfoMappedField(fieldType)
+                ).groupBy(eventApplicantLadger.eventInfo.id)
+                .orderBy(eventApplicantLadger.eventInfo.createdDate.desc());
+//        return new PageImpl<>(eventInfos, pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(eventInfos, pageable, countQuery::fetchOne);
     }
 
     @Override
     public Page<EventApplicantLadger> findAllByEventIndex_Id(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
         List<OrderSpecifier<?>> orders = sortApplicant(sort);
-        QueryResults<EventApplicantLadger> results = queryFactory
+        List<EventApplicantLadger> results = queryFactory
                 .select(eventApplicantLadger)
                 .from(eventApplicantLadger)
                 .where(
@@ -62,9 +73,19 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 )
                 .orderBy(orders.toArray(new OrderSpecifier[0]))
                 .limit(pageable.getPageSize())
-                .fetchResults();
+                .fetch();
 
-        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+        JPAQuery<Long> countQuery = queryFactory
+                .select(eventApplicantLadger.count())
+                .from(eventApplicantLadger)
+                .where(
+                        eventApplicantLadger.eventIndex.id.eq(eventIndexId),
+                        ltUsernameAndCreatedDate(username, time),
+                        applicantNameLike(keyword)
+                );
+
+//        return new PageImpl<>(results, pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression ltUsernameAndCreatedDate(String username, LocalDateTime time) {
