@@ -3,6 +3,7 @@ package com.example.openoff.domain.eventInstance.domain.entity;
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.bookmark.domain.entity.EventBookmark;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
+import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -57,6 +58,9 @@ public class EventInfo extends BaseEntity {
 
     @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
     private List<EventIndex> eventIndexes;
+
+    @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
+    private List<EventApplicantLadger> eventApplicantLadgers;
 
     @OneToMany(mappedBy = "eventInfo", cascade = CascadeType.ALL)
     private List<EventImage> eventImages;
