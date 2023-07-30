@@ -27,7 +27,7 @@ public class LadgerPatchController {
     @PatchMapping(value = "/qr/check")
     public ResponseEntity<ResponseDto<QRCheckResponseDto>> applyEvent(@RequestBody QRCheckRequestDto qrCheckRequestDto)
     {
-        ladgerUpdateUseCase.checkQRCode(qrCheckRequestDto);
-        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청이 완료되었습니다.", null));
+        QRCheckResponseDto qrCheckResponseDto = ladgerUpdateUseCase.checkQRCode(qrCheckRequestDto);
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 참석이 완료되었습니다.", qrCheckResponseDto));
     }
 }
