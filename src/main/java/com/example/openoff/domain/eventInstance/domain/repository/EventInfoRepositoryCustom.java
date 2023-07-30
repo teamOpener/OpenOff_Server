@@ -14,4 +14,6 @@ public interface EventInfoRepositoryCustom {
     PageResponse<MainTapEventInfoResponse> findMainTapEventInfoByFieldType(FieldType fieldType, Long eventInfoId, Pageable pageable);
     PageResponse<MainTapEventInfoResponse> findMainTapEventInfoByVogue(Long eventInfoId, Integer count, Pageable pageable);
 
+    List<EventInfo> findHostEventInfo(String userId, Long eventInfoId, Pageable pageable);
+
 }

@@ -108,6 +108,20 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
         return PageResponse.of(new PageImpl<>(data, pageable, data.size()));
     }
 
+    @Override
+    public List<EventInfo> findHostEventInfo(String userId, Long eventInfoId, Pageable pageable) {
+        return queryFactory
+                .selectDistinct(QEventInfo.eventInfo)
+                .from(QEventInfo.eventInfo)
+                .where(
+                        QEventInfo.eventInfo.eventStaffs.any().staff.id.eq(userId),
+                        ltEventInfoId(eventInfoId)
+                )
+                .orderBy(QEventInfo.eventInfo.createdDate.desc())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
     private BooleanExpression ltEventInfoId(Long eventInfoId) {
         if (eventInfoId == null) return null;
         return QEventInfo.eventInfo.id.lt(eventInfoId);
