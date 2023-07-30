@@ -64,8 +64,10 @@ public class EventApplicantLadgerService {
                 .orElseThrow(() -> BusinessException.of(Error.EVENT_APPLICANT_NOT_FOUND));
     }
 
-    public EventApplicantLadger findUserIdAndTicketIndex(String userId, String ticketIndex) {
-        return eventApplicantLadgerRepository.findByEventApplicant_IdAndTicketIndex(userId, ticketIndex)
+    public EventApplicantLadger findUserIdAndTicketIndexUpdateJoinAt(String userId, String ticketIndex) {
+        EventApplicantLadger eventApplicantLadger = eventApplicantLadgerRepository.findByEventApplicant_IdAndTicketIndex(userId, ticketIndex)
                 .orElseThrow(() -> BusinessException.of(Error.EVENT_APPLICANT_NOT_FOUND));
+        eventApplicantLadger.updateIsJoinAndJoinAt(true);
+        return eventApplicantLadger;
     }
 }

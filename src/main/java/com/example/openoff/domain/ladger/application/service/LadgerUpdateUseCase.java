@@ -6,6 +6,7 @@ import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
 import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.ladger.application.dto.request.QRCheckRequestDto;
+import com.example.openoff.domain.ladger.application.dto.response.QRCheckResponseDto;
 import com.example.openoff.domain.ladger.application.handler.EventApplicationLadgerHandler;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
@@ -35,12 +36,18 @@ public class LadgerUpdateUseCase {
         eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
     }
 
-    public void checkQRCode(QRCheckRequestDto qrCheckRequestDto) {
+    public QRCheckResponseDto checkQRCode(QRCheckRequestDto qrCheckRequestDto) {
         String decryptedContent = encryptionUtils.decrypt(qrCheckRequestDto.getContent());
         String[] parts = decryptedContent.split("\\.", 2);
         if (parts.length != 2) throw BusinessException.of(Error.INVALID_QR_CODE);
         String userId = parts[0];
         String ticketIndex = parts[1];
-        eventApplicantLadgerService.findUserIdAndTicketIndex(userId, ticketIndex);
+        EventApplicantLadger applicantLadger = eventApplicantLadgerService.findUserIdAndTicketIndexUpdateJoinAt(userId, ticketIndex);
+        return QRCheckResponseDto.builder()
+                .eventApplicantLadgerId(applicantLadger.getId())
+                .userId(applicantLadger.getEventApplicant().getId())
+                .joinAt(applicantLadger.getJoinAt())
+                .ticketIndex(applicantLadger.getTicketIndex())
+                .build();
     }
 }
