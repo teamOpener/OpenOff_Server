@@ -1,6 +1,8 @@
 package com.example.openoff.domain.ladger.domain.service;
 
 import com.example.openoff.common.annotation.DomainService;
+import com.example.openoff.common.exception.BusinessException;
+import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import com.example.openoff.domain.ladger.domain.entity.StaffType;
@@ -17,5 +19,11 @@ public class EventStaffService {
 
     public Long saveEventStaff(User user, EventInfo eventInfo, String phoneNumber, String email, String name) {
         return eventStaffRepository.save(EventStaff.toEntity(user, eventInfo, StaffType.MAIN, phoneNumber, email, name)).getId();
+    }
+
+    public void checkEventStaff(String eventStaffId, Long eventInfoId) {
+        if (!eventStaffRepository.existsByEventInfo_IdAndStaff_Id(eventInfoId, eventStaffId)){
+            throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
+        }
     }
 }
