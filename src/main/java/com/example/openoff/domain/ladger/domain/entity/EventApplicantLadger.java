@@ -2,6 +2,7 @@ package com.example.openoff.domain.ladger.domain.entity;
 
 import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
+import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,6 +41,10 @@ public class EventApplicantLadger extends BaseEntity {
     private String qrCodeImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_info_id")
+    private EventInfo eventInfo;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_index_id")
     private EventIndex eventIndex;
 
@@ -57,10 +62,11 @@ public class EventApplicantLadger extends BaseEntity {
     private LocalDateTime joinAt;
 
     @Builder
-    public EventApplicantLadger(Long id, String ticketIndex, TicketType ticketType, EventIndex eventIndex, User eventApplicant, Boolean isAccept, Boolean isJoin, LocalDateTime joinAt, String qrCodeImageUrl) {
+    public EventApplicantLadger(Long id, String ticketIndex, TicketType ticketType, EventInfo eventInfo, EventIndex eventIndex, User eventApplicant, Boolean isAccept, Boolean isJoin, LocalDateTime joinAt, String qrCodeImageUrl) {
         this.id = id;
         this.ticketIndex = ticketIndex;
         this.ticketType = ticketType;
+        this.eventInfo = eventInfo;
         this.eventIndex = eventIndex;
         this.eventApplicant = eventApplicant;
         this.isAccept = isAccept;
@@ -74,6 +80,7 @@ public class EventApplicantLadger extends BaseEntity {
                 .ticketIndex("E-" + UUID.randomUUID().toString().replace("-", "").substring(0, 10).toUpperCase())
                 .ticketType(TicketType.getRandomTicketType())
                 .eventIndex(eventIndex)
+                .eventInfo(eventIndex.getEventInfo())
                 .eventApplicant(eventApplicant)
                 .isAccept(false)
                 .isJoin(false)
