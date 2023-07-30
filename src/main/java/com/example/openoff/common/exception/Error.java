@@ -50,7 +50,10 @@ public enum Error {
     // Ladger
     EVENT_APPLICANT_FULL("이벤트 신청 인원이 가득 찻습니다.", 1300),
 
-    ;
+    EVENT_STAFF_NOT_FOUND("해당 이벤트의 스테프가 아닙니다.", 1301),
+    EVENT_APPLICANT_NOT_FOUND("신청 데이터가 존재하지 않습니다", 1302),
+    ALREADY_PERMIT("이미 신청이 완료되었습니다.", 1303),
+    INVALID_QR_CODE("유효한 QR 코드가 아닙니다.", 1304);
 
 
     private final String message;

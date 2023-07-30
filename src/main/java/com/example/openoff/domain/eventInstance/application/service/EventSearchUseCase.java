@@ -8,6 +8,7 @@ import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.bookmark.domain.repository.EventBookmarkRepository;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.MainTapEventInfoResponse;
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.mapper.EventInstanceMapper;
@@ -94,5 +95,12 @@ public class EventSearchUseCase {
                             );
                 });
         return responseList;
+    }
+
+    public PageResponse<HostEventInfoResponseDto> getHostEventInfoList(Long eventInfoId, FieldType fieldType, Pageable pageable) {
+        User user = userUtils.getUser();
+        List<EventInfo> hostEventInfo = eventInfoRepository.findHostEventInfo(user.getId(), eventInfoId, pageable);
+
+        return EventInstanceMapper.mapToHostEventInfoResponseList(hostEventInfo, pageable);
     }
 }

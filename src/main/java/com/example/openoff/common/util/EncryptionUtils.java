@@ -65,4 +65,19 @@ public class EncryptionUtils {
             throw BusinessException.of(Error.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public String qrContentEncrypt(String sourceText) {
+        try {
+            IvParameterSpec iv = new IvParameterSpec(initVector.getBytes("UTF-8"));
+            SecretKeySpec skeySpec = new SecretKeySpec(secretKey.getBytes("UTF-8"), "AES");
+
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+            String value = sourceText;
+            byte[] encrypted = cipher.doFinal(value.getBytes());
+            return Base64.getEncoder().encodeToString(encrypted);
+        } catch (Exception ex) {
+            throw BusinessException.of(Error.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

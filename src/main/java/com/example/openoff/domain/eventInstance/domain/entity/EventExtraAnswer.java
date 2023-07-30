@@ -11,7 +11,14 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_event_extra_answer")
+@Table(name = "openoff_event_extra_answer",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_question_answerer",
+                        columnNames = {"answerer_id","event_extra_question_id"}
+                )
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventExtraAnswer extends BaseEntity {
     @Id

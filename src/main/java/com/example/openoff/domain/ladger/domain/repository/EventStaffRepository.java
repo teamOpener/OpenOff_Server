@@ -4,4 +4,5 @@ import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EventStaffRepository extends JpaRepository<EventStaff, Long> {
+    boolean existsByEventInfo_IdAndStaff_Id(Long eventInfoId, String staffId);
 }

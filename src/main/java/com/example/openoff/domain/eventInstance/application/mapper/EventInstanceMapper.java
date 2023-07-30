@@ -1,14 +1,18 @@
 package com.example.openoff.domain.eventInstance.application.mapper;
 
 import com.example.openoff.common.annotation.Mapper;
+import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.domain.eventInstance.application.dto.request.CreateNewEventRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.CreateNewEventResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,5 +75,17 @@ public class EventInstanceMapper {
                         .map(eventQuestion -> DetailEventInfoResponseDto.ExtraQuestionInfo.of(eventQuestion.getId(), eventQuestion.getQuestion()))
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    public static PageResponse<HostEventInfoResponseDto> mapToHostEventInfoResponseList(List<EventInfo> eventInfoList, Pageable pageable) {
+        List<HostEventInfoResponseDto> infoResponseDtos = eventInfoList.stream().map(data -> HostEventInfoResponseDto.builder()
+                .eventInfoId(data.getId())
+                .eventTitle(data.getEventTitle())
+                .isApproved(data.getIsApproval())
+                .eventIndexInfoList(data.getEventIndexes().stream()
+                        .map(eventIndex -> HostEventInfoResponseDto.EventIndexInfo.of(eventIndex.getId(), eventIndex.getEventDate())).collect(Collectors.toList()))
+                .fieldTypeList(data.getEventInterestFields().stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
+                .build()).collect(Collectors.toList());
+        return PageResponse.of(new PageImpl<>(infoResponseDtos, pageable, infoResponseDtos.size()));
     }
 }

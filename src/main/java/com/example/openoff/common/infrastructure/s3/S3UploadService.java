@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
@@ -74,5 +76,22 @@ public class S3UploadService {
             throw BusinessException.of(Error.FILE_EXTENTION_ERROR);
         }
         return ext;
+    }
+
+    public String uploadQRImage(ByteArrayOutputStream out, ByteArrayInputStream inputStream, String ticketIndex) {
+        // S3에 업로드할 Object 메타데이터 설정
+        ObjectMetadata meta = new ObjectMetadata();
+        meta.setContentLength(out.size());
+        meta.setContentType("image/png");
+
+        // S3에 업로드
+        try{
+            PutObjectRequest request = new PutObjectRequest(bucket, ticketIndex, inputStream, meta)
+                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            amazonS3.putObject(request);
+        } catch (Exception e) {
+            throw BusinessException.of(Error.FILE_UPLOAD_ERROR);
+        }
+        return amazonS3.getUrl(bucket, ticketIndex).toString();
     }
 }

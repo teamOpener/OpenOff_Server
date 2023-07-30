@@ -4,6 +4,7 @@ import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.MainTapEventInfoResponse;
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.service.EventSearchUseCase;
@@ -62,5 +63,17 @@ public class EventInstanceGetController {
     {
         PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapListByVogue(eventInfoId, count, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
+    }
+
+    @GetMapping(value = "/host")
+    public ResponseEntity<ResponseDto<PageResponse<HostEventInfoResponseDto>>> getMyHostEventInfos
+            (
+                    @RequestParam(required = false) FieldType fieldType,
+                    @RequestParam(required = false) Long eventInfoId,
+                    @PageableDefault(size = 8) Pageable pageable
+            )
+    {
+        PageResponse<HostEventInfoResponseDto> hostEventInfoResponseDtoPage = eventSearchUseCase.getHostEventInfoList(eventInfoId, fieldType, pageable);
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "주최한 이벤트 목록 조회가 완료되었습니다.", hostEventInfoResponseDtoPage));
     }
 }
