@@ -1,6 +1,8 @@
 package com.example.openoff.domain.eventInstance.domain.service;
 
 import com.example.openoff.common.annotation.DomainService;
+import com.example.openoff.common.exception.BusinessException;
+import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.application.dto.request.CreateNewEventRequestDto;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventInfoRepository;
@@ -24,5 +26,9 @@ public class EventInfoService {
                 createNewEventRequestDto.getApplicationEndDate(),
                 37.498020, 126.026702, createNewEventRequestDto.getStreetLoadAddress(), createNewEventRequestDto.getDetailAddress());
         return eventInfoRepository.save(eventInfo);
+    }
+
+    public EventInfo findEventInfoById(Long eventInfoId){
+        return eventInfoRepository.findById(eventInfoId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
     }
 }
