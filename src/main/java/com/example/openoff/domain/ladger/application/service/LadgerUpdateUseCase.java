@@ -36,6 +36,15 @@ public class LadgerUpdateUseCase {
         eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
     }
 
+    public void cancelPermitedApplicantion(Long ladgerId) {
+        User user = userUtils.getUser();
+        EventApplicantLadger eventApplicantLadger = eventApplicantLadgerService.findLadgerInfo(ladgerId);
+        if (!eventApplicantLadger.getIsAccept()) throw BusinessException.of(Error.NOT_ACCEPTED);
+        // 처리하는 사람이 스탭인지 체크
+        eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
+        eventApplicationLadgerHandler.removeQRImageAndUpdateIsAccepted(eventApplicantLadger);
+    }
+
     public QRCheckResponseDto checkQRCode(QRCheckRequestDto qrCheckRequestDto) {
         String decryptedContent = encryptionUtils.decrypt(qrCheckRequestDto.getContent());
         String[] parts = decryptedContent.split("\\.", 2);
