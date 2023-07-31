@@ -36,6 +36,9 @@ public class EventIndex extends BaseEntity {
     @OneToMany(mappedBy = "eventIndex", cascade = CascadeType.ALL)
     private List<EventApplicantLadger> eventApplicantLadgers;
 
+    @OneToMany(mappedBy = "eventIndex", cascade = CascadeType.ALL)
+    private List<EventExtraAnswer> eventExtraAnswers;
+
     @Builder
     public EventIndex(EventInfo eventInfo, LocalDateTime eventDate, Boolean isClose) {
         this.eventInfo = eventInfo;
