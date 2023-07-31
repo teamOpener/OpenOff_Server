@@ -70,4 +70,8 @@ public class EventApplicantLadgerService {
         eventApplicantLadger.updateIsJoinAndJoinAt(true);
         return eventApplicantLadger;
     }
+
+    public void deleteEventApplicantLadger(Long ladgerId) {
+        eventApplicantLadgerRepository.deleteById(ladgerId);
+    }
 }
