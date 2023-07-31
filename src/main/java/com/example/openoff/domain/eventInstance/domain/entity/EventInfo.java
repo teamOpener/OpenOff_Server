@@ -121,4 +121,10 @@ public class EventInfo extends BaseEntity {
     public void updateTotalRegisterCount() {
         this.totalRegisterCount += 1;
     }
+
+    public void updateTotalRegisterCountMinus() {
+        if (this.totalRegisterCount != 0) {
+            this.totalRegisterCount -= 1;
+        }
+    }
 }
