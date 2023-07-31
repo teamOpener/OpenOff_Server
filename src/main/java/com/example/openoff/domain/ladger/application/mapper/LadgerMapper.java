@@ -2,7 +2,6 @@ package com.example.openoff.domain.ladger.application.mapper;
 
 import com.example.openoff.common.annotation.Mapper;
 import com.example.openoff.common.dto.PageResponse;
-import com.example.openoff.domain.eventInstance.domain.entity.EventExtraQuestion;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
@@ -66,7 +65,7 @@ public class LadgerMapper {
     }
 
     public static ApplicantApplyDetailResponseDto mapToMyTicketInfoResponseDto(User user, EventApplicantLadger ladgerInfo) {
-        List<Long> questionIds = ladgerInfo.getEventInfo().getEventExtraQuestions().stream().map(EventExtraQuestion::getId).collect(Collectors.toList());
+//        List<Long> questionIds = ladgerInfo.getEventInfo().getEventExtraQuestions().stream().map(EventExtraQuestion::getId).collect(Collectors.toList());
         return ApplicantApplyDetailResponseDto.builder()
                 .username(user.getUserName())
                 .birth(user.getBirth().getYear().toString() + "." + user.getBirth().getMonth() + "." + user.getBirth().getDay())
@@ -80,7 +79,7 @@ public class LadgerMapper {
                 .isAccepted(ladgerInfo.getIsAccept())
                 .qrImageUrl(ladgerInfo.getQrCodeImageUrl())
                 .qnAInfoList(user.getEventExtraAnswerList().stream()
-                        .filter(eventExtraAnswer -> questionIds.contains(eventExtraAnswer.getQuestion().getId()))
+                        .filter(eventExtraAnswer -> eventExtraAnswer.getEventIndex().getId().equals(ladgerInfo.getEventIndex().getId()))
                         .map(eventExtraAnswer -> ApplicantApplyDetailResponseDto.QnAInfo.of(eventExtraAnswer.getQuestion().getQuestion(), eventExtraAnswer.getAnswer())).collect(Collectors.toList()))
                 .build();
     }

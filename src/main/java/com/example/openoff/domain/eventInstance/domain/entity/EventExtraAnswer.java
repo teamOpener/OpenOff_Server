@@ -11,14 +11,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_event_extra_answer",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_question_answerer",
-                        columnNames = {"answerer_id","event_extra_question_id"}
-                )
-        }
-)
+@Table(name = "openoff_event_extra_answer")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EventExtraAnswer extends BaseEntity {
     @Id
@@ -34,20 +27,26 @@ public class EventExtraAnswer extends BaseEntity {
     private User answerer;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_index_id")
+    private EventIndex eventIndex;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_extra_question_id")
     private EventExtraQuestion question;
 
     @Builder
-    public EventExtraAnswer(String answer, User answerer, EventExtraQuestion question) {
+    public EventExtraAnswer(String answer, User answerer, EventIndex eventIndex, EventExtraQuestion question) {
         this.answer = answer;
         this.answerer = answerer;
+        this.eventIndex = eventIndex;
         this.question = question;
     }
 
-    public static EventExtraAnswer toEntity(String answer, User answerer, EventExtraQuestion question){
+    public static EventExtraAnswer toEntity(String answer, User answerer, EventIndex eventIndex, EventExtraQuestion question){
         return EventExtraAnswer.builder()
                 .answer(answer)
                 .answerer(answerer)
+                .eventIndex(eventIndex)
                 .question(question)
                 .build();
     }

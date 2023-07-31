@@ -26,4 +26,11 @@ public class EventApplicationLadgerHandler {
         eventApplicantLadger.updateIsAcceptAndQrCodeUrl(true, qrImageUrl);
         eventApplicantLadgerRepository.save(eventApplicantLadger);
     }
+
+    @Async
+    @TransactionalEventListener
+    public void removeQRImageAndUpdateIsAccepted(EventApplicantLadger eventApplicantLadger) {
+        eventApplicantLadger.updateIsAcceptAndQrCodeUrl(false, null);
+        eventApplicantLadgerRepository.save(eventApplicantLadger);
+    }
 }
