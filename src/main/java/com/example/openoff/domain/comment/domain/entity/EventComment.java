@@ -1,5 +1,6 @@
 package com.example.openoff.domain.comment.domain.entity;
 
+import com.example.openoff.common.infrastructure.domain.BaseEntity;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.AccessLevel;
@@ -15,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "openoff_event_comment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EventComment {
+public class EventComment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_comment_id")
@@ -40,22 +41,18 @@ public class EventComment {
     private List<EventComment> children = new ArrayList<>();
 
     @Builder
-    public EventComment(String content) {
+    public EventComment(EventInfo eventInfo, User writer, String content) {
+        this.eventInfo = eventInfo;
+        this.writer = writer;
         this.content = content;
     }
 
-    public static EventComment toEntity(String content) {
+    public static EventComment toEntity(User user, EventInfo eventInfo, String content) {
         return EventComment.builder()
+                .eventInfo(eventInfo)
+                .writer(user)
                 .content(content)
                 .build();
-    }
-
-    public void updateEventInfo(EventInfo eventInfo) {
-        this.eventInfo = eventInfo;
-    }
-
-    public void updateWriter(User writer) {
-        this.writer = writer;
     }
 
     public void updateParent(EventComment parent) {
