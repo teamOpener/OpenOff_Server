@@ -11,6 +11,9 @@ import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @DomainService
 @RequiredArgsConstructor
@@ -25,5 +28,9 @@ public class EventStaffService {
         if (!eventStaffRepository.existsByEventInfo_IdAndStaff_Id(eventInfoId, eventStaffId)){
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }
+    }
+
+    public List<String> getEventStaffIds(Long eventInfoId){
+        return eventStaffRepository.findEventStaffByEventInfo_Id(eventInfoId).stream().map(staff -> staff.getStaff().getId()).collect(Collectors.toList());
     }
 }
