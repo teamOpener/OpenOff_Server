@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 @Slf4j
 @DomainService
 @RequiredArgsConstructor
@@ -31,5 +33,18 @@ public class CommentService {
 
     public Page<EventComment> getEventInfoParentComments(Long eventInfoId, Long commentId, Pageable pageable){
         return eventCommentRepository.getParentEventComments(eventInfoId, commentId, pageable);
+    }
+
+    public List<EventComment> getEventInfoChildComments(Long eventInfoId, Long commentId) {
+        return eventCommentRepository.getChildEventComments(eventInfoId, commentId);
+    }
+
+    public void deleteComment(String userId, Long commentId) {
+        eventCommentRepository.findEventCommentByIdAndWriter_Id(commentId, userId)
+                .ifPresentOrElse(eventCommentRepository::delete,
+                        // 댓글 삭제 권한이 없는 예외 처리 추가해야함
+                        () -> {throw BusinessException.of(Error.DATA_NOT_FOUND);}
+                );
+
     }
 }
