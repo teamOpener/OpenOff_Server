@@ -32,11 +32,6 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-
-      - name: Build with Gradle
-        run: ./gradlew clean build
-        shell: bash
-
       # create application-secret.yml
       - name: make application-secret.yml
         run: echo ${{ secrets.SECRET_YML }} | base64 --decode > ./src/main/resources/application-secret.yml
@@ -58,6 +53,12 @@ jobs:
          restore-keys: |
            ${{ runner.os }}-gradle-
 
+      - name: Build with Gradle
+        run: ./gradlew clean build
+        shell: bash
+
+      - name: Compile querydsl with Gradle
+        run: ./gradlew compilequerydsl
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.0
