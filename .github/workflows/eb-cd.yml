@@ -37,6 +37,10 @@ jobs:
         run: echo ${{ secrets.PROD_YML }}  | base64 --decode > ./src/main/resources/application-prod.yml
         shell: bash
 
+      - name: make openoff-484dd-firebase-adminsdk-ruh1l-e458eb4d19.json
+        run: echo ${{ secrets.FIREBASE_JSON }} | base64 --decode > ./src/main/resources/firebase/openoff-484dd-firebase-adminsdk-ruh1l-e458eb4d19.json
+        shell: bash
+
       # gradle caching
       - name: Gradle Caching
         uses: actions/cache@v3
