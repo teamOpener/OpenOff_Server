@@ -37,6 +37,7 @@ out/
 .vscode/
 
 ### Secret Files ###
+application-prod.yml
 application-real1.yml
 application-real2.yml
 application-secret.yml
