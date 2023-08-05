@@ -40,6 +40,19 @@ public class EventCommentRepositoryImpl implements EventCommentRepositoryCustom 
         return PageableExecutionUtils.getPage(eventComments, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public List<EventComment> getChildEventComments(Long eventInfoId, Long commentId) {
+        return queryFactory
+                .select(eventComment)
+                .from(eventComment)
+                .leftJoin(eventComment.parent).fetchJoin()
+                .where(
+                        eventComment.eventInfo.id.eq(eventInfoId)
+                                .and(eventComment.parent.id.eq(commentId))
+                ).orderBy(eventComment.createdDate.asc())
+                .fetch();
+    }
+
     private BooleanExpression commonConditions(Long eventInfoId, Long commentId) {
         BooleanExpression conditions = eventComment.eventInfo.id.eq(eventInfoId)
                 .and(eventComment.parent.isNull());

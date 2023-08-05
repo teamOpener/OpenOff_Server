@@ -3,6 +3,7 @@ package com.example.openoff.domain.comment.application.service;
 import com.example.openoff.common.annotation.UseCase;
 import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.comment.application.dto.response.ChildCommentInfoResponseDto;
 import com.example.openoff.domain.comment.application.dto.response.ParentCommentInfoResponseDto;
 import com.example.openoff.domain.comment.application.mapper.CommentMapper;
 import com.example.openoff.domain.comment.domain.entity.EventComment;
@@ -27,9 +28,15 @@ public class CommentSearchUseCase {
     private final CommentService commentService;
     private final EventInfoService eventInfoService;
 
-    public PageResponse<ParentCommentInfoResponseDto> getParentCommentsInEvent(Long eventInfo, Long commentId, Pageable pageable) {
-        List<String> eventStaffIds = eventStaffService.getEventStaffIds(eventInfo);
-        Page<EventComment> eventInfoParentComments = commentService.getEventInfoParentComments(eventInfo, commentId, pageable);
+    public PageResponse<ParentCommentInfoResponseDto> getParentCommentsInEvent(Long eventInfoId, Long commentId, Pageable pageable) {
+        List<String> eventStaffIds = eventStaffService.getEventStaffIds(eventInfoId);
+        Page<EventComment> eventInfoParentComments = commentService.getEventInfoParentComments(eventInfoId, commentId, pageable);
         return CommentMapper.mapToParentCommentInfoResponseDto(eventStaffIds, eventInfoParentComments);
+    }
+
+    public List<ChildCommentInfoResponseDto> getChildCommentsInEvent(Long eventInfoId, Long commentId) {
+        List<String> eventStaffIds = eventStaffService.getEventStaffIds(eventInfoId);
+        List<EventComment> eventInfoChildComments = commentService.getEventInfoChildComments(eventInfoId, commentId);
+        return CommentMapper.mapToChildCommentInfoResponseDto(eventStaffIds, eventInfoChildComments);
     }
 }

@@ -3,6 +3,7 @@ package com.example.openoff.domain.comment.application.mapper;
 import com.example.openoff.common.annotation.Mapper;
 import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.domain.comment.application.dto.request.CommentWriteRequestDto;
+import com.example.openoff.domain.comment.application.dto.response.ChildCommentInfoResponseDto;
 import com.example.openoff.domain.comment.application.dto.response.CommentWriteResponseDto;
 import com.example.openoff.domain.comment.application.dto.response.ParentCommentInfoResponseDto;
 import com.example.openoff.domain.comment.domain.entity.EventComment;
@@ -30,9 +31,23 @@ public class CommentMapper {
                         .userId(data.getWriter().getId())
                         .nickname(data.getWriter().getNickname())
                         .content(data.getContent())
+                        .childCount(data.getChildren().size())
                         .createdAt(data.getCreatedDate())
                         .isStaff(staffIds.contains(data.getWriter().getId())).build()
         ).collect(Collectors.toList());
         return PageResponse.of(new PageImpl<>(responseDtos, eventComments.getPageable(), eventComments.getTotalElements()));
+    }
+
+    public static List<ChildCommentInfoResponseDto> mapToChildCommentInfoResponseDto(List<String> staffIds, List<EventComment> comments) {
+        List<ChildCommentInfoResponseDto> responseDtos = comments.stream().map(data ->
+                ChildCommentInfoResponseDto.builder()
+                        .commentId(data.getId())
+                        .userId(data.getWriter().getId())
+                        .nickname(data.getWriter().getNickname())
+                        .content(data.getContent())
+                        .createdAt(data.getCreatedDate())
+                        .isStaff(staffIds.contains(data.getWriter().getId())).build()
+        ).collect(Collectors.toList());
+        return responseDtos;
     }
 }
