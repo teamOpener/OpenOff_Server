@@ -19,13 +19,13 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v2.4.2
+        uses: actions/checkout@v3
 
-      
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.3.0 
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: '17'
+          distribution: 'temurin'
 
 
       - name: Grant execute permission for gradlew
@@ -37,6 +37,27 @@ jobs:
         run: ./gradlew clean build
         shell: bash
 
+      # create application-secret.yml
+      - name: make application-secret.yml
+        run: echo ${{ secrets.SECRET_YML }} | base64 --decode > ./src/main/resources/application-secret.yml
+        shell: bash
+
+      # create application-prod.yml
+      - name: make application-prod.yml
+        run: echo ${{ secrets.PROD_YML }}  | base64 --decode > ./src/main/resources/application-prod.yml
+        shell: bash
+
+      # gradle caching
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+         path: |
+           ~/.gradle/caches
+           ~/.gradle/wrapper
+         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+         restore-keys: |
+           ${{ runner.os }}-gradle-
+
 
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.0
@@ -45,16 +66,19 @@ jobs:
           format: YYYY-MM-DDTHH-mm-ss # 다른 포맷으로 변경 가능
           utcOffset: "+09:00" ## 한국시간에 맞추기 위함
 
+      - name: Show Current Time
+        run: echo "CurrentTime=${{ steps.current-time.outputs.time }}"
+        shell: bash
       
       # Gradle build를 통해 만들어진 JAR를 beanstalk에 배포하기 위한 ZIP 파일로 만드는 것
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp build/libs/*.jar deploy/application.jar  # 빌드 완료 시 JAR 파일명을 application.jar로 변경
+          cp build/libs/*.jar deploy/application.jar
           cp Procfile deploy/Procfile
           cp -r .ebextensions deploy/.ebextensions
           cp -r .platform deploy/.platform
-          cd deploy && zip -r deploy.zip . # Procfile, .ebextensions, .playform 포함하여 zip 생성
+          cd deploy && zip -r deploy.zip . 
 
 
       # Beanstalk Deploy 플러그인 사용
@@ -63,8 +87,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }} # github secrets로 등록한 값 사용
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # github secrets로 등록한 값 사용
-          application-name: eb-github-action-test # EB application 이름
-          environment_name: dev-eb-github-action-test # EB environment 이름
+          application-name: openoff-api-server # EB application 이름
+          environment_name: Openoff-api-server-env # EB environment 이름
           version_label: Github Action-${{steps.current-time.outputs.formattedTime}} # 배포 버전은 타임스탬프를 이용하여 구분
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
