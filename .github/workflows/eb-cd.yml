@@ -83,7 +83,7 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application-name: openoff-api-server
+          application_name: openoff-api-server
           environment_name: Openoff-api-server-env
           version_label: Github Action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
