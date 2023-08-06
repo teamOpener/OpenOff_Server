@@ -99,6 +99,18 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 .fetch();
     }
 
+    @Override
+    public List<EventApplicantLadger> findNotAcceptedApplicantInEventIndex(Long eventIndexId) {
+        return queryFactory
+                .select(eventApplicantLadger)
+                .from(eventApplicantLadger)
+                .where(
+                        eventApplicantLadger.eventIndex.id.eq(eventIndexId),
+                        eventApplicantLadger.isAccept.isFalse()
+                )
+                .fetch();
+    }
+
     private BooleanExpression ltUsernameAndCreatedDate(String username, LocalDateTime time) {
         if (username == null || time == null) return null;
         return eventApplicantLadger.eventApplicant.userName.gt(username)
