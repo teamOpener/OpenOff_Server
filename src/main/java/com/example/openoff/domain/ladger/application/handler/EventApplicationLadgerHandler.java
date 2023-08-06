@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.List;
+
 @Slf4j
 @UseCase
 @RequiredArgsConstructor
@@ -25,6 +27,17 @@ public class EventApplicationLadgerHandler {
         String qrImageUrl = qrImageCreateService.createQRImageAndUploadToS3(eventApplicantLadger.getEventApplicant().getId(), eventApplicantLadger.getTicketIndex());
         eventApplicantLadger.updateIsAcceptAndQrCodeUrl(true, qrImageUrl);
         eventApplicantLadgerRepository.save(eventApplicantLadger);
+    }
+
+    @Async
+    @TransactionalEventListener
+    public void totalLadgerPermitAndCreateQRImage(List<EventApplicantLadger> eventApplicantLadgers) {
+        eventApplicantLadgers.stream()
+                .forEach(eventApplicantLadger -> {
+                    String qrImageUrl = qrImageCreateService.createQRImageAndUploadToS3(eventApplicantLadger.getEventApplicant().getId(), eventApplicantLadger.getTicketIndex());
+                    eventApplicantLadger.updateIsAcceptAndQrCodeUrl(true, qrImageUrl);
+                });
+        eventApplicantLadgerRepository.saveAll(eventApplicantLadgers);
     }
 
     @Async
