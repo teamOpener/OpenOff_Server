@@ -108,4 +108,21 @@ public class EventInstanceMapper {
                     .build()).collect(Collectors.toList());
         return PageResponse.of(new PageImpl<>(responseDtos, eventInfoList.getPageable(), eventInfoList.getTotalElements()));
     }
+
+    public static List<MainTapEventInfoResponse> mapToMainTapEventInfoResponseList(List<EventInfo> eventInfoList){
+        return eventInfoList.stream().map(data ->
+                        MainTapEventInfoResponse.builder()
+                                .eventInfoId(data.getId())
+                                .eventTitle(data.getEventTitle())
+                                .streetRoadAddress(data.getLocation().getStreetNameAddress())
+                                .totalApplicantCount(data.getTotalRegisterCount())
+                                .fieldTypes(data.getEventInterestFields().stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
+                                .eventDate(data.getEventIndexes().stream().findFirst().get().getEventDate())
+                                .mainImageUrl(data.getEventImages().stream()
+                                        .filter(image -> image.getIsMain().equals(true))
+                                        .map(EventImage::getEventImageUrl).findFirst().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)))
+                                .isBookmarked((long) data.getEventBookmarks().size() > 0)
+                                .build()
+                ).collect(Collectors.toList());
+    }
 }
