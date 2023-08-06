@@ -136,6 +136,21 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
         return PageableExecutionUtils.getPage(data, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public List<EventInfo> findEventInfosByFieldTypes(List<FieldType> fieldTypes) {
+        return queryFactory
+                .select(QEventInfo.eventInfo)
+                .from(QEventInfo.eventInfo)
+                .where(
+                        QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        eventInfoMappedFields(fieldTypes)
+                )
+                .orderBy(QEventInfo.eventInfo.createdDate.desc())
+                .limit(6)
+                .fetch();
+    }
+
     private BooleanExpression ltEventInfoId(Long eventInfoId) {
         if (eventInfoId == null) return null;
         return QEventInfo.eventInfo.id.lt(eventInfoId);
@@ -150,6 +165,11 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
     private BooleanExpression eventInfoMappedField(FieldType fieldType) {
         if (fieldType == null) return null;
         return QEventInfo.eventInfo.eventInterestFields.any().fieldType.eq(fieldType);
+    }
+
+    private BooleanExpression eventInfoMappedFields(List<FieldType> fieldTypes) {
+        if (fieldTypes == null || fieldTypes.isEmpty()) return null;
+        return QEventInfo.eventInfo.eventInterestFields.any().fieldType.in(fieldTypes);
     }
 
     private BooleanExpression distanceJudgment(Double latitude, Double longitude) {
