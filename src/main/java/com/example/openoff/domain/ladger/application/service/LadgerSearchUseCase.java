@@ -8,10 +8,7 @@ import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicantApplyDetailResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicationInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.EventApplicantInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.MyTicketInfoResponseDto;
+import com.example.openoff.domain.ladger.application.dto.response.*;
 import com.example.openoff.domain.ladger.application.mapper.LadgerMapper;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
@@ -65,5 +62,14 @@ public class LadgerSearchUseCase {
         }
         Page<EventApplicantLadger> ladgerInfoList = eventApplicantLadgerService.findAllEventApplicants(eventIndexId, username, time, keyword, sort, pageable);
         return LadgerMapper.mapToEventApplicantInfoResponseDto(ladgerInfoList);
+    }
+
+    public EventLadgerTotalStatusResponseDto getEventIndexLadgerStatus(Long eventIndexId) {
+        User user = userUtils.getUser();
+        if (eventIndexService.findById(eventIndexId).getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
+            throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
+        }
+        List<EventApplicantLadger> allAcceptedApplicantInEventIndex = eventApplicantLadgerService.findAllAcceptedApplicantInEventIndex(eventIndexId);
+        return LadgerMapper.mapToEventLadgerTotalStatusResponseDto(allAcceptedApplicantInEventIndex);
     }
 }
