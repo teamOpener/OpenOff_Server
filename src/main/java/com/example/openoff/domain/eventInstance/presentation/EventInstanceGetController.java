@@ -49,7 +49,7 @@ public class EventInstanceGetController {
                     @PageableDefault(size = 5) Pageable pageable
             )
     {
-        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapListByFieldType(fieldType, eventInfoId, pageable);
+        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, fieldType, null, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
     }
 
@@ -61,7 +61,7 @@ public class EventInstanceGetController {
                     @PageableDefault(size = 5) Pageable pageable
             )
     {
-        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapListByVogue(eventInfoId, count, pageable);
+        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, null, count, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
     }
 
