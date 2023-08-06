@@ -78,4 +78,8 @@ public class EventApplicantLadgerService {
     public List<EventApplicantLadger> findInEventIndex(Long eventIndexId) {
         return eventApplicantLadgerRepository.findApplicantInEventIndex(eventIndexId);
     }
+
+    public List<EventApplicantLadger> findNotAcceptedLadgersByEventIndex(Long eventIndexId) {
+        return eventApplicantLadgerRepository.findNotAcceptedApplicantInEventIndex(eventIndexId);
+    }
 }
