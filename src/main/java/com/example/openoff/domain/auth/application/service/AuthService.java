@@ -10,6 +10,7 @@ import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserI
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.SearchIdResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 
 public interface AuthService {
@@ -29,6 +30,7 @@ public interface AuthService {
 
     // NORMAL
     ResponseDto<CheckEmailResponseDto> checkExistEmail(String email);
+    ResponseDto<SearchIdResponseDto> searchIdByPhoneNum(String phoneNum);
     ResponseDto<TokenResponseDto> initNormalSignUp(NormalSignInRequestDto normalSignupRequestDto);
     ResponseDto<TokenResponseDto> normalLogin(NormalSignInRequestDto normalSignupRequestDto);
 }

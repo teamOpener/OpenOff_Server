@@ -1,6 +1,7 @@
 package com.example.openoff.domain.auth.application.service;
 
 import com.example.openoff.common.dto.ResponseDto;
+import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.security.jwt.JwtProvider;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
@@ -12,6 +13,7 @@ import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserI
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.SearchIdResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.exception.OAuthException;
 import com.example.openoff.domain.auth.application.service.apple.AppleOIDCUserProvider;
@@ -21,6 +23,7 @@ import com.example.openoff.domain.auth.domain.entity.AccountType;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
 import com.example.openoff.domain.auth.domain.service.SocialAccountService;
 import com.example.openoff.domain.user.domain.entity.User;
+import com.example.openoff.domain.user.domain.service.UserFindService;
 import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,7 @@ public class AuthServiceImpl implements AuthService{
     private final AppleOIDCUserProvider appleOIDCUserProvider;
     private final SocialAccountService socialAccountService;
     private final UserQueryService userQueryService;
+    private final UserFindService userFindService;
     private final JwtProvider jwtProvider;
 
     @Override
@@ -115,6 +119,14 @@ public class AuthServiceImpl implements AuthService{
                 ResponseDto.of(HttpStatus.OK.value(), "이미 존재하는 이메일입니다.", CheckEmailResponseDto.builder().check(false).build()) :
                 ResponseDto.of(HttpStatus.OK.value(), "가입 가능한 이메일입니다.", CheckEmailResponseDto.builder().check(true).build())
                 ;
+    }
+
+    @Override
+    public ResponseDto<SearchIdResponseDto> searchIdByPhoneNum(String phoneNum) {
+        User user = userFindService.findByPhoneNum(phoneNum);
+        if (user.getNormalAccount() == null) {throw BusinessException.of(Error.DATA_NOT_FOUND);}
+        SearchIdResponseDto dto = SearchIdResponseDto.builder().id(user.getNormalAccount().getSocialId()).build();
+        return ResponseDto.of(HttpStatus.OK.value(), "해당 휴대폰 번호로 연동된 id 조회에 성공하였습니다.", dto);
     }
 
     @Override
