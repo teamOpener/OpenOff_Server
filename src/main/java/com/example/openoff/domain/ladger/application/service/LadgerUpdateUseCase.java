@@ -5,6 +5,7 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.ladger.application.dto.request.QRCheckRequestDto;
 import com.example.openoff.domain.ladger.application.dto.response.QRCheckResponseDto;
 import com.example.openoff.domain.ladger.application.handler.EventApplicationLadgerHandler;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @UseCase
 @Transactional
@@ -24,6 +27,7 @@ public class LadgerUpdateUseCase {
     private final UserUtils userUtils;
     private final EncryptionUtils encryptionUtils;
     private final EventStaffService eventStaffService;
+    private final EventIndexService eventIndexService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
     private final EventApplicationLadgerHandler eventApplicationLadgerHandler;
 
@@ -34,6 +38,13 @@ public class LadgerUpdateUseCase {
         // 처리하는 사람이 스탭인지 체크
         eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
         eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
+    }
+
+    public void permitAndUpdateQRImageUrlAllApplicant(Long eventIndexId) {
+        User user = userUtils.getUser();
+        eventStaffService.checkEventStaff(user.getId(), eventIndexId);
+        List<EventApplicantLadger> notAcceptedLadgersByEventIndex = eventApplicantLadgerService.findNotAcceptedLadgersByEventIndex(eventIndexId);
+        eventApplicationLadgerHandler.totalLadgerPermitAndCreateQRImage(notAcceptedLadgersByEventIndex);
     }
 
     public void cancelPermitedApplicantion(Long ladgerId) {
