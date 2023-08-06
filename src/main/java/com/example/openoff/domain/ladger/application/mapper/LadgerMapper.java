@@ -47,6 +47,7 @@ public class LadgerMapper {
                 .ticketType(data.getTicketType())
                 .eventDate(data.getEventIndex().getEventDate())
                 .isAccepted(data.getIsAccept())
+                .isJoined(data.getIsJoin())
                 .qrImageUrl(data.getQrCodeImageUrl())
                 .build()).collect(Collectors.toList());
     }
