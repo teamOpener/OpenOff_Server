@@ -13,15 +13,17 @@ public class EventLadgerTotalStatusResponseDto {
     private LocalDateTime eventDate;
     private Boolean isClosed;
     private Integer maxCount;
+    private Long notApprovedCount;
     private Long approvedCount;
     private Long joinedCount;
 
     @Builder
-    public EventLadgerTotalStatusResponseDto(Long eventIndexId, LocalDateTime eventDate, Boolean isClosed, Integer maxCount, Long approvedCount, Long joinedCount) {
+    public EventLadgerTotalStatusResponseDto(Long eventIndexId, LocalDateTime eventDate, Boolean isClosed, Integer maxCount, Long notApprovedCount, Long approvedCount, Long joinedCount) {
         this.eventIndexId = eventIndexId;
         this.eventDate = eventDate;
         this.isClosed = isClosed;
         this.maxCount = maxCount;
+        this.notApprovedCount = notApprovedCount;
         this.approvedCount = approvedCount;
         this.joinedCount = joinedCount;
     }

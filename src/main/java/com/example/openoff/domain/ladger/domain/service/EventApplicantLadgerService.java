@@ -75,7 +75,7 @@ public class EventApplicantLadgerService {
         eventApplicantLadgerRepository.deleteById(ladgerId);
     }
 
-    public List<EventApplicantLadger> findAllAcceptedApplicantInEventIndex(Long eventIndexId) {
-        return eventApplicantLadgerRepository.findAcceptedApplicantInEventIndex(eventIndexId);
+    public List<EventApplicantLadger> findInEventIndex(Long eventIndexId) {
+        return eventApplicantLadgerRepository.findApplicantInEventIndex(eventIndexId);
     }
 }

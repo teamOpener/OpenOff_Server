@@ -59,6 +59,7 @@ public class LadgerMapper {
                 .genderType(data.getEventApplicant().getGender())
                 .ladgerId(data.getId())
                 .isAccepted(data.getIsAccept())
+                .isJoined(data.getIsJoin())
                 .createdAt(data.getCreatedDate()).build()).collect(Collectors.toList());
         return PageResponse.of(new PageImpl<>(responseDtos, ladgerInfoList.getPageable(), ladgerInfoList.getTotalElements()));
     }
@@ -90,7 +91,8 @@ public class LadgerMapper {
                 .eventDate(eventIndex.getEventDate())
                 .isClosed(eventIndex.getIsClose())
                 .maxCount(eventIndex.getEventInfo().getEventMaxPeople())
-                .approvedCount((long) ladgerList.size())
+                .notApprovedCount(ladgerList.stream().filter(ladger -> ladger.getIsAccept().equals(false)).count())
+                .approvedCount(ladgerList.stream().filter(ladger -> ladger.getIsJoin().equals(false) && ladger.getIsAccept().equals(true)).count())
                 .joinedCount(ladgerList.stream().filter(ladger -> ladger.getIsJoin().equals(true)).count())
                 .build();
     }

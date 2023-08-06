@@ -69,7 +69,7 @@ public class LadgerSearchUseCase {
         if (eventIndexService.findById(eventIndexId).getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }
-        List<EventApplicantLadger> allAcceptedApplicantInEventIndex = eventApplicantLadgerService.findAllAcceptedApplicantInEventIndex(eventIndexId);
-        return LadgerMapper.mapToEventLadgerTotalStatusResponseDto(allAcceptedApplicantInEventIndex);
+        List<EventApplicantLadger> allApplicantInEventIndex = eventApplicantLadgerService.findInEventIndex(eventIndexId);
+        return LadgerMapper.mapToEventLadgerTotalStatusResponseDto(allApplicantInEventIndex);
     }
 }

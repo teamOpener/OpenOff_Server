@@ -89,13 +89,12 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
     }
 
     @Override
-    public List<EventApplicantLadger> findAcceptedApplicantInEventIndex(Long eventIndexId) {
+    public List<EventApplicantLadger> findApplicantInEventIndex(Long eventIndexId) {
         return queryFactory
                 .select(eventApplicantLadger)
                 .from(eventApplicantLadger)
                 .where(
-                        eventApplicantLadger.eventIndex.id.eq(eventIndexId),
-                        eventApplicantLadger.isAccept.isTrue()
+                        eventApplicantLadger.eventIndex.id.eq(eventIndexId)
                 )
                 .fetch();
     }
