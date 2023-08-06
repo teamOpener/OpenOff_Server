@@ -4,6 +4,7 @@ import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
+import com.example.openoff.domain.auth.application.dto.response.normal.SearchIdResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,12 @@ public class AuthController {
     public ResponseEntity<ResponseDto<CheckEmailResponseDto>> checkExistEmail(@RequestParam String email) {
         ResponseDto<CheckEmailResponseDto> responseDto = authService.checkExistEmail(email);
         return ResponseEntity.ok().body(responseDto);
+    }
+
+    @GetMapping("/search/id")
+    public ResponseEntity<ResponseDto<SearchIdResponseDto>> findIdByPhoneNumber(@RequestParam String phoneNum) {
+        ResponseDto<SearchIdResponseDto> searchIdResponseDtoResponseDto = authService.searchIdByPhoneNum(phoneNum);
+        return ResponseEntity.ok().body(searchIdResponseDtoResponseDto);
     }
 
 }
