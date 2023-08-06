@@ -49,10 +49,10 @@ public class LadgerSearchUseCase {
         return LadgerMapper.mapToMyTicketInfoResponseDtoList(user, ladgerInfoList);
     }
 
-    public ApplicantApplyDetailResponseDto getApplyEventTicketInfo(Long ladgerId) {
+    public ApplicantApplyDetailResponseDto getApplicationInfo(Long ladgerId) {
         User user = userUtils.getUser();
-        EventApplicantLadger ladgerInfo = eventApplicantLadgerService.findMyEventTicketInfo(ladgerId, user.getId());
-        return LadgerMapper.mapToMyTicketInfoResponseDto(user, ladgerInfo);
+        EventApplicantLadger ladgerInfo = eventApplicantLadgerService.getApplicationInfo(ladgerId, user.getId());
+        return LadgerMapper.mapToApplicantApplyDetailResponseDto(user, ladgerInfo);
     }
 
     public PageResponse<EventApplicantInfoResponseDto> getEventApplicantList(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {

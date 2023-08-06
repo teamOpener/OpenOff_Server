@@ -43,10 +43,10 @@ public class LadgerGetController {
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "해당 이벤트 티켓 목록 조회가 완료되었습니다.", myTicketInfoResponseDtoList));
     }
 
-    @GetMapping(value = "/ticket/{ladgerId}")
-    public ResponseEntity<ResponseDto<ApplicantApplyDetailResponseDto>> getEventTicketInfo(@PathVariable Long ladgerId)
+    @GetMapping(value = "/application/info/{ladgerId}")
+    public ResponseEntity<ResponseDto<ApplicantApplyDetailResponseDto>> getApplicationInfo(@PathVariable Long ladgerId)
     {
-        ApplicantApplyDetailResponseDto applicantApplyDetailResponseDto = ladgerSearchUseCase.getApplyEventTicketInfo(ladgerId);
+        ApplicantApplyDetailResponseDto applicantApplyDetailResponseDto = ladgerSearchUseCase.getApplicationInfo(ladgerId);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "해당 이벤트 티켓 조회가 완료되었습니다.", applicantApplyDetailResponseDto));
     }
 

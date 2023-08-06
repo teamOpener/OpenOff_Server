@@ -64,8 +64,7 @@ public class LadgerMapper {
         return PageResponse.of(new PageImpl<>(responseDtos, ladgerInfoList.getPageable(), ladgerInfoList.getTotalElements()));
     }
 
-    public static ApplicantApplyDetailResponseDto mapToMyTicketInfoResponseDto(User user, EventApplicantLadger ladgerInfo) {
-//        List<Long> questionIds = ladgerInfo.getEventInfo().getEventExtraQuestions().stream().map(EventExtraQuestion::getId).collect(Collectors.toList());
+    public static ApplicantApplyDetailResponseDto mapToApplicantApplyDetailResponseDto(User user, EventApplicantLadger ladgerInfo) {
         return ApplicantApplyDetailResponseDto.builder()
                 .username(user.getUserName())
                 .birth(user.getBirth().getYear().toString() + "." + user.getBirth().getMonth() + "." + user.getBirth().getDay())
@@ -73,11 +72,8 @@ public class LadgerMapper {
                 .eventIndexId(ladgerInfo.getEventIndex().getId())
                 .eventTitle(ladgerInfo.getEventInfo().getEventTitle())
                 .streetRoadAddress(ladgerInfo.getEventInfo().getLocation().getStreetNameAddress())
-                .ticketIndex(ladgerInfo.getTicketIndex())
-                .ticketType(ladgerInfo.getTicketType())
                 .eventDate(ladgerInfo.getEventIndex().getEventDate())
                 .isAccepted(ladgerInfo.getIsAccept())
-                .qrImageUrl(ladgerInfo.getQrCodeImageUrl())
                 .qnAInfoList(user.getEventExtraAnswerList().stream()
                         .filter(eventExtraAnswer -> eventExtraAnswer.getEventIndex().getId().equals(ladgerInfo.getEventIndex().getId()))
                         .map(eventExtraAnswer -> ApplicantApplyDetailResponseDto.QnAInfo.of(eventExtraAnswer.getQuestion().getQuestion(), eventExtraAnswer.getAnswer())).collect(Collectors.toList()))

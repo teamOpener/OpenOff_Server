@@ -19,7 +19,7 @@ public class LadgerDeleteUseCase {
 
     public void deleteMyApplyLadger(Long ladgerId){
         User user = userUtils.getUser();
-        EventApplicantLadger myEventTicketInfo = eventApplicantLadgerService.findMyEventTicketInfo(ladgerId, user.getId());
+        EventApplicantLadger myEventTicketInfo = eventApplicantLadgerService.getApplicationInfo(ladgerId, user.getId());
         myEventTicketInfo.getEventInfo().updateTotalRegisterCountMinus();
         eventApplicantLadgerService.deleteEventApplicantLadger(myEventTicketInfo.getId());
     }
