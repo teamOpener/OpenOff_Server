@@ -3,10 +3,7 @@ package com.example.openoff.domain.ladger.presentation;
 import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicantApplyDetailResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicationInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.EventApplicantInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.MyTicketInfoResponseDto;
+import com.example.openoff.domain.ladger.application.dto.response.*;
 import com.example.openoff.domain.ladger.application.service.LadgerSearchUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,4 +67,15 @@ public class LadgerGetController {
         PageResponse<EventApplicantInfoResponseDto> eventApplicantInfoResponseDtoPageResponse = ladgerSearchUseCase.getEventApplicantList(eventIndexId, username, convertedTime, keyword, sort, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청자 목록 조회가 완료되었습니다.", eventApplicantInfoResponseDtoPageResponse));
     }
+
+    @GetMapping(value = "/status")
+    public ResponseEntity<ResponseDto<EventLadgerTotalStatusResponseDto>> getEventIndexStatus
+            (
+                    @RequestParam Long eventIndexId
+            )
+    {
+        EventLadgerTotalStatusResponseDto eventIndexLadgerStatus = ladgerSearchUseCase.getEventIndexLadgerStatus(eventIndexId);
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청자 현황 조회가 완료되었습니다.", eventIndexLadgerStatus));
+    }
+
 }
