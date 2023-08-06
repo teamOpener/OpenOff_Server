@@ -88,6 +88,18 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
         return PageableExecutionUtils.getPage(results, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public List<EventApplicantLadger> findAcceptedApplicantInEventIndex(Long eventIndexId) {
+        return queryFactory
+                .select(eventApplicantLadger)
+                .from(eventApplicantLadger)
+                .where(
+                        eventApplicantLadger.eventIndex.id.eq(eventIndexId),
+                        eventApplicantLadger.isAccept.isTrue()
+                )
+                .fetch();
+    }
+
     private BooleanExpression ltUsernameAndCreatedDate(String username, LocalDateTime time) {
         if (username == null || time == null) return null;
         return eventApplicantLadger.eventApplicant.userName.gt(username)
