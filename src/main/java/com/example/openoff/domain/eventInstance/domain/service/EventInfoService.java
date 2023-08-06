@@ -53,4 +53,8 @@ public class EventInfoService {
     public EventInfo findEventInfoById(Long eventInfoId){
         return eventInfoRepository.findById(eventInfoId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
     }
+
+    public List<EventInfo> findEventInfoByMyInterestFields(List<FieldType> fieldTypes) {
+        return eventInfoRepository.findEventInfosByFieldTypes(fieldTypes);
+    }
 }
