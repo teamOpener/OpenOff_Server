@@ -6,6 +6,7 @@ import com.example.openoff.domain.auth.application.dto.request.apple.AppleOIDCRe
 import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAuthCodeRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.kakao.KakaoOIDCRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.normal.ResetPasswordRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
@@ -31,6 +32,7 @@ public interface AuthService {
     // NORMAL
     ResponseDto<CheckEmailResponseDto> checkExistEmail(String email);
     ResponseDto<SearchIdResponseDto> searchIdByPhoneNum(String phoneNum);
+    ResponseDto<Void> resetPassword(ResetPasswordRequestDto resetPasswordRequestDto);
     ResponseDto<TokenResponseDto> initNormalSignUp(NormalSignInRequestDto normalSignupRequestDto);
     ResponseDto<TokenResponseDto> normalLogin(NormalSignInRequestDto normalSignupRequestDto);
 }

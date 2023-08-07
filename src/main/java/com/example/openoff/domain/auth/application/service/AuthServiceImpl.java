@@ -9,6 +9,7 @@ import com.example.openoff.domain.auth.application.dto.request.apple.AppleOIDCRe
 import com.example.openoff.domain.auth.application.dto.request.google.GoogleOAuthCodeRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.kakao.KakaoOIDCRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.normal.ResetPasswordRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.apple.AppleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.google.GoogleUserInfoResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.kakao.KakaoUserInfoResponseDto;
@@ -127,6 +128,14 @@ public class AuthServiceImpl implements AuthService{
         if (user.getNormalAccount() == null) {throw BusinessException.of(Error.DATA_NOT_FOUND);}
         SearchIdResponseDto dto = SearchIdResponseDto.builder().id(user.getNormalAccount().getSocialId()).build();
         return ResponseDto.of(HttpStatus.OK.value(), "해당 휴대폰 번호로 연동된 id 조회에 성공하였습니다.", dto);
+    }
+
+    @Override
+    public ResponseDto<Void> resetPassword(ResetPasswordRequestDto resetPasswordRequestDto) {
+        User user = userFindService.findByPhoneNum(resetPasswordRequestDto.getPhoneNum());
+        if (user.getNormalAccount() == null) {throw BusinessException.of(Error.DATA_NOT_FOUND);}
+        socialAccountService.resetNormalAccountPassword(resetPasswordRequestDto);
+        return ResponseDto.of(HttpStatus.OK.value(), "비밀번호 재설정에 성공하였습니다.", null);
     }
 
     @Override
