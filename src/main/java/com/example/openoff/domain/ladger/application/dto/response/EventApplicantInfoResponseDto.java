@@ -16,16 +16,18 @@ public class EventApplicantInfoResponseDto {
     private GenderType genderType;
     private Long ladgerId;
     private Boolean isAccepted;
+    private Boolean isJoined;
     private LocalDateTime createdAt;
 
     @Builder
-    public EventApplicantInfoResponseDto(String userId, String username, String birth, GenderType genderType, Long ladgerId, Boolean isAccepted, LocalDateTime createdAt){
+    public EventApplicantInfoResponseDto(String userId, String username, String birth, GenderType genderType, Long ladgerId, Boolean isAccepted, Boolean isJoined, LocalDateTime createdAt){
         this.userId = userId;
         this.username = username;
         this.birth = birth;
         this.genderType = genderType;
         this.ladgerId = ladgerId;
         this.isAccepted = isAccepted;
+        this.isJoined = isJoined;
         this.createdAt = createdAt;
     }
 }

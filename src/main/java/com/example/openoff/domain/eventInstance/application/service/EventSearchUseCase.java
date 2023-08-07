@@ -2,10 +2,7 @@ package com.example.openoff.domain.eventInstance.application.service;
 
 import com.example.openoff.common.annotation.UseCase;
 import com.example.openoff.common.dto.PageResponse;
-import com.example.openoff.common.exception.BusinessException;
-import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
-import com.example.openoff.domain.bookmark.domain.repository.EventBookmarkRepository;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
@@ -13,20 +10,19 @@ import com.example.openoff.domain.eventInstance.application.dto.response.MainTap
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.mapper.EventInstanceMapper;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
-import com.example.openoff.domain.eventInstance.domain.repository.EventImageRepository;
-import com.example.openoff.domain.eventInstance.domain.repository.EventIndexRepository;
-import com.example.openoff.domain.eventInstance.domain.repository.EventInfoRepository;
+import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
+import com.example.openoff.domain.eventInstance.domain.service.EventInfoService;
 import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
+import com.example.openoff.domain.interest.domain.entity.UserInterestField;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,72 +31,45 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EventSearchUseCase {
     private final UserUtils userUtils;
-    private final EventInfoRepository eventInfoRepository;
-    private final EventIndexRepository eventIndexRepository;
-    private final EventImageRepository eventImageRepository;
-    private final EventBookmarkRepository eventBookmarkRepository;
+    private final EventInfoService eventInfoService;
+    private final EventIndexService eventIndexService;
 
 
     public List<SearchMapEventInfoResponseDto> searchMapEventInfo(EventSearchRequestDto eventSearchRequestDto)
     {
         userUtils.getUser();
-        List<EventInfo> eventInfoList = eventInfoRepository.searchAllEventInfosInMap(eventSearchRequestDto);
-        return EventInstanceMapper.mapToSearchMapEventInfoResponseList(eventInfoList);
+        List<EventInfo> eventMapList = eventInfoService.getEventMapList(eventSearchRequestDto);
+        return EventInstanceMapper.mapToSearchMapEventInfoResponseList(eventMapList);
     }
 
     public DetailEventInfoResponseDto getDetailEventInfo(Long eventInfoId){
         User user = userUtils.getUser();
-        EventInfo eventInfo = eventInfoRepository.findById(eventInfoId)
-                .orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
-
-        List<EventIndexStatisticsDto> eventIndexStatisticsDtos = eventIndexRepository.statisticsEventIndexByEventInfoId(eventInfoId, user.getId());
-        return EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo, eventIndexStatisticsDtos);
+        EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
+        List<EventIndexStatisticsDto> eventDetailInfo = eventIndexService.getEventDetailInfo(eventInfo.getId(), user.getId());
+        return EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo, eventDetailInfo);
     }
 
-    public PageResponse<MainTapEventInfoResponse> getMainTapListByFieldType(FieldType fieldType, Long eventInfoId, Pageable pageable) {
+    public List<MainTapEventInfoResponse> getPersonalEventInfoList(){
         User user = userUtils.getUser();
-        PageResponse<MainTapEventInfoResponse> responseList = eventInfoRepository.findMainTapEventInfoByFieldType(fieldType, eventInfoId, pageable);
-        List<Long> eventInfoIdList = responseList.getContent().stream().map(MainTapEventInfoResponse::getEventInfoId).collect(Collectors.toList());
-
-        Map<Long, LocalDateTime> eventDateByEventInfoId = eventIndexRepository.findEventDateByEventInfoId(eventInfoIdList);
-        Map<Long, String> mainImageUrlByEventInfoId = eventImageRepository.findMainImageUrlByEventInfoId(eventInfoIdList);
-        List<Long> isBookmarkList = eventBookmarkRepository.findByEventInfoIdAndUserId(eventInfoIdList, user.getId());
-        responseList.getContent().stream()
-                .forEach(data -> {
-                    data.setMainImageUrl(mainImageUrlByEventInfoId.get(data.getEventInfoId()));
-                    data.setEventDate(eventDateByEventInfoId.get(data.getEventInfoId()));
-                    isBookmarkList.stream().filter(tuple -> tuple.equals(data.getEventInfoId())).findFirst()
-                            .ifPresentOrElse(tuple -> { data.setIsBookmarked(true); },
-                                                () -> { data.setIsBookmarked(false); }
-                        );
-                });
-        return responseList;
+        List<FieldType> myInterests = user.getUserInterestFields().stream().map(UserInterestField::getFieldType).collect(Collectors.toList());
+        List<EventInfo> eventInfoByMyInterestFields = eventInfoService.findEventInfoByMyInterestFields(myInterests);
+        return EventInstanceMapper.mapToMainTapEventInfoResponseList(eventInfoByMyInterestFields);
     }
 
-    public PageResponse<MainTapEventInfoResponse> getMainTapListByVogue(Long eventInfoId, Integer count, Pageable pageable) {
+    public PageResponse<MainTapEventInfoResponse> getMainTapList(Long eventInfoId, FieldType fieldType, Integer count, Pageable pageable) {
         User user = userUtils.getUser();
-        PageResponse<MainTapEventInfoResponse> responseList = eventInfoRepository.findMainTapEventInfoByVogue(eventInfoId, count, pageable);
-        List<Long> eventInfoIdList = responseList.getContent().stream().map(MainTapEventInfoResponse::getEventInfoId).collect(Collectors.toList());
-
-        Map<Long, LocalDateTime> eventDateByEventInfoId = eventIndexRepository.findEventDateByEventInfoId(eventInfoIdList);
-        Map<Long, String> mainImageUrlByEventInfoId = eventImageRepository.findMainImageUrlByEventInfoId(eventInfoIdList);
-        List<Long> isBookmarkList = eventBookmarkRepository.findByEventInfoIdAndUserId(eventInfoIdList, user.getId());
-        responseList.getContent().stream()
-                .forEach(data -> {
-                    data.setMainImageUrl(mainImageUrlByEventInfoId.get(data.getEventInfoId()));
-                    data.setEventDate(eventDateByEventInfoId.get(data.getEventInfoId()));
-                    isBookmarkList.stream().filter(tuple -> tuple.equals(data.getEventInfoId())).findFirst()
-                            .ifPresentOrElse(tuple -> { data.setIsBookmarked(true); },
-                                    () -> { data.setIsBookmarked(false); }
-                            );
-                });
-        return responseList;
+        if (fieldType != null) {
+            Page<EventInfo> mainTapEventByField = eventInfoService.getMainTapEventByField(fieldType, eventInfoId, pageable);
+            return EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByField);
+        } else {
+            Page<EventInfo> mainTapEventByField = eventInfoService.getMainTapEventByVogue(eventInfoId, count, pageable);
+            return EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByField);
+        }
     }
 
     public PageResponse<HostEventInfoResponseDto> getHostEventInfoList(Long eventInfoId, FieldType fieldType, Pageable pageable) {
         User user = userUtils.getUser();
-        List<EventInfo> hostEventInfo = eventInfoRepository.findHostEventInfo(user.getId(), eventInfoId, pageable);
-
-        return EventInstanceMapper.mapToHostEventInfoResponseList(hostEventInfo, pageable);
+        Page<EventInfo> hostEventList = eventInfoService.getHostEventList(user.getId(), eventInfoId, fieldType, pageable);
+        return EventInstanceMapper.mapToHostEventInfoResponseList(hostEventList);
     }
 }

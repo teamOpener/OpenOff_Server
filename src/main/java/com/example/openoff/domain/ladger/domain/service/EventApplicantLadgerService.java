@@ -54,7 +54,7 @@ public class EventApplicantLadgerService {
         return eventApplicantLadgerRepository.findAllByEventIndex_Id(eventIndexId, username, time, keyword, sort, pageable);
     }
 
-    public EventApplicantLadger findMyEventTicketInfo(Long ladgerId, String userId) {
+    public EventApplicantLadger getApplicationInfo(Long ladgerId, String userId) {
         return eventApplicantLadgerRepository.findByIdAndEventApplicant_Id(ladgerId, userId)
                 .orElseThrow(() -> BusinessException.of(Error.EVENT_APPLICANT_NOT_FOUND));
     }
@@ -73,5 +73,13 @@ public class EventApplicantLadgerService {
 
     public void deleteEventApplicantLadger(Long ladgerId) {
         eventApplicantLadgerRepository.deleteById(ladgerId);
+    }
+
+    public List<EventApplicantLadger> findInEventIndex(Long eventIndexId) {
+        return eventApplicantLadgerRepository.findApplicantInEventIndex(eventIndexId);
+    }
+
+    public List<EventApplicantLadger> findNotAcceptedLadgersByEventIndex(Long eventIndexId) {
+        return eventApplicantLadgerRepository.findNotAcceptedApplicantInEventIndex(eventIndexId);
     }
 }

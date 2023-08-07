@@ -41,6 +41,14 @@ public class EventInstanceGetController {
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "검색 조건에 따라 지도에 이벤트 정보를 불러오는데 성공하였습니다.", searchMapEventInfoResponseDtoList));
     }
 
+    @GetMapping(value = "/main/personal")
+    public ResponseEntity<ResponseDto<List<MainTapEventInfoResponse>>> getMainTapListByMyInterestField
+            ()
+    {
+        List<MainTapEventInfoResponse> personalEventInfoList = eventSearchUseCase.getPersonalEventInfoList();
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "맞춤 이벤트 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", personalEventInfoList));
+    }
+
     @GetMapping(value = "/main/{fieldType}")
     public ResponseEntity<ResponseDto<PageResponse<MainTapEventInfoResponse>>> getMainTapListByFieldType
             (
@@ -49,7 +57,7 @@ public class EventInstanceGetController {
                     @PageableDefault(size = 5) Pageable pageable
             )
     {
-        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapListByFieldType(fieldType, eventInfoId, pageable);
+        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, fieldType, null, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
     }
 
@@ -61,7 +69,7 @@ public class EventInstanceGetController {
                     @PageableDefault(size = 5) Pageable pageable
             )
     {
-        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapListByVogue(eventInfoId, count, pageable);
+        PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, null, count, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
     }
 
@@ -76,4 +84,6 @@ public class EventInstanceGetController {
         PageResponse<HostEventInfoResponseDto> hostEventInfoResponseDtoPage = eventSearchUseCase.getHostEventInfoList(eventInfoId, fieldType, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "주최한 이벤트 목록 조회가 완료되었습니다.", hostEventInfoResponseDtoPage));
     }
+
+
 }

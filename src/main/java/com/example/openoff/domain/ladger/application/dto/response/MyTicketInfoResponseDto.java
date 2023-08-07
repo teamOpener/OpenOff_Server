@@ -20,12 +20,13 @@ public class MyTicketInfoResponseDto {
     private TicketType ticketType;
     private LocalDateTime eventDate;
     private Boolean isAccepted;
+    private Boolean isJoined;
     private String qrImageUrl;
 
     @Builder
     public MyTicketInfoResponseDto(String username, String birth, Long eventInfoId, Long eventIndexId, String eventTitle,
                                    String streetRoadAddress, String ticketIndex, TicketType ticketType,
-                                   LocalDateTime eventDate, Boolean isAccepted, String qrImageUrl) {
+                                   LocalDateTime eventDate, Boolean isAccepted, Boolean isJoined, String qrImageUrl) {
         this.username = username;
         this.birth = birth;
         this.eventInfoId = eventInfoId;
@@ -36,6 +37,7 @@ public class MyTicketInfoResponseDto {
         this.ticketType = ticketType;
         this.eventDate = eventDate;
         this.isAccepted = isAccepted;
+        this.isJoined = isJoined;
         this.qrImageUrl = qrImageUrl;
     }
 }

@@ -24,6 +24,13 @@ public class LadgerPatchController {
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청 승인이 완료되었습니다.", null));
     }
 
+    @PatchMapping(value = "/permit/all")
+    public ResponseEntity<ResponseDto<Void>> applyEventAll(@RequestParam Long eventIndexId)
+    {
+        ladgerUpdateUseCase.permitAndUpdateQRImageUrlAllApplicant(eventIndexId);
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청 승인이 완료되었습니다.", null));
+    }
+
     @PatchMapping(value = "/permit/cancel")
     public ResponseEntity<ResponseDto<Void>> cancelAcceptedEvent(@RequestParam Long ladgerId)
     {

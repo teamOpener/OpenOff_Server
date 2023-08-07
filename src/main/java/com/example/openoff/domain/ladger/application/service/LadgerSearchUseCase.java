@@ -8,10 +8,7 @@ import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicantApplyDetailResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicationInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.EventApplicantInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.MyTicketInfoResponseDto;
+import com.example.openoff.domain.ladger.application.dto.response.*;
 import com.example.openoff.domain.ladger.application.mapper.LadgerMapper;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
@@ -52,10 +49,10 @@ public class LadgerSearchUseCase {
         return LadgerMapper.mapToMyTicketInfoResponseDtoList(user, ladgerInfoList);
     }
 
-    public ApplicantApplyDetailResponseDto getApplyEventTicketInfo(Long ladgerId) {
+    public ApplicantApplyDetailResponseDto getApplicationInfo(Long ladgerId) {
         User user = userUtils.getUser();
-        EventApplicantLadger ladgerInfo = eventApplicantLadgerService.findMyEventTicketInfo(ladgerId, user.getId());
-        return LadgerMapper.mapToMyTicketInfoResponseDto(user, ladgerInfo);
+        EventApplicantLadger ladgerInfo = eventApplicantLadgerService.getApplicationInfo(ladgerId, user.getId());
+        return LadgerMapper.mapToApplicantApplyDetailResponseDto(user, ladgerInfo);
     }
 
     public PageResponse<EventApplicantInfoResponseDto> getEventApplicantList(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
@@ -65,5 +62,14 @@ public class LadgerSearchUseCase {
         }
         Page<EventApplicantLadger> ladgerInfoList = eventApplicantLadgerService.findAllEventApplicants(eventIndexId, username, time, keyword, sort, pageable);
         return LadgerMapper.mapToEventApplicantInfoResponseDto(ladgerInfoList);
+    }
+
+    public EventLadgerTotalStatusResponseDto getEventIndexLadgerStatus(Long eventIndexId) {
+        User user = userUtils.getUser();
+        if (eventIndexService.findById(eventIndexId).getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
+            throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
+        }
+        List<EventApplicantLadger> allApplicantInEventIndex = eventApplicantLadgerService.findInEventIndex(eventIndexId);
+        return LadgerMapper.mapToEventLadgerTotalStatusResponseDto(allApplicantInEventIndex);
     }
 }

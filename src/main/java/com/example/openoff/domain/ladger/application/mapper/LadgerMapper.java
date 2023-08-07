@@ -2,13 +2,12 @@ package com.example.openoff.domain.ladger.application.mapper;
 
 import com.example.openoff.common.annotation.Mapper;
 import com.example.openoff.common.dto.PageResponse;
+import com.example.openoff.common.exception.BusinessException;
+import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicantApplyDetailResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.ApplicationInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.EventApplicantInfoResponseDto;
-import com.example.openoff.domain.ladger.application.dto.response.MyTicketInfoResponseDto;
+import com.example.openoff.domain.ladger.application.dto.response.*;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +47,7 @@ public class LadgerMapper {
                 .ticketType(data.getTicketType())
                 .eventDate(data.getEventIndex().getEventDate())
                 .isAccepted(data.getIsAccept())
+                .isJoined(data.getIsJoin())
                 .qrImageUrl(data.getQrCodeImageUrl())
                 .build()).collect(Collectors.toList());
     }
@@ -60,12 +60,12 @@ public class LadgerMapper {
                 .genderType(data.getEventApplicant().getGender())
                 .ladgerId(data.getId())
                 .isAccepted(data.getIsAccept())
+                .isJoined(data.getIsJoin())
                 .createdAt(data.getCreatedDate()).build()).collect(Collectors.toList());
         return PageResponse.of(new PageImpl<>(responseDtos, ladgerInfoList.getPageable(), ladgerInfoList.getTotalElements()));
     }
 
-    public static ApplicantApplyDetailResponseDto mapToMyTicketInfoResponseDto(User user, EventApplicantLadger ladgerInfo) {
-//        List<Long> questionIds = ladgerInfo.getEventInfo().getEventExtraQuestions().stream().map(EventExtraQuestion::getId).collect(Collectors.toList());
+    public static ApplicantApplyDetailResponseDto mapToApplicantApplyDetailResponseDto(User user, EventApplicantLadger ladgerInfo) {
         return ApplicantApplyDetailResponseDto.builder()
                 .username(user.getUserName())
                 .birth(user.getBirth().getYear().toString() + "." + user.getBirth().getMonth() + "." + user.getBirth().getDay())
@@ -73,14 +73,24 @@ public class LadgerMapper {
                 .eventIndexId(ladgerInfo.getEventIndex().getId())
                 .eventTitle(ladgerInfo.getEventInfo().getEventTitle())
                 .streetRoadAddress(ladgerInfo.getEventInfo().getLocation().getStreetNameAddress())
-                .ticketIndex(ladgerInfo.getTicketIndex())
-                .ticketType(ladgerInfo.getTicketType())
                 .eventDate(ladgerInfo.getEventIndex().getEventDate())
                 .isAccepted(ladgerInfo.getIsAccept())
-                .qrImageUrl(ladgerInfo.getQrCodeImageUrl())
                 .qnAInfoList(user.getEventExtraAnswerList().stream()
                         .filter(eventExtraAnswer -> eventExtraAnswer.getEventIndex().getId().equals(ladgerInfo.getEventIndex().getId()))
                         .map(eventExtraAnswer -> ApplicantApplyDetailResponseDto.QnAInfo.of(eventExtraAnswer.getQuestion().getQuestion(), eventExtraAnswer.getAnswer())).collect(Collectors.toList()))
+                .build();
+    }
+
+    public static EventLadgerTotalStatusResponseDto mapToEventLadgerTotalStatusResponseDto(List<EventApplicantLadger> ladgerList){
+        EventIndex eventIndex = ladgerList.stream().findAny().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)).getEventIndex();
+        return EventLadgerTotalStatusResponseDto.builder()
+                .eventIndexId(eventIndex.getId())
+                .eventDate(eventIndex.getEventDate())
+                .isClosed(eventIndex.getIsClose())
+                .maxCount(eventIndex.getEventInfo().getEventMaxPeople())
+                .notApprovedCount(ladgerList.stream().filter(ladger -> ladger.getIsAccept().equals(false)).count())
+                .approvedCount(ladgerList.stream().filter(ladger -> ladger.getIsJoin().equals(false) && ladger.getIsAccept().equals(true)).count())
+                .joinedCount(ladgerList.stream().filter(ladger -> ladger.getIsJoin().equals(true)).count())
                 .build();
     }
 }

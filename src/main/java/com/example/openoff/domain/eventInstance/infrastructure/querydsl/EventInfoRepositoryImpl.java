@@ -1,8 +1,6 @@
 package com.example.openoff.domain.eventInstance.infrastructure.querydsl;
 
-import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
-import com.example.openoff.domain.eventInstance.application.dto.response.MainTapEventInfoResponse;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.entity.QEventImage;
 import com.example.openoff.domain.eventInstance.domain.entity.QEventIndex;
@@ -15,14 +13,15 @@ import com.example.openoff.domain.ladger.domain.entity.QEventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.entity.QEventStaff;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -58,17 +57,9 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
     }
 
     @Override
-    public PageResponse<MainTapEventInfoResponse> findMainTapEventInfoByFieldType(FieldType fieldType, final Long eventInfoId, final Pageable pageable) {
-        List<MainTapEventInfoResponse> data = queryFactory
-                .select(
-                        Projections.fields(
-                                MainTapEventInfoResponse.class,
-                                QEventInfo.eventInfo.id.as("eventInfoId"),
-                                QEventInfo.eventInfo.eventTitle.as("eventTitle"),
-                                QEventInfo.eventInfo.location.streetNameAddress.as("streetRoadAddress"),
-                                QEventInfo.eventInfo.totalRegisterCount.as("totalApplicantCount")
-                        )
-                )
+    public Page<EventInfo> findMainTapEventInfoByFieldType2(FieldType fieldType, final Long eventInfoId, final Pageable pageable) {
+        List<EventInfo> data = queryFactory
+                .select(QEventInfo.eventInfo)
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
@@ -80,21 +71,23 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return PageResponse.of(new PageImpl<>(data, pageable, data.size()));
+        JPAQuery<Long> countQuery = queryFactory
+                .select(QEventInfo.eventInfo.count())
+                .from(QEventInfo.eventInfo)
+                .where(
+                        QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        ltEventInfoId(eventInfoId),
+                        eventInfoMappedField(fieldType)
+                );
+
+        return PageableExecutionUtils.getPage(data, pageable, countQuery::fetchOne);
     }
 
     @Override
-    public PageResponse<MainTapEventInfoResponse> findMainTapEventInfoByVogue(Long eventInfoId, Integer count, final Pageable pageable) {
-        List<MainTapEventInfoResponse> data = queryFactory
-                .select(
-                        Projections.fields(
-                                MainTapEventInfoResponse.class,
-                                QEventInfo.eventInfo.id.as("eventInfoId"),
-                                QEventInfo.eventInfo.eventTitle.as("eventTitle"),
-                                QEventInfo.eventInfo.location.streetNameAddress.as("streetRoadAddress"),
-                                QEventInfo.eventInfo.totalRegisterCount.as("totalApplicantCount")
-                        )
-                )
+    public Page<EventInfo> findMainTapEventInfoByVogue2(Long eventInfoId, Integer count, final Pageable pageable) {
+        List<EventInfo> data = queryFactory
+                .select(QEventInfo.eventInfo)
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
@@ -105,20 +98,56 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return PageResponse.of(new PageImpl<>(data, pageable, data.size()));
+        JPAQuery<Long> countQuery = queryFactory
+                .select(QEventInfo.eventInfo.count())
+                .from(QEventInfo.eventInfo)
+                .where(
+                        QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        ltVogueEventInfo(eventInfoId, count)
+                );
+
+        return PageableExecutionUtils.getPage(data, pageable, countQuery::fetchOne);
     }
 
     @Override
-    public List<EventInfo> findHostEventInfo(String userId, Long eventInfoId, Pageable pageable) {
-        return queryFactory
-                .selectDistinct(QEventInfo.eventInfo)
+    public Page<EventInfo> findHostEventInfo(String userId, Long eventInfoId, FieldType fieldType, Pageable pageable) {
+        List<EventInfo> data = queryFactory
+                .select(QEventInfo.eventInfo)
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.eventStaffs.any().staff.id.eq(userId),
-                        ltEventInfoId(eventInfoId)
+                        ltEventInfoId(eventInfoId),
+                        eventInfoMappedField(fieldType)
                 )
                 .orderBy(QEventInfo.eventInfo.createdDate.desc())
                 .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(QEventInfo.eventInfo.count())
+                .from(QEventInfo.eventInfo)
+                .where(
+                        QEventInfo.eventInfo.eventStaffs.any().staff.id.eq(userId),
+                        ltEventInfoId(eventInfoId),
+                        eventInfoMappedField(fieldType)
+                );
+
+        return PageableExecutionUtils.getPage(data, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public List<EventInfo> findEventInfosByFieldTypes(List<FieldType> fieldTypes) {
+        return queryFactory
+                .select(QEventInfo.eventInfo)
+                .from(QEventInfo.eventInfo)
+                .where(
+                        QEventInfo.eventInfo.isApproval.eq(true),
+                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        eventInfoMappedFields(fieldTypes)
+                )
+                .orderBy(QEventInfo.eventInfo.createdDate.desc())
+                .limit(6)
                 .fetch();
     }
 
@@ -136,6 +165,11 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
     private BooleanExpression eventInfoMappedField(FieldType fieldType) {
         if (fieldType == null) return null;
         return QEventInfo.eventInfo.eventInterestFields.any().fieldType.eq(fieldType);
+    }
+
+    private BooleanExpression eventInfoMappedFields(List<FieldType> fieldTypes) {
+        if (fieldTypes == null || fieldTypes.isEmpty()) return null;
+        return QEventInfo.eventInfo.eventInterestFields.any().fieldType.in(fieldTypes);
     }
 
     private BooleanExpression distanceJudgment(Double latitude, Double longitude) {
