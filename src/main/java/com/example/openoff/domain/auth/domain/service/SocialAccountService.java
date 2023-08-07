@@ -3,6 +3,7 @@ package com.example.openoff.domain.auth.domain.service;
 import com.example.openoff.common.annotation.DomainService;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
+import com.example.openoff.domain.auth.application.dto.request.normal.ResetPasswordRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.SocialAccountInfoResponseDto;
 import com.example.openoff.domain.auth.domain.entity.AccountType;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
@@ -46,5 +47,13 @@ public class SocialAccountService {
 
     public List<SocialAccountInfoResponseDto> getSocialAccountInfos(List<SocialAccount> socialAccountList) {
         return SocialAccountInfoResponseDto.ofList(socialAccountList);
+    }
+
+    public void resetNormalAccountPassword(ResetPasswordRequestDto resetPasswordRequestDto) {
+        SocialAccount socialAccount = socialAccountRepository.findByEmailAndAccountType(resetPasswordRequestDto.getEmail(), AccountType.NOMAL)
+                .orElseThrow(() -> UserNotFoundException.of(Error.USER_NOT_FOUND));
+        String passwordedEncrypt = encryptionUtils.passwordEncrypt(resetPasswordRequestDto.getEmail(), resetPasswordRequestDto.getNewPassword());
+        socialAccount.updateNormalAccountSocialId(passwordedEncrypt);
+        socialAccountRepository.saveAndFlush(socialAccount);
     }
 }

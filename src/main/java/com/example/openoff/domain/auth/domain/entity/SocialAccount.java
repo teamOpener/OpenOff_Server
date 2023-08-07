@@ -48,4 +48,8 @@ public class SocialAccount extends BaseEntity {
                 .socialName(socialName)
                 .build();
     }
+
+    public void updateNormalAccountSocialId(String newSocialId) {
+        this.socialId = newSocialId;
+    }
 }
