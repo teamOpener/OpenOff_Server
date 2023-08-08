@@ -132,10 +132,11 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
+    @Transactional
     public ResponseDto<Void> resetPassword(ResetPasswordRequestDto resetPasswordRequestDto) {
         User user = userFindService.findByPhoneNum(resetPasswordRequestDto.getPhoneNum());
         if (user.getNormalAccount() == null) {throw BusinessException.of(Error.DATA_NOT_FOUND);}
-        socialAccountService.resetNormalAccountPassword(resetPasswordRequestDto);
+        socialAccountService.resetNormalAccountPassword(user, resetPasswordRequestDto);
         return ResponseDto.of(HttpStatus.OK.value(), "비밀번호 재설정에 성공하였습니다.", null);
     }
 
@@ -150,6 +151,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
+    @Transactional
     public ResponseDto<TokenResponseDto> normalLogin(NormalSignInRequestDto normalSignupRequestDto) {
         SocialAccount normalAccount = socialAccountService.findNormalAccount(normalSignupRequestDto.getPassword(), normalSignupRequestDto.getEmail());
         User user = userQueryService.initUserSaveOrFind(normalAccount, "normal");

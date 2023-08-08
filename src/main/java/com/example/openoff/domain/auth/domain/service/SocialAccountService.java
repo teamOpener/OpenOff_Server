@@ -9,6 +9,7 @@ import com.example.openoff.domain.auth.domain.entity.AccountType;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
 import com.example.openoff.domain.auth.domain.exception.SocialAccountException;
 import com.example.openoff.domain.auth.domain.repository.SocialAccountRepository;
+import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,11 +50,10 @@ public class SocialAccountService {
         return SocialAccountInfoResponseDto.ofList(socialAccountList);
     }
 
-    public void resetNormalAccountPassword(ResetPasswordRequestDto resetPasswordRequestDto) {
-        SocialAccount socialAccount = socialAccountRepository.findByEmailAndAccountType(resetPasswordRequestDto.getEmail(), AccountType.NOMAL)
-                .orElseThrow(() -> UserNotFoundException.of(Error.USER_NOT_FOUND));
+    public void resetNormalAccountPassword(User user, ResetPasswordRequestDto resetPasswordRequestDto) {
+        SocialAccount normalAccount = user.getNormalAccount();
         String passwordedEncrypt = encryptionUtils.passwordEncrypt(resetPasswordRequestDto.getEmail(), resetPasswordRequestDto.getNewPassword());
-        socialAccount.updateNormalAccountSocialId(passwordedEncrypt);
-        socialAccountRepository.saveAndFlush(socialAccount);
+        normalAccount.updateNormalAccountSocialId(passwordedEncrypt);
+        socialAccountRepository.saveAndFlush(normalAccount);
     }
 }

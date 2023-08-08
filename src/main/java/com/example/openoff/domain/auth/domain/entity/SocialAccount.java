@@ -23,7 +23,7 @@ public class SocialAccount extends BaseEntity {
     private AccountType accountType;
 
     // 일반 유저일 경우 password로 사용
-   @Column(name = "social_id", updatable = false, unique = true)
+   @Column(name = "social_id", unique = true)
     private String socialId;
 
     @Column(name = "email", updatable = false)
