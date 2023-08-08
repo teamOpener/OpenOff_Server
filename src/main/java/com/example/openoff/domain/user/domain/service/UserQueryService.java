@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @DomainService
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserQueryService {
     private final UserUtils userUtils;
