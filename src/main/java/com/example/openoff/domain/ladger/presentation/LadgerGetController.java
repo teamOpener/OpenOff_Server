@@ -29,7 +29,7 @@ public class LadgerGetController {
             (
                     @RequestParam(required = false) FieldType fieldType,
                     @RequestParam(required = false) Long eventInfoId,
-                    @PageableDefault(size = 1) Pageable pageable
+                    @PageableDefault(size = 8) Pageable pageable
             )
     {
         PageResponse<ApplicationInfoResponseDto> myLadgerInfos = ladgerSearchUseCase.getMyLadgerInfos(eventInfoId, fieldType, pageable);
@@ -58,7 +58,7 @@ public class LadgerGetController {
                     @RequestParam(required = false) String time,
                     @RequestParam(required = false) String keyword,
                     @RequestParam SortType sort,
-                    @PageableDefault(size = 1) Pageable pageable
+                    @PageableDefault(size = 8) Pageable pageable
             )
     {
         DateTimeFormatter parse = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");

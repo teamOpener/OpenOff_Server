@@ -25,7 +25,7 @@ public class CommentGetController {
             (
                     @PathVariable Long eventInfoId,
                     @RequestParam(required = false) Long commentId,
-                    @PageableDefault(size = 4) Pageable pageable
+                    @PageableDefault(size = 8) Pageable pageable
             )
     {
         PageResponse<ParentCommentInfoResponseDto> parentCommentsInEvent = commentSearchUseCase.getParentCommentsInEvent(eventInfoId, commentId, pageable);

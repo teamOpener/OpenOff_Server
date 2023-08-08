@@ -26,7 +26,7 @@ public class BookmarkGetController {
     public ResponseEntity<ResponseDto<PageResponse<MyBookmarkEventResponseDto>>> getMyBookmarkEventList
             (
                     @RequestParam(required = false) Long bookmarkId,
-                    @PageableDefault(size = 1) Pageable pageable
+                    @PageableDefault(size = 6) Pageable pageable
             )
     {
         PageResponse<MyBookmarkEventResponseDto> myBookmarks = bookmarkSearchUseCase.findMyBookmarks(bookmarkId, pageable);

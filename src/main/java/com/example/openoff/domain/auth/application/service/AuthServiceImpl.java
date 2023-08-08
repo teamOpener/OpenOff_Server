@@ -123,10 +123,11 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<SearchIdResponseDto> searchIdByPhoneNum(String phoneNum) {
         User user = userFindService.findByPhoneNum(phoneNum);
         if (user.getNormalAccount() == null) {throw BusinessException.of(Error.DATA_NOT_FOUND);}
-        SearchIdResponseDto dto = SearchIdResponseDto.builder().id(user.getNormalAccount().getSocialId()).build();
+        SearchIdResponseDto dto = SearchIdResponseDto.builder().id(user.getNormalAccount().getEmail()).build();
         return ResponseDto.of(HttpStatus.OK.value(), "해당 휴대폰 번호로 연동된 id 조회에 성공하였습니다.", dto);
     }
 

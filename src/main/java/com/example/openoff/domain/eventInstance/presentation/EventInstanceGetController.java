@@ -54,7 +54,7 @@ public class EventInstanceGetController {
             (
                     @PathVariable FieldType fieldType,
                     @RequestParam(required = false) Long eventInfoId,
-                    @PageableDefault(size = 5) Pageable pageable
+                    @PageableDefault(size = 8) Pageable pageable
             )
     {
         PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, fieldType, null, pageable);
@@ -66,7 +66,7 @@ public class EventInstanceGetController {
             (
                     @RequestParam(required = false) Integer count,
                     @RequestParam(required = false) Long eventInfoId,
-                    @PageableDefault(size = 5) Pageable pageable
+                    @PageableDefault(size = 8) Pageable pageable
             )
     {
         PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, null, count, pageable);
