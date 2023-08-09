@@ -34,6 +34,7 @@ public class FieldService {
     }
 
     public void saveUserInterests(User user, List<FieldType> fieldTypeList) {
+        userInterestFieldRepository.deleteAllByUser_Id(user.getId());
         List<UserInterestField> userInterestFields = fieldTypeList.stream()
                 .filter(fieldType -> !userInterestFieldRepository.existsByUser_IdAndFieldType(user.getId(), fieldType))
                 .map(interest -> UserInterestField.toEntity(user, interest)).collect(Collectors.toList());
