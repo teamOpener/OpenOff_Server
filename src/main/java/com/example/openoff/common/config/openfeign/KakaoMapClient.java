@@ -13,5 +13,6 @@ public interface KakaoMapClient {
     @GetMapping("")
     KakaoAddressResponse getKakaoAddressToCoord(@RequestParam("query") String query,
                                                 @RequestParam("analyze_type") String analyzeType,
-                                                @RequestHeader("Authorization") String authorization);
+                                                @RequestHeader("Authorization") String authorization,
+                                                @RequestHeader("Accept") String accept);
 }
