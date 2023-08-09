@@ -4,10 +4,16 @@ import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.auth.application.dto.request.SocialSignupRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.normal.NormalSignInRequestDto;
 import com.example.openoff.domain.auth.application.dto.request.normal.ResetPasswordRequestDto;
+import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsInfoRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.normal.CheckEmailResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.normal.SearchIdResponseDto;
+import com.example.openoff.domain.auth.application.dto.response.sms.NCPSmsResponseDto;
 import com.example.openoff.domain.auth.application.dto.response.token.TokenResponseDto;
 import com.example.openoff.domain.auth.application.service.AuthService;
+import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
+import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
+import com.example.openoff.domain.user.application.dto.response.CheckNicknameResponseDto;
+import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final UserQueryService userQueryService;
+    private final NCPSmsService ncpSmsService;
 
     @PostMapping("/refresh")
     public ResponseEntity<ResponseDto<TokenResponseDto>> tokenRefresh(@RequestBody TokenResponseDto tokenResponseDto)
@@ -64,4 +72,21 @@ public class AuthController {
         return ResponseEntity.ok().body(responseDto);
     }
 
+    @GetMapping("/check/nickname")
+    public ResponseEntity<ResponseDto<CheckNicknameResponseDto>> checkNickname(@RequestParam String nickname) {
+        ResponseDto<CheckNicknameResponseDto> checkNicknameResponseDto = userQueryService.checkNicknameExist(nickname);
+        return ResponseEntity.ok().body(checkNicknameResponseDto);
+    }
+
+    @PostMapping("/sms")
+    public ResponseEntity<ResponseDto<NCPSmsResponseDto>> sendSms(@RequestBody NCPSmsInfoRequestDto ncpSmsInfoRequestDto) {
+        ResponseDto<NCPSmsResponseDto> ncpSmsResponseDto = ncpSmsService.sendSms(ncpSmsInfoRequestDto);
+        return ResponseEntity.ok().body(ncpSmsResponseDto);
+    }
+
+    @PatchMapping("/sms")
+    public ResponseEntity<ResponseDto<Void>> checkSmsNum(@RequestBody UserSmsCheckRequestDto userSmsCheckRequestDto) {
+        ResponseDto<Void> responseDto = userQueryService.noLoginCheckSmsNum(userSmsCheckRequestDto);
+        return ResponseEntity.ok().body(responseDto);
+    }
 }
