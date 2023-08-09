@@ -3,6 +3,7 @@ package com.example.openoff.domain.comment.domain.service;
 import com.example.openoff.common.annotation.DomainService;
 import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
+import com.example.openoff.domain.comment.application.dto.request.CommentChangeRequestDto;
 import com.example.openoff.domain.comment.application.dto.request.CommentWriteRequestDto;
 import com.example.openoff.domain.comment.domain.entity.EventComment;
 import com.example.openoff.domain.comment.domain.repository.EventCommentRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @DomainService
@@ -46,5 +48,17 @@ public class CommentService {
                         () -> {throw BusinessException.of(Error.DATA_NOT_FOUND);}
                 );
 
+    }
+
+    public EventComment updateCommentByUser(User user, CommentChangeRequestDto commentChangeRequestDto) {
+        Optional<EventComment> comment = eventCommentRepository.findEventCommentByIdAndWriter_Id(commentChangeRequestDto.getCommentId(), user.getId());
+        if (comment.isEmpty()) {
+            throw BusinessException.of(Error.DATA_NOT_FOUND);
+        } else {
+            EventComment eventComment = comment.get();
+            eventComment.updateContent(commentChangeRequestDto.getContent());
+            eventCommentRepository.save(eventComment);
+            return eventComment;
+        }
     }
 }
