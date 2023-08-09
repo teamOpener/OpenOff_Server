@@ -24,6 +24,15 @@ public class CommentMapper {
                 .build();
     }
 
+    public static CommentWriteResponseDto mapToCommentWriteResDto(EventComment eventComment){
+        return CommentWriteResponseDto.builder()
+                .commentId(eventComment.getId())
+                .eventInfoId(eventComment.getEventInfo().getId())
+                .parentId(eventComment.getParent() == null ? null : eventComment.getParent().getId())
+                .content(eventComment.getContent())
+                .build();
+    }
+
     public static PageResponse<ParentCommentInfoResponseDto> mapToParentCommentInfoResponseDto(List<String> staffIds, Page<EventComment> eventComments) {
         List<ParentCommentInfoResponseDto> responseDtos = eventComments.stream().map(data ->
                 ParentCommentInfoResponseDto.builder()
