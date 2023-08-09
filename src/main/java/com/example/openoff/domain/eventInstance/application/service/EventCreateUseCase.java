@@ -5,6 +5,7 @@ import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.eventInstance.application.dto.request.CreateNewEventRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.CreateNewEventResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.KakaoAddressResponse;
 import com.example.openoff.domain.eventInstance.application.mapper.EventInstanceMapper;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventExtraQuestionService;
@@ -33,6 +34,7 @@ public class EventCreateUseCase {
     private final EventExtraQuestionService eventExtraQuestionService;
     private final FieldService fieldService;
     private final EventStaffService eventStaffService;
+    private final KakaoLocalService kakaoLocalService;
 
     // TODO: 통째로 비동기처리 하기 -> mapper 에서 비동기 처리하기
     public CreateNewEventResponseDto createEvent(CreateNewEventRequestDto createNewEventRequestDto) {
@@ -40,7 +42,9 @@ public class EventCreateUseCase {
             throw TooManyFieldException.of(Error.TOO_MANY_EVENT_FIELD);
         }
         final User user = userUtils.getUser();
-        EventInfo eventInfo = eventInfoService.saveEventInfo(createNewEventRequestDto);
+        KakaoAddressResponse coord = kakaoLocalService.getKakaoAddressToCoord(createNewEventRequestDto.getStreetLoadAddress(), "similar");
+
+        EventInfo eventInfo = eventInfoService.saveEventInfo(createNewEventRequestDto, coord);
         List<Long> eventIndexIdList = eventIndexService.saveEventIndex(eventInfo, createNewEventRequestDto.getEventStartDate(), createNewEventRequestDto.getEventEndDate());
         List<Long> eventImageIdList = eventImageService.saveEventImage(eventInfo, createNewEventRequestDto.getImageDataList());
         List<Long> eventExtraQuestionIdList = eventExtraQuestionService.saveEventExtraQuestion(eventInfo, createNewEventRequestDto.getExtraQuestionList());

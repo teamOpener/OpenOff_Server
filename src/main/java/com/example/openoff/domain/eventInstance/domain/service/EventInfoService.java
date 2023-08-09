@@ -5,6 +5,7 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.application.dto.request.CreateNewEventRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.KakaoAddressResponse;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventInfoRepository;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
@@ -21,8 +22,7 @@ import java.util.List;
 public class EventInfoService {
     private final EventInfoRepository eventInfoRepository;
 
-    public EventInfo saveEventInfo(CreateNewEventRequestDto createNewEventRequestDto) {
-        // TODO: createNewEventRequestDto.getStreetLoadAddress() 로 위,경도 구하는 로직 있어야함
+    public EventInfo saveEventInfo(CreateNewEventRequestDto createNewEventRequestDto, KakaoAddressResponse coord) {
         EventInfo eventInfo = EventInfo.toEntity(
                 createNewEventRequestDto.getTitle(),
                 createNewEventRequestDto.getEventFee(),
@@ -30,7 +30,9 @@ public class EventInfoService {
                 createNewEventRequestDto.getDescription(),
                 createNewEventRequestDto.getApplicationStartDate(),
                 createNewEventRequestDto.getApplicationEndDate(),
-                37.498020, 126.026702, createNewEventRequestDto.getStreetLoadAddress(), createNewEventRequestDto.getDetailAddress());
+                Double.valueOf(coord.getDocuments().get(0).getY()),
+                Double.valueOf(coord.getDocuments().get(0).getX()),
+                createNewEventRequestDto.getStreetLoadAddress(), createNewEventRequestDto.getDetailAddress());
         return eventInfoRepository.save(eventInfo);
     }
 
