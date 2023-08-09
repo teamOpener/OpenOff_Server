@@ -10,6 +10,7 @@ import com.example.openoff.domain.auth.domain.entity.SocialAccount;
 import com.example.openoff.domain.auth.domain.service.SocialAccountService;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
+import com.example.openoff.domain.user.application.dto.response.CheckNicknameResponseDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
 import com.example.openoff.domain.user.application.dto.response.UserTotalInfoResponseDto;
 import com.example.openoff.domain.user.domain.entity.User;
@@ -96,5 +97,35 @@ public class UserQueryService {
             throw new UserNotCorrectSMSNumException(Error.USER_NOT_CORRECT_SMS_NUM);
         }
         return ResponseDto.of(HttpStatus.OK.value(), "휴대폰 인증에 성공하였습니다.", UserInfoResponseDto.from(user));
+    }
+
+    public ResponseDto<Void> noLoginCheckSmsNum(UserSmsCheckRequestDto userSmsCheckRequestDto) {
+        if(!ncpSmsService.checkSmsNum(userSmsCheckRequestDto)) {
+            throw new UserNotCorrectSMSNumException(Error.USER_NOT_CORRECT_SMS_NUM);
+        }
+        return ResponseDto.of(HttpStatus.OK.value(), "휴대폰 인증에 성공하였습니다.", null);
+    }
+
+    public ResponseDto<CheckNicknameResponseDto> checkNicknameExist(String nickname) {
+        if (userRepository.existsByNickname(nickname)) {
+            return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", CheckNicknameResponseDto.builder().isExist(true).build());
+        }
+        return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", CheckNicknameResponseDto.builder().isExist(false).build());
+    }
+
+    @Transactional
+    public ResponseDto<UserInfoResponseDto> approvalAgreement() {
+        User user = userUtils.getUser();
+        user.updateTermsConditionsAgreement(true);
+        userRepository.save(user);
+        return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
+    }
+
+    @Transactional
+    public ResponseDto<UserInfoResponseDto> uploadProfile(String profileUrl) {
+        User user = userUtils.getUser();
+        user.updateProfileImageUrl(profileUrl);
+        userRepository.save(user);
+        return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
     }
 }

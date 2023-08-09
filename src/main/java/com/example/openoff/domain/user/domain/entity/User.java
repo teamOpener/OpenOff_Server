@@ -125,4 +125,8 @@ public class User extends BaseEntity {
     public List<FieldType> getUserInterestList(){
         return this.userInterestFields.stream().map(UserInterestField::getFieldType).collect(Collectors.toList());
     }
+
+    public void updateTermsConditionsAgreement(Boolean termsConditionsAgreement){
+        this.termsConditionsAgreement = termsConditionsAgreement;
+    }
 }
