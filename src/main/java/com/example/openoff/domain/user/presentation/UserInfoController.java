@@ -5,6 +5,7 @@ import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsInfoReq
 import com.example.openoff.domain.auth.application.dto.response.sms.NCPSmsResponseDto;
 import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
+import com.example.openoff.domain.user.application.dto.request.UserProfileUploadRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
 import com.example.openoff.domain.user.application.dto.response.UserTotalInfoResponseDto;
@@ -49,6 +50,18 @@ public class UserInfoController {
     @PatchMapping("/sms")
     public ResponseEntity<ResponseDto<UserInfoResponseDto>> checkSmsNum(@RequestBody UserSmsCheckRequestDto userSmsCheckRequestDto) {
         ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.checkSmsNum(userSmsCheckRequestDto);
+        return ResponseEntity.ok().body(userInfoResponseDto);
+    }
+
+    @PatchMapping("/approval/privacy")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> approvalAgreement() {
+        ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.approvalAgreement();
+        return ResponseEntity.ok().body(userInfoResponseDto);
+    }
+
+    @PatchMapping("/upload/profile")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> uploadProfile(@RequestBody UserProfileUploadRequestDto userProfileUploadRequestDto) {
+        ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.uploadProfile(userProfileUploadRequestDto.getProfileUrl());
         return ResponseEntity.ok().body(userInfoResponseDto);
     }
 
