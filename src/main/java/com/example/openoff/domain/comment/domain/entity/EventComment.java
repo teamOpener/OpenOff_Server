@@ -58,4 +58,8 @@ public class EventComment extends BaseEntity {
     public void updateParent(EventComment parent) {
         this.parent = parent;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
