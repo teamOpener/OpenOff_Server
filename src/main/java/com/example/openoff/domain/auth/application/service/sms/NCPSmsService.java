@@ -78,7 +78,7 @@ public class NCPSmsService {
         try {
             Random random = new Random();
             StringBuilder randomNum = new StringBuilder();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 6; i++) {
                 randomNum.append(random.nextInt(9) + 1);
             }
             ncpSmsInfoRequestDto.setContent("[OpenOff] 인증번호 ["+randomNum+"]를 입력해주세요.");
