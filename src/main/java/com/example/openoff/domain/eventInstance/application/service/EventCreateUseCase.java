@@ -42,15 +42,17 @@ public class EventCreateUseCase {
             throw TooManyFieldException.of(Error.TOO_MANY_EVENT_FIELD);
         }
         final User user = userUtils.getUser();
+        List<User> userList = userUtils.getUserList(createNewEventRequestDto.getStaffIdList());
+
         KakaoAddressResponse coord = kakaoLocalService.getKakaoAddressToCoord(createNewEventRequestDto.getStreetLoadAddress(), "similar");
 
         EventInfo eventInfo = eventInfoService.saveEventInfo(createNewEventRequestDto, coord);
-        List<Long> eventIndexIdList = eventIndexService.saveEventIndex(eventInfo, createNewEventRequestDto.getEventStartDate(), createNewEventRequestDto.getEventEndDate());
+        List<Long> eventIndexIdList = eventIndexService.saveEventIndex(eventInfo, createNewEventRequestDto.getEventDates());
         List<Long> eventImageIdList = eventImageService.saveEventImage(eventInfo, createNewEventRequestDto.getImageDataList());
         List<Long> eventExtraQuestionIdList = eventExtraQuestionService.saveEventExtraQuestion(eventInfo, createNewEventRequestDto.getExtraQuestionList());
         List<Long> eventInterestFieldIdList = fieldService.saveEventInterestFields(eventInfo, createNewEventRequestDto.getFieldTypeList());
-        Long eventStaffId = eventStaffService.saveEventStaff(user, eventInfo, createNewEventRequestDto.getHostPhoneNumber(), createNewEventRequestDto.getHostEmail(), createNewEventRequestDto.getHostName());
+        List<Long> eventStaffIds = eventStaffService.saveEventStaffs(user, userList, eventInfo, createNewEventRequestDto.getHostPhoneNumber(), createNewEventRequestDto.getHostEmail(), createNewEventRequestDto.getHostName());
 
-        return EventInstanceMapper.mapToEventInstanceInfoResponse(createNewEventRequestDto, eventInfo.getId(), eventIndexIdList, eventImageIdList, eventExtraQuestionIdList, eventInterestFieldIdList, eventStaffId);
+        return EventInstanceMapper.mapToEventInstanceInfoResponse(createNewEventRequestDto, eventInfo.getId(), eventIndexIdList, eventImageIdList, eventExtraQuestionIdList, eventInterestFieldIdList, eventStaffIds);
     }
 }

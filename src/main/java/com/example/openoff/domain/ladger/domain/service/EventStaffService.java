@@ -20,8 +20,11 @@ import java.util.stream.Collectors;
 public class EventStaffService {
     private final EventStaffRepository eventStaffRepository;
 
-    public Long saveEventStaff(User user, EventInfo eventInfo, String phoneNumber, String email, String name) {
-        return eventStaffRepository.save(EventStaff.toEntity(user, eventInfo, StaffType.MAIN, phoneNumber, email, name)).getId();
+    public List<Long> saveEventStaffs(User user, List<User> staffs, EventInfo eventInfo, String phoneNumber, String email, String name) {
+        EventStaff mainStaff = EventStaff.toEntity(user, eventInfo, StaffType.MAIN, phoneNumber, email, name);
+        List<EventStaff> eventStaffs = staffs.stream().map(staff -> EventStaff.toEntity(staff, eventInfo, StaffType.SUB, phoneNumber, email, name)).collect(Collectors.toList());
+        eventStaffs.add(0, mainStaff);
+        return eventStaffRepository.saveAll(eventStaffs).stream().map(EventStaff::getId).collect(Collectors.toList());
     }
 
     public void checkEventStaff(String eventStaffId, Long eventInfoId) {

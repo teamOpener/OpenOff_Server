@@ -17,16 +17,16 @@ public class CreateNewEventResponseDto {
     private List<Long> eventImageIdList;
     private List<Long> eventQuestionIdList;
     private List<Long> eventInterestFieldIdList;
-    private Long eventStaffId;
+    private List<Long> eventStaffIds;
 
     @Builder
-    public CreateNewEventResponseDto(CreateNewEventRequestDto createDataInfo, Long eventInfoId, List<Long> eventIndexIdList, List<Long> eventImageIdList, List<Long> eventQuestionIdList, List<Long> eventInterestFieldIdList, Long eventStaffId) {
+    public CreateNewEventResponseDto(CreateNewEventRequestDto createDataInfo, Long eventInfoId, List<Long> eventIndexIdList, List<Long> eventImageIdList, List<Long> eventQuestionIdList, List<Long> eventInterestFieldIdList, List<Long> eventStaffIds) {
         this.createDataInfo = createDataInfo;
         this.eventInfoId = eventInfoId;
         this.eventIndexIdList = eventIndexIdList;
         this.eventImageIdList = eventImageIdList;
         this.eventQuestionIdList = eventQuestionIdList;
         this.eventInterestFieldIdList = eventInterestFieldIdList;
-        this.eventStaffId = eventStaffId;
+        this.eventStaffIds = eventStaffIds;
     }
 }

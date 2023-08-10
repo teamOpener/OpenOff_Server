@@ -17,7 +17,6 @@ public class KakaoLocalService {
     private final KakaoMapClient kakaoMapClient;
 
     public KakaoAddressResponse getKakaoAddressToCoord(String query, String analyzeType) {
-        log.info("query: {}, analyzeType: {}", query, analyzeType);
         return kakaoMapClient.getKakaoAddressToCoord(query, analyzeType, "KakaoAK " + API_KEY, "application/json; charset=utf-8");
     }
 }

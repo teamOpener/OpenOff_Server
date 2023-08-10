@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @DomainService
@@ -22,11 +20,8 @@ import java.util.stream.Stream;
 public class EventIndexService {
     private final EventIndexRepository eventIndexRepository;
 
-    public List<Long> saveEventIndex(EventInfo eventInfo, LocalDateTime eventStartDate, LocalDateTime eventEndDate) {
-        long numOfDaysBetween = ChronoUnit.DAYS.between(eventStartDate, eventEndDate);
-        List<EventIndex> eventIndexList = Stream.iterate(eventStartDate, date -> date.plusDays(1))
-                .limit(numOfDaysBetween + 1)
-                .collect(Collectors.toList()).stream()
+    public List<Long> saveEventIndex(EventInfo eventInfo, List<LocalDateTime> eventDates) {
+        List<EventIndex> eventIndexList = eventDates.stream()
                 .map(date -> EventIndex.toEntity(eventInfo, date))
                 .collect(Collectors.toList());
         return eventIndexRepository.saveAll(eventIndexList).stream().map(EventIndex::getId).collect(Collectors.toList());

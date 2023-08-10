@@ -15,8 +15,7 @@ public class CreateNewEventRequestDto {
     private String title;
     private LocalDateTime applicationStartDate;
     private LocalDateTime applicationEndDate;
-    private LocalDateTime eventStartDate;
-    private LocalDateTime eventEndDate;
+    private List<LocalDateTime> eventDates;
     private String streetLoadAddress;
     private String detailAddress;
     private Integer eventFee;
@@ -25,6 +24,7 @@ public class CreateNewEventRequestDto {
     private List<ImageUrlList> imageDataList;
     private List<String> extraQuestionList;
     private String hostName;
+    private List<String> staffIdList;
     private String hostPhoneNumber;
     private String hostEmail;
 

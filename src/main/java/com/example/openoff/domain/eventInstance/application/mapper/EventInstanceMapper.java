@@ -24,7 +24,7 @@ public class EventInstanceMapper {
             (
                     CreateNewEventRequestDto createDataInfo,
                     Long eventInfoId, List<Long> eventIndexIdList, List<Long> eventImageIdList,
-                    List<Long> eventQuestionIdList, List<Long> eventInterestFieldIdList, Long eventStaffId
+                    List<Long> eventQuestionIdList, List<Long> eventInterestFieldIdList, List<Long> eventStaffIds
             )
     {
         return CreateNewEventResponseDto.builder()
@@ -34,7 +34,7 @@ public class EventInstanceMapper {
                 .eventImageIdList(eventImageIdList)
                 .eventQuestionIdList(eventQuestionIdList)
                 .eventInterestFieldIdList(eventInterestFieldIdList)
-                .eventStaffId(eventStaffId)
+                .eventStaffIds(eventStaffIds)
                 .build();
     }
 
