@@ -53,6 +53,9 @@ public class User extends BaseEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kakao_account_id")
     private SocialAccount kakaoAccount;
@@ -128,5 +131,9 @@ public class User extends BaseEntity {
 
     public void updateTermsConditionsAgreement(Boolean termsConditionsAgreement){
         this.termsConditionsAgreement = termsConditionsAgreement;
+    }
+
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
     }
 }
