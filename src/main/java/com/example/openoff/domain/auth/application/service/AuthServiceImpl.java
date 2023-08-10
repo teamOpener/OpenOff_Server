@@ -141,6 +141,7 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
+    @Transactional
     public ResponseDto<TokenResponseDto> initNormalSignUp(NormalSignInRequestDto normalSignupRequestDto) {
         SocialAccount socialAccount = socialAccountService.checkAndSaveNormalAccount(normalSignupRequestDto.getPassword(), normalSignupRequestDto.getEmail());
         User user = userQueryService.initUserSaveOrFind(socialAccount, "normal");
