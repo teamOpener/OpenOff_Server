@@ -11,6 +11,7 @@ import com.example.openoff.domain.auth.domain.service.SocialAccountService;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.CheckNicknameResponseDto;
+import com.example.openoff.domain.user.application.dto.response.SearchNicknameResponseDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
 import com.example.openoff.domain.user.application.dto.response.UserTotalInfoResponseDto;
 import com.example.openoff.domain.user.domain.entity.User;
@@ -127,5 +128,15 @@ public class UserQueryService {
         user.updateProfileImageUrl(profileUrl);
         userRepository.save(user);
         return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
+    }
+
+    public ResponseDto<List<SearchNicknameResponseDto>> searchUserByNickname(String keyword) {
+        List<SearchNicknameResponseDto> nicknameResponseDtos = userRepository.findByNickname(keyword).stream()
+                .map(user -> SearchNicknameResponseDto.builder()
+                        .userId(user.getId())
+                        .username(user.getUserName())
+                        .nickname(user.getNickname())
+                        .profileImageUrl(user.getProfileImageUrl()).build()).collect(Collectors.toList());
+        return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", nicknameResponseDtos);
     }
 }
