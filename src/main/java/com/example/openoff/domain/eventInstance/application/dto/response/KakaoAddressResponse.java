@@ -1,13 +1,14 @@
 package com.example.openoff.domain.eventInstance.application.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
-@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class KakaoAddressResponse {
 
@@ -15,17 +16,17 @@ public class KakaoAddressResponse {
     private List<KakaoDocument> documents;
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoMeta {
         private int total_count;
         private int pageable_count;
+        @JsonProperty("is_end")
         private boolean is_end;
-
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoDocument {
         private String address_name;
@@ -38,7 +39,7 @@ public class KakaoAddressResponse {
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoAddress {
         private String address_name;
@@ -57,7 +58,7 @@ public class KakaoAddressResponse {
     }
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class KakaoRoadAddress {
         private String address_name;
