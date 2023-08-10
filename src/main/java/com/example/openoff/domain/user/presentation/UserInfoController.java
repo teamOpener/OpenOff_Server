@@ -65,4 +65,10 @@ public class UserInfoController {
         return ResponseEntity.ok().body(userInfoResponseDto);
     }
 
+    @GetMapping("/search/nickname")
+    public ResponseEntity<ResponseDto<?>> searchUser(@RequestParam String keyword) {
+        ResponseDto<?> responseDto = userQueryService.searchUserByNickname(keyword);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
 }
