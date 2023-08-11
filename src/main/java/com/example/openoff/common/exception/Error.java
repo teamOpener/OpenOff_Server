@@ -45,7 +45,7 @@ public enum Error {
     // EventInstance
     TOO_MANY_EVENT_FIELD("이벤트 분야를 4개 이상 설정할 수 없습니다.", 1200),
     ALREADY_APPLIED_EVENT("이미 신청한 이벤트입니다.", 1201),
-
+    EVENT_DATE_IS_BEFORE("이벤트 날짜가 지나 접근할 수 없습니다.", 1202),
 
     // Ladger
     EVENT_APPLICANT_FULL("이벤트 신청 인원이 가득 찻습니다.", 1300),

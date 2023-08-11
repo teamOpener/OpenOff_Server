@@ -2,8 +2,6 @@ package com.example.openoff.domain.ladger.application.mapper;
 
 import com.example.openoff.common.annotation.Mapper;
 import com.example.openoff.common.dto.PageResponse;
-import com.example.openoff.common.exception.BusinessException;
-import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
@@ -81,8 +79,7 @@ public class LadgerMapper {
                 .build();
     }
 
-    public static EventLadgerTotalStatusResponseDto mapToEventLadgerTotalStatusResponseDto(List<EventApplicantLadger> ladgerList){
-        EventIndex eventIndex = ladgerList.stream().findAny().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)).getEventIndex();
+    public static EventLadgerTotalStatusResponseDto mapToEventLadgerTotalStatusResponseDto(EventIndex eventIndex, List<EventApplicantLadger> ladgerList){
         return EventLadgerTotalStatusResponseDto.builder()
                 .eventIndexId(eventIndex.getId())
                 .eventDate(eventIndex.getEventDate())
