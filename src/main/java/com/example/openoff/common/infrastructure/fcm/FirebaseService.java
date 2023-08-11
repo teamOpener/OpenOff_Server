@@ -1,6 +1,6 @@
 package com.example.openoff.common.infrastructure.fcm;
 
-import com.example.openoff.domain.user.domain.entity.User;
+import com.example.openoff.domain.notification.domain.entity.UserFcmToken;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,8 +39,7 @@ public class FirebaseService {
                 .build();
     }
 
-    public void sendFCMNotificationSingle(User user, String title, String body) {
-        if (user.getFcmToken() == null) return;
+    public void sendFCMNotificationSingle(UserFcmToken userFcmToken, String title, String body) {
         Notification notification = Notification.builder()
                 .setTitle(title).setBody(body).build();
 
@@ -48,7 +47,7 @@ public class FirebaseService {
                 .setAndroidConfig(androidConfig(title, body))
                 .setApnsConfig(apnsConfig(title, body))
                 .setNotification(notification)
-                .setToken(user.getFcmToken())
+                .setToken(userFcmToken.getFcmToken())
                 .build();
         try {
             firebaseMessaging.send(message);
@@ -57,15 +56,15 @@ public class FirebaseService {
         }
     }
 
-    public void sendFCMNotificationMulticast(List<User> users, String title, String body) {
+    public void sendFCMNotificationMulticast(List<UserFcmToken> userFcmTokens, String title, String body) {
         Notification notification = Notification.builder()
                 .setTitle(title).setBody(body).build();
         MulticastMessage multicastMessage = MulticastMessage.builder()
                 .setNotification(notification)
                 .setAndroidConfig(androidConfig(title, body))
                 .setApnsConfig(apnsConfig(title, body))
-                .addAllTokens(users.stream()
-                        .map(User::getFcmToken)
+                .addAllTokens(userFcmTokens.stream()
+                        .map(UserFcmToken::getFcmToken)
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList()))
                 .build();

@@ -58,7 +58,8 @@ public class LadgerUpdateUseCase {
         // 처리하는 사람이 스탭인지 체크
         eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
         eventApplicationLadgerHandler.removeQRImageAndUpdateIsAccepted(eventApplicantLadger);
-//        firebaseService.sendFCMNotificationSingle(eventApplicantLadger.getEventApplicant(), "이벤트 신청 완료", "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!");
+
+//        firebaseService.sendFCMNotificationSingle(eventApplicantLadger.getEventApplicant(), "이벤트 신청 취소", "이벤트 신청 취소되었습니다...\n사유를 확인해주세요");
     }
 
     public QRCheckResponseDto checkQRCode(QRCheckRequestDto qrCheckRequestDto) {
