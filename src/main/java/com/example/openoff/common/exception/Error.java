@@ -36,6 +36,7 @@ public enum Error {
     USER_NOT_FOUND("사용자를 찾을 수 없습니다.", 1000),
     USER_NOT_CORRECT_SMS_NUM("잘못된 인증 번호입니다.", 1001),
     USER_NICKNAME_DUPLICATION("중복된 닉네임입니다.", 1002),
+    USER_PHONE_NUM_DUPLICATION("이미 가입된 휴대폰 번호에요🥹🥹🥹", 1003),
 
 
     // Field
@@ -55,7 +56,8 @@ public enum Error {
     ALREADY_PERMIT("이미 신청이 완료되었습니다.", 1303),
     INVALID_QR_CODE("유효한 QR 코드가 아닙니다.", 1304),
     NOT_ACCEPTED("승인된 신청이 아닙니다.", 1305),
-    EVENT_APPLICANT_NOT_ACCEPT("승인되지 않은 인원입니다.", 1306);
+    EVENT_APPLICANT_NOT_ACCEPT("승인되지 않은 인원입니다.", 1306),
+    ;
 
 
     private final String message;

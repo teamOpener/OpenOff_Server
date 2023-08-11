@@ -91,7 +91,11 @@ public class UserQueryService {
 
     @Transactional
     public ResponseDto<UserInfoResponseDto> checkSmsNum(UserSmsCheckRequestDto userSmsCheckRequestDto) {
+        Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(userSmsCheckRequestDto.getPhoneNum());
         User user = userUtils.getUser();
+        if (byPhoneNumber.isPresent() && !byPhoneNumber.get().getId().equals(user.getId())) {
+            throw UserException.of(Error.USER_PHONE_NUM_DUPLICATION);
+        }
         if(ncpSmsService.checkSmsNum(userSmsCheckRequestDto)) {
             user.updatePhoneNumber(userSmsCheckRequestDto.getPhoneNum());
         } else {
