@@ -5,6 +5,7 @@ import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
@@ -65,11 +66,16 @@ public class LadgerSearchUseCase {
     }
 
     public EventLadgerTotalStatusResponseDto getEventIndexLadgerStatus(Long eventIndexId) {
+        LocalDateTime now = LocalDateTime.now();
         User user = userUtils.getUser();
-        if (eventIndexService.findById(eventIndexId).getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
+        EventIndex eventIndex = eventIndexService.findById(eventIndexId);
+        if (eventIndex.getEventDate().isBefore(now)) {
+            throw BusinessException.of(Error.EVENT_DATE_IS_BEFORE);
+        }
+        if (eventIndex.getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }
         List<EventApplicantLadger> allApplicantInEventIndex = eventApplicantLadgerService.findInEventIndex(eventIndexId);
-        return LadgerMapper.mapToEventLadgerTotalStatusResponseDto(allApplicantInEventIndex);
+        return LadgerMapper.mapToEventLadgerTotalStatusResponseDto(eventIndex, allApplicantInEventIndex);
     }
 }
