@@ -66,12 +66,8 @@ public class LadgerSearchUseCase {
     }
 
     public EventLadgerTotalStatusResponseDto getEventIndexLadgerStatus(Long eventIndexId) {
-        LocalDateTime now = LocalDateTime.now();
         User user = userUtils.getUser();
         EventIndex eventIndex = eventIndexService.findById(eventIndexId);
-        if (eventIndex.getEventDate().isBefore(now)) {
-            throw BusinessException.of(Error.EVENT_DATE_IS_BEFORE);
-        }
         if (eventIndex.getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }

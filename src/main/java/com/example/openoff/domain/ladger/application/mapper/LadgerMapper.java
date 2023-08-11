@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,10 +81,12 @@ public class LadgerMapper {
     }
 
     public static EventLadgerTotalStatusResponseDto mapToEventLadgerTotalStatusResponseDto(EventIndex eventIndex, List<EventApplicantLadger> ladgerList){
+        LocalDateTime now = LocalDateTime.now();
         return EventLadgerTotalStatusResponseDto.builder()
                 .eventIndexId(eventIndex.getId())
                 .eventDate(eventIndex.getEventDate())
                 .isClosed(eventIndex.getIsClose())
+                .isEnded(eventIndex.getEventDate().isBefore(now))
                 .maxCount(eventIndex.getEventInfo().getEventMaxPeople())
                 .notApprovedCount(ladgerList.stream().filter(ladger -> ladger.getIsAccept().equals(false)).count())
                 .approvedCount(ladgerList.stream().filter(ladger -> ladger.getIsJoin().equals(false) && ladger.getIsAccept().equals(true)).count())
