@@ -8,6 +8,7 @@ import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.interest.domain.entity.UserInterestField;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.entity.EventStaff;
+import com.example.openoff.domain.notification.domain.entity.UserFcmToken;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,9 +54,6 @@ public class User extends BaseEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "fcm_token")
-    private String fcmToken;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kakao_account_id")
     private SocialAccount kakaoAccount;
@@ -71,6 +69,9 @@ public class User extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "normal_account_id")
     private SocialAccount normalAccount;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserFcmToken> userFcmTokens;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserInterestField> userInterestFields;
@@ -133,7 +134,4 @@ public class User extends BaseEntity {
         this.termsConditionsAgreement = termsConditionsAgreement;
     }
 
-    public void updateFcmToken(String fcmToken){
-        this.fcmToken = fcmToken;
-    }
 }

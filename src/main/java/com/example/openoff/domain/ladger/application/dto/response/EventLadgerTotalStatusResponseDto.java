@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class EventLadgerTotalStatusResponseDto {
     private Long eventIndexId;
+    private String eventTitle;
     private LocalDateTime eventDate;
     private Boolean isClosed;
     private Boolean isEnded;
@@ -19,8 +20,9 @@ public class EventLadgerTotalStatusResponseDto {
     private Long joinedCount;
 
     @Builder
-    public EventLadgerTotalStatusResponseDto(Long eventIndexId, LocalDateTime eventDate, Boolean isClosed, Boolean isEnded, Integer maxCount, Long notApprovedCount, Long approvedCount, Long joinedCount) {
+    public EventLadgerTotalStatusResponseDto(Long eventIndexId, String eventTitle, LocalDateTime eventDate, Boolean isClosed, Boolean isEnded, Integer maxCount, Long notApprovedCount, Long approvedCount, Long joinedCount) {
         this.eventIndexId = eventIndexId;
+        this.eventTitle = eventTitle;
         this.eventDate = eventDate;
         this.isClosed = isClosed;
         this.isEnded = isEnded;

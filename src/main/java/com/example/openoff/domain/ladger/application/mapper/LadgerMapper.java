@@ -84,6 +84,7 @@ public class LadgerMapper {
         LocalDateTime now = LocalDateTime.now();
         return EventLadgerTotalStatusResponseDto.builder()
                 .eventIndexId(eventIndex.getId())
+                .eventTitle(eventIndex.getEventInfo().getEventTitle())
                 .eventDate(eventIndex.getEventDate())
                 .isClosed(eventIndex.getIsClose())
                 .isEnded(eventIndex.getEventDate().isBefore(now))
