@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -22,9 +23,17 @@ public class UserImageController {
     private final S3UploadService s3UploadService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseDto<Map<String, String>>> getMyTotalInfo(@RequestPart MultipartFile multipartFile) {
+    public ResponseEntity<ResponseDto<Map<String, String>>> uploadImage(@RequestPart MultipartFile multipartFile) {
         String uploadedImgUrl = s3UploadService.uploadImg(multipartFile);
         ResponseDto<Map<String, String>> responseDto = ResponseDto.of(HttpStatus.OK.value(), "이미지 업로드 성공", Map.of("imgUrl", uploadedImgUrl));
         return ResponseEntity.ok().body(responseDto);
     }
+
+    @PostMapping("/uploads")
+    public ResponseEntity<ResponseDto<Map<String, List<String>>>> uploadImages(@RequestPart List<MultipartFile> multipartFiles) {
+        List<String> uploadImgs = s3UploadService.uploadImgs(multipartFiles);
+        ResponseDto<Map<String, List<String>>> responseDto = ResponseDto.of(HttpStatus.OK.value(), "이미지 업로드 성공", Map.of("imgUrl", uploadImgs));
+        return ResponseEntity.ok().body(responseDto);
+    }
+
 }

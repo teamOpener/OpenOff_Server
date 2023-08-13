@@ -17,10 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -63,6 +60,35 @@ public class S3UploadService {
         }
         return amazonS3.getUrl(bucket, fileName).toString();
     }
+
+    public List<String> uploadImgs(List<MultipartFile> files) {
+        if (Objects.isNull(files) || files.isEmpty()) return Collections.emptyList();
+
+        List<String> uploadedImgUrls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) continue;
+
+            String originFileName = Normalizer.normalize(file.getOriginalFilename(), Normalizer.Form.NFC);
+            String fileName = createFileName(originFileName);
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
+
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+            } catch (IOException e) {
+                throw BusinessException.of(Error.FILE_UPLOAD_ERROR);
+            }
+
+            String uploadedUrl = amazonS3.getUrl(bucket, fileName).toString();
+            uploadedImgUrls.add(uploadedUrl);
+        }
+
+        return uploadedImgUrls;
+    }
+
 
     //파일명 난수화
     private String createFileName(String fileName) {
