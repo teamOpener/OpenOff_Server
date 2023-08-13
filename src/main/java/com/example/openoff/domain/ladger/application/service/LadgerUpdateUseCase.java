@@ -3,16 +3,15 @@ package com.example.openoff.domain.ladger.application.service;
 import com.example.openoff.common.annotation.UseCase;
 import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
-import com.example.openoff.common.infrastructure.fcm.FirebaseService;
 import com.example.openoff.common.util.EncryptionUtils;
 import com.example.openoff.common.util.UserUtils;
-import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.ladger.application.dto.request.QRCheckRequestDto;
 import com.example.openoff.domain.ladger.application.dto.response.QRCheckResponseDto;
 import com.example.openoff.domain.ladger.application.handler.EventApplicationLadgerHandler;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
 import com.example.openoff.domain.ladger.domain.service.EventStaffService;
+import com.example.openoff.domain.notification.application.service.NotificationCreateService;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,10 +27,9 @@ public class LadgerUpdateUseCase {
     private final UserUtils userUtils;
     private final EncryptionUtils encryptionUtils;
     private final EventStaffService eventStaffService;
-    private final EventIndexService eventIndexService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
     private final EventApplicationLadgerHandler eventApplicationLadgerHandler;
-    private final FirebaseService firebaseService;
+    private final NotificationCreateService notificationCreateService;
 
     public void permitAndUpdateQRImageUrl(Long ladgerId) {
         User user = userUtils.getUser();
@@ -41,7 +39,7 @@ public class LadgerUpdateUseCase {
         eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
         eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
 
-//        firebaseService.sendFCMNotificationSingle(eventApplicantLadger.getEventApplicant(), "이벤트 신청 완료", "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!");
+        notificationCreateService.createApplyPermitNotification(eventApplicantLadger);
     }
 
     public void permitAndUpdateQRImageUrlAllApplicant(Long eventIndexId) {
@@ -49,6 +47,8 @@ public class LadgerUpdateUseCase {
         eventStaffService.checkEventStaff(user.getId(), eventIndexId);
         List<EventApplicantLadger> notAcceptedLadgersByEventIndex = eventApplicantLadgerService.findNotAcceptedLadgersByEventIndex(eventIndexId);
         eventApplicationLadgerHandler.totalLadgerPermitAndCreateQRImage(notAcceptedLadgersByEventIndex);
+
+        notificationCreateService.createApplyPermitNotifications(notAcceptedLadgersByEventIndex);
     }
 
     public void cancelPermitedApplicantion(Long ladgerId) {
@@ -59,7 +59,7 @@ public class LadgerUpdateUseCase {
         eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
         eventApplicationLadgerHandler.removeQRImageAndUpdateIsAccepted(eventApplicantLadger);
 
-//        firebaseService.sendFCMNotificationSingle(eventApplicantLadger.getEventApplicant(), "이벤트 신청 취소", "이벤트 신청 취소되었습니다...\n사유를 확인해주세요");
+        notificationCreateService.createCancelPermitNotification(eventApplicantLadger);
     }
 
     public QRCheckResponseDto checkQRCode(QRCheckRequestDto qrCheckRequestDto) {
