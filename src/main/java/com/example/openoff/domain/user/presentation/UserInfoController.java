@@ -72,7 +72,7 @@ public class UserInfoController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @PatchMapping("/permit/alert")
+    @PostMapping("/permit/alert")
     public ResponseEntity<ResponseDto<UserInfoResponseDto>> permitAlert(@RequestBody UserFcmTokenUploadRequestDto userFcmTokenUploadRequestDto) {
         ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.permitAlert(userFcmTokenUploadRequestDto);
         return ResponseEntity.ok().body(userInfoResponseDto);

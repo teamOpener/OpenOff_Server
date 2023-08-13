@@ -10,7 +10,13 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_user_fcm_token")
+@Table(name = "openoff_user_fcm_token",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_user_id_fcm_token",
+                        columnNames = {"user_id", "fcm_token"}
+                )
+        })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFcmToken extends BaseEntity {
     @Id

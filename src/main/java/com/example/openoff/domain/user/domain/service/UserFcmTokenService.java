@@ -20,6 +20,11 @@ public class UserFcmTokenService {
     }
 
     public void save(User user, String fcmToken) {
-        userFcmTokenRepository.save(UserFcmToken.builder().user(user).fcmToken(fcmToken).build());
+        userFcmTokenRepository.findAllByUser_Id(user.getId()).stream()
+                        .forEach(userFcmToken -> {
+                            if (!userFcmToken.getFcmToken().equals(fcmToken)) {
+                                userFcmTokenRepository.save(UserFcmToken.builder().user(user).fcmToken(fcmToken).build());
+                            }
+                        });
     }
 }
