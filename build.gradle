@@ -46,6 +46,11 @@ dependencyManagement {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-batch")
+    implementation("org.springframework.boot:spring-boot-starter-quartz")
+
+    testImplementation 'org.springframework.batch:spring-batch-test'
+
     implementation 'org.springframework.kafka:spring-kafka'
     // RabbitMQ
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
