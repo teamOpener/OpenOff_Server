@@ -8,6 +8,7 @@ import com.example.openoff.domain.auth.application.dto.response.SocialAccountInf
 import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
 import com.example.openoff.domain.auth.domain.entity.SocialAccount;
 import com.example.openoff.domain.auth.domain.service.SocialAccountService;
+import com.example.openoff.domain.user.application.dto.request.UserFcmTokenUploadRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.CheckNicknameResponseDto;
@@ -36,6 +37,7 @@ public class UserQueryService {
     private final UserUtils userUtils;
     private final NCPSmsService ncpSmsService;
     private final SocialAccountService socialAccountService;
+    private final UserFcmTokenService userFcmTokenService;
     private final UserRepository userRepository;
 
     public User initUserSaveOrFind(SocialAccount socialAccount, String socialType) {
@@ -142,5 +144,12 @@ public class UserQueryService {
                         .nickname(user.getNickname())
                         .profileImageUrl(user.getProfileImageUrl()).build()).collect(Collectors.toList());
         return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", nicknameResponseDtos);
+    }
+
+    @Transactional
+    public ResponseDto<UserInfoResponseDto> permitAlert(UserFcmTokenUploadRequestDto userFcmTokenUploadRequestDto) {
+        User user = userUtils.getUser();
+        userFcmTokenService.save(user, userFcmTokenUploadRequestDto.getFcmToken());
+        return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
     }
 }
