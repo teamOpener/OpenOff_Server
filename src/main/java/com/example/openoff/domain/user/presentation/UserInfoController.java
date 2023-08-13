@@ -4,6 +4,7 @@ import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.auth.application.dto.request.sms.NCPSmsInfoRequestDto;
 import com.example.openoff.domain.auth.application.dto.response.sms.NCPSmsResponseDto;
 import com.example.openoff.domain.auth.application.service.sms.NCPSmsService;
+import com.example.openoff.domain.user.application.dto.request.UserFcmTokenUploadRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserOnboardingRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserProfileUploadRequestDto;
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
@@ -69,6 +70,12 @@ public class UserInfoController {
     public ResponseEntity<ResponseDto<?>> searchUser(@RequestParam String keyword) {
         ResponseDto<?> responseDto = userQueryService.searchUserByNickname(keyword);
         return ResponseEntity.ok().body(responseDto);
+    }
+
+    @PatchMapping("/permit/alert")
+    public ResponseEntity<ResponseDto<UserInfoResponseDto>> permitAlert(@RequestBody UserFcmTokenUploadRequestDto userFcmTokenUploadRequestDto) {
+        ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.permitAlert(userFcmTokenUploadRequestDto);
+        return ResponseEntity.ok().body(userInfoResponseDto);
     }
 
 }
