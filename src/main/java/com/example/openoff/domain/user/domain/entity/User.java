@@ -8,7 +8,7 @@ import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.interest.domain.entity.UserInterestField;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.entity.EventStaff;
-import com.example.openoff.domain.notification.domain.entity.UserFcmToken;
+import com.example.openoff.domain.notification.domain.entity.Notification;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -87,6 +87,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventBookmark> eventBookmarkList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notificationList;
 
     @Builder
     public User(String userName, String nickname, String profileImageUrl, Birth birth, GenderType gender, String phoneNumber,

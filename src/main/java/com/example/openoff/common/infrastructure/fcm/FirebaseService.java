@@ -1,6 +1,6 @@
 package com.example.openoff.common.infrastructure.fcm;
 
-import com.example.openoff.domain.notification.domain.entity.UserFcmToken;
+import com.example.openoff.domain.user.domain.entity.UserFcmToken;
 import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
