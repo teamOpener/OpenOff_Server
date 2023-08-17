@@ -47,4 +47,9 @@ public class NotificationCreateService {
         firebaseService.sendToTopic(eventInfoId+"-comment-staff-alert", "내가 주최한 이벤트에 댓글이 달렸어요!", "[댓글 미리보기] "+commentWriteRequestDTO.getContent());
         notificationService.saveBulk(staffs, "내가 주최한 이벤트에 댓글이 달렸어요!", NotificationType.C, eventInfoId);
     }
+
+    public void createAnswerCommentNotificationToUser(User user, Long eventInfoId, CommentWriteRequestDto commentWriteRequestDTO){
+        firebaseService.sendFCMNotificationMulticast(user.getUserFcmTokens(), "내가 남긴 문의에 댓글이 달렸어요!", "[댓글 미리보기] "+commentWriteRequestDTO.getContent());
+        notificationService.save(user, "내가 남긴 문의에 댓글이 달렸어요!", NotificationType.C, eventInfoId);
+    }
 }

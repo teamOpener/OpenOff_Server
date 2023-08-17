@@ -36,6 +36,9 @@ public class CommentCreateUseCase {
 
         if (commentWriteRequestDTO.getParentId() == null && !staffs.contains(user)) {
             notificationCreateService.createCommentNotificationToStaff(staffs, eventInfo.getId(), commentWriteRequestDTO);
+        } else if (commentWriteRequestDTO.getParentId() != null && staffs.contains(user)) {
+            EventComment comment = commentService.findByCommentId(commentWriteRequestDTO.getParentId());
+            notificationCreateService.createAnswerCommentNotificationToUser(comment.getWriter(), eventInfo.getId(), commentWriteRequestDTO);
         }
         EventComment comment = commentService.insert(user, eventInfo, commentWriteRequestDTO);
         return CommentMapper.mapToCommentWriteResDto(comment, commentWriteRequestDTO);

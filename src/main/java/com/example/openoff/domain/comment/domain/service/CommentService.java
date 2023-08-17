@@ -61,4 +61,8 @@ public class CommentService {
             return eventComment;
         }
     }
+
+    public EventComment findByCommentId(Long commentId) {
+        return eventCommentRepository.findById(commentId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
+    }
 }
