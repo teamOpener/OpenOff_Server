@@ -28,20 +28,26 @@ public class BookmarkClickUseCase {
     public void doBookmark(Long eventInfoId) {
         User user = userUtils.getUser();
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
+
+        boolean getIsExist = bookmarkService.doBookmarkAndGetIsExist(eventInfo, user);
+
         List<String> fcmTokens = user.getUserFcmTokens().stream()
                 .map(UserFcmToken::getFcmToken)
                 .collect(Collectors.toList());
-
-        String[] suffixes = {"-bookmark-1day", "-bookmark-half", "-bookmark-almost"};
-
-        if (bookmarkService.doBookmarkAndGetIsExist(eventInfo, user)){
-            for (String suffix : suffixes) {
-                firebaseService.unSubscribe(eventInfo.getId() + suffix, fcmTokens);
-            }
+        if (fcmTokens.isEmpty()) {
+            return;
         } else {
-            for (String suffix : suffixes) {
-                firebaseService.subScribe(eventInfo.getId() + suffix, fcmTokens);
+            String[] suffixes = {"-bookmark-1day", "-bookmark-half", "-bookmark-almost"};
+            if (getIsExist){
+                for (String suffix : suffixes) {
+                    firebaseService.unSubscribe(eventInfo.getId() + suffix, fcmTokens);
+                }
+            } else {
+                for (String suffix : suffixes) {
+                    firebaseService.subScribe(eventInfo.getId() + suffix, fcmTokens);
+                }
             }
         }
+
     }
 }
