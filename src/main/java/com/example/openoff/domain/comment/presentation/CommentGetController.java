@@ -41,4 +41,11 @@ public class CommentGetController {
         List<ChildCommentInfoResponseDto> childCommentsInEvent = commentSearchUseCase.getChildCommentsInEvent(eventInfoId, commentId);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "대댓글 조회 완료되었습니다.", childCommentsInEvent));
     }
+
+    @GetMapping(value = "/report/{commentId}")
+    public ResponseEntity<ResponseDto<Void>> reportComment(@PathVariable Long commentId)
+    {
+        commentSearchUseCase.reportComment(commentId);
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "댓글 신고가 완료되었습니다.", null));
+    }
 }
