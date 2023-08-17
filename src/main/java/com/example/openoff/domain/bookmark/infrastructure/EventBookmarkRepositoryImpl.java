@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.example.openoff.domain.bookmark.domain.entity.QEventBookmark.eventBookmark;
@@ -45,6 +46,23 @@ public class EventBookmarkRepositoryImpl implements EventBookmarkRepositoryCusto
                 );
         return PageableExecutionUtils.getPage(eventBookmarks, pageable, countQuery::fetchOne);
     }
+
+    @Override
+    public List<EventBookmark> findApply1DayLeftEventBookmark() {
+        LocalDate oneDayAhead = LocalDate.now().plusDays(1);
+        return queryFactory
+                .select(eventBookmark)
+                .from(eventBookmark)
+                .where(
+                        eventBookmark.eventInfo.eventApplyEndDate.year().eq(oneDayAhead.getYear())
+                                .and(eventBookmark.eventInfo.eventApplyEndDate.month().eq(oneDayAhead.getMonthValue()))
+                                .and(eventBookmark.eventInfo.eventApplyEndDate.dayOfMonth().eq(oneDayAhead.getDayOfMonth()))
+                                .and(eventBookmark.eventInfo.isApproval.isTrue())
+                )
+                .fetch();
+    }
+
+
 
     private BooleanExpression ltEventBookmarkId(Long bookmarkId) {
         return bookmarkId == null ? null : eventBookmark.id.lt(bookmarkId);

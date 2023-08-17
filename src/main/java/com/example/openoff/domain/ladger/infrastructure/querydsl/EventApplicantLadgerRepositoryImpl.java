@@ -5,6 +5,7 @@ import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.repository.EventApplicantLadgerRepositoryCustom;
 import com.example.openoff.domain.ladger.presentation.SortType;
+import com.example.openoff.domain.user.domain.entity.User;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -107,6 +108,19 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 .where(
                         eventApplicantLadger.eventIndex.id.eq(eventIndexId),
                         eventApplicantLadger.isAccept.isFalse()
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<User> findAcceptedApplicantInEventIndex(Long eventIndexId) {
+        return queryFactory
+                .select(eventApplicantLadger.eventApplicant)
+                .from(eventApplicantLadger)
+                .innerJoin(eventApplicantLadger.eventApplicant).fetchJoin()
+                .where(
+                        eventApplicantLadger.eventIndex.id.eq(eventIndexId),
+                        eventApplicantLadger.isAccept.isTrue()
                 )
                 .fetch();
     }

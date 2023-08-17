@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserFcmTokenRepository extends JpaRepository<UserFcmToken, Long> {
+public interface UserFcmTokenRepository extends JpaRepository<UserFcmToken, Long>, UserFcmTokenRepositoryCustom {
     List<UserFcmToken> findAllByUser_Id(String userId);
 }

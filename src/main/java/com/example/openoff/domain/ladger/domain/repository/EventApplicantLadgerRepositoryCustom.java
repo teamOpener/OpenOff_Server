@@ -4,6 +4,7 @@ import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.presentation.SortType;
+import com.example.openoff.domain.user.domain.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,5 @@ public interface EventApplicantLadgerRepositoryCustom {
 
     List<EventApplicantLadger> findApplicantInEventIndex(Long eventIndexId);
     List<EventApplicantLadger> findNotAcceptedApplicantInEventIndex(Long eventIndexId);
+    List<User> findAcceptedApplicantInEventIndex(Long eventIndexId);
 }
