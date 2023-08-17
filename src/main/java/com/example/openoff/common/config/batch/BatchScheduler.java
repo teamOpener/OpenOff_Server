@@ -59,4 +59,16 @@ public class BatchScheduler {
             log.error("eventStaffJob error : {}", e.getMessage());
         }
     }
+
+    @Scheduled(cron = "0 0 8 * * *")
+    public void checkNotApprovedApplicantJob() {
+        Map<String, JobParameter> confMap = Map.of("time", new JobParameter(System.currentTimeMillis()));
+        JobParameters jobParameters = new JobParameters(confMap);
+
+        try{
+            jobLauncher.run(eventStaffBatchConfig.eventStaffCountNotApprovedApplicantJob(), jobParameters);
+        } catch (Exception e) {
+            log.error("bookmarkEventApplyLeft1DayJob error : {}", e.getMessage());
+        }
+    }
 }

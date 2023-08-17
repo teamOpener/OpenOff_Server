@@ -59,6 +59,16 @@ public class EventStaffBatchConfig {
     }
 
     @Bean
+    public Job eventStaffCountNotApprovedApplicantJob()
+    {
+        LocalDate now = LocalDate.now();
+        return jobBuilderFactory.get("EventCountNotApprovedApplicantStep_"+now)
+                .preventRestart()
+                .start(EventCountNotApprovedApplicantStep())
+                .build();
+    }
+
+    @Bean
     public Step EventStaffLeft1DayStep()
     {
         LocalDate now = LocalDate.now();
@@ -82,6 +92,17 @@ public class EventStaffBatchConfig {
                 .build();
     }
 
+    public Step EventCountNotApprovedApplicantStep()
+    {
+        LocalDate now = LocalDate.now();
+        return stepBuilderFactory.get("EventCountNotApprovedApplicantStep_"+now)
+                .<EventIndex, List<Notification>> chunk(10)
+                .reader(eventCountNotApprovedReader())
+                .processor(eventCountNotApprovedApplicantNotificationProcessor())
+                .writer(staffNotificationWriter())
+                .build();
+    }
+
     @Bean
     @StepScope
     public ListItemReader<EventIndex> eventStaff1DayLeftReader() {
@@ -93,6 +114,13 @@ public class EventStaffBatchConfig {
     @StepScope
     public ListItemReader<EventIndex> eventStaffDDayLeftReader() {
         List<EventIndex> eventIndexList = eventIndexRepository.findDDayLeftEventIndex();
+        return new ListItemReader<>(eventIndexList);
+    }
+
+    @Bean
+    @StepScope
+    public ListItemReader<EventIndex> eventCountNotApprovedReader() {
+        List<EventIndex> eventIndexList = eventIndexRepository.findNotClosedEventIndex();
         return new ListItemReader<>(eventIndexList);
     }
 
@@ -124,6 +152,25 @@ public class EventStaffBatchConfig {
                 return staffs.stream().map(user -> Notification.builder()
                                 .user(user)
                                 .content("이벤트 당일이 되었습니다!\n참석 명단을 다시 한 번 체크해주세요.")
+                                .isRead(false)
+                                .notificationType(NotificationType.E)
+                                .notificationParameter(item.getId()).build())
+                        .collect(Collectors.toList());
+            }
+        };
+    }
+
+    public ItemProcessor<EventIndex, List<Notification>> eventCountNotApprovedApplicantNotificationProcessor() {
+        return new ItemProcessor<EventIndex, List<Notification>>() {
+            @Override
+            public List<Notification> process(EventIndex item) throws Exception {
+                String eventTitle = item.getEventInfo().getEventTitle();
+                List<User> staffs = item.getEventInfo().getEventStaffs().stream().map(EventStaff::getStaff).collect(Collectors.toList());
+                long count = item.getEventApplicantLadgers().stream().filter(eventApplicantLadger -> !eventApplicantLadger.getIsAccept()).count();
+                firebaseService.sendToTopic(item.getId()+"-check-approve-staff-alert", "["+eventTitle+"] 이벤트 미확인 신청자를 확인해주세요!", "미승인한 이벤트 참여자가 " + String.valueOf(count) +  " 명 있습니다.\n서둘러 승인을 완료해주세요.");
+                return staffs.stream().map(user -> Notification.builder()
+                                .user(user)
+                                .content("미승인한 이벤트 참여자가 " + String.valueOf(count) +  " 명 있습니다.\n서둘러 승인을 완료해주세요.")
                                 .isRead(false)
                                 .notificationType(NotificationType.E)
                                 .notificationParameter(item.getId()).build())
