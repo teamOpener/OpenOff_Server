@@ -63,15 +63,16 @@ public class EventCreateUseCase {
                 .map(UserFcmToken::getFcmToken)
                 .collect(Collectors.toList());
 
-        firebaseService.subScribe(eventInfo.getId()+"-comment-staff-alert", fcmTokens);
-        firebaseService.subScribe(eventInfo.getId()+"-permit-staff", fcmTokens);
+        if (!fcmTokens.isEmpty()) {
+            firebaseService.subScribe(eventInfo.getId()+"-comment-staff-alert", fcmTokens);
+            firebaseService.subScribe(eventInfo.getId()+"-permit-staff", fcmTokens);
 
-        eventIndexIdList.forEach(eventIndexId -> {
-            firebaseService.subScribe(eventIndexId+"-apply-staff-alert", fcmTokens);
-            firebaseService.subScribe(eventIndexId+"-apply-half-staff-alert", fcmTokens);
-            firebaseService.subScribe(eventIndexId+"-1day-staff-alert", fcmTokens);
-            firebaseService.subScribe(eventIndexId+"-dday-staff-alert", fcmTokens);
-        });
+            eventIndexIdList.forEach(eventIndexId -> {
+                firebaseService.subScribe(eventIndexId + "-check-approve-staff-alert", fcmTokens);
+                firebaseService.subScribe(eventIndexId + "-1day-staff-alert", fcmTokens);
+                firebaseService.subScribe(eventIndexId + "-dday-staff-alert", fcmTokens);
+            });
+        }
 
         return EventInstanceMapper.mapToEventInstanceInfoResponse(createNewEventRequestDto, eventInfo.getId(), eventIndexIdList, eventImageIdList, eventExtraQuestionIdList, eventInterestFieldIdList, eventStaffs.stream().map(EventStaff::getId).collect(Collectors.toList()));
     }
