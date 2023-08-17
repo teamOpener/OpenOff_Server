@@ -6,7 +6,7 @@ public enum AccountType implements CodeValue {
     GOOGLE("G","구글"),
     KAKAO("K", "카카오"),
     APPLE("A", "애플"),
-    NOMAL("N","일반");
+    NORMAL("N","일반");
 
     private String code;
     private String value;

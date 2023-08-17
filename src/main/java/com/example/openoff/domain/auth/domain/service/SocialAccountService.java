@@ -30,19 +30,19 @@ public class SocialAccountService {
     }
 
     public Boolean checkExistEmailInNormal(String email) {
-        return socialAccountRepository.existsByEmailAndAccountType(email, AccountType.NOMAL);
+        return socialAccountRepository.existsByEmailAndAccountType(email, AccountType.NORMAL);
     }
 
     public SocialAccount checkAndSaveNormalAccount(String password, String email) {
         if (checkExistEmailInNormal(email)) {
             throw SocialAccountException.of(Error.EMAIL_DUPLICATION);
         } else {
-            return socialAccountRepository.saveAndFlush(SocialAccount.toEntity(AccountType.NOMAL, encryptionUtils.passwordEncrypt(email, password), email, UUID.randomUUID().toString()));
+            return socialAccountRepository.saveAndFlush(SocialAccount.toEntity(AccountType.NORMAL, encryptionUtils.passwordEncrypt(email, password), email, UUID.randomUUID().toString()));
         }
     }
 
     public SocialAccount findNormalAccount(String password, String email) {
-        return socialAccountRepository.findByEmailAndSocialIdAndAccountType(email, encryptionUtils.passwordEncrypt(email, password), AccountType.NOMAL)
+        return socialAccountRepository.findByEmailAndSocialIdAndAccountType(email, encryptionUtils.passwordEncrypt(email, password), AccountType.NORMAL)
                 .orElseThrow(() -> UserNotFoundException.of(Error.USER_NOT_FOUND));
     }
 
