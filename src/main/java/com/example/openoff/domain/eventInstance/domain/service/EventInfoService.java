@@ -59,4 +59,9 @@ public class EventInfoService {
     public List<EventInfo> findEventInfoByMyInterestFields(List<FieldType> fieldTypes) {
         return eventInfoRepository.findEventInfosByFieldTypes(fieldTypes);
     }
+
+    public void suspensionEventApplication(EventInfo eventInfo) {
+        eventInfo.updateApplyPermit(false);
+        eventInfoRepository.save(eventInfo);
+    }
 }
