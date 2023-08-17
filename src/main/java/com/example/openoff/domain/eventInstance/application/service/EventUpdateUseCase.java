@@ -5,6 +5,7 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
+import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.eventInstance.domain.service.EventInfoService;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 public class EventUpdateUseCase {
     private final UserUtils userUtils;
     private final EventInfoService eventInfoService;
+    private final EventIndexService eventIndexService;
 
     public void suspensionEventApplication(Long eventInfoId) {
         User user = userUtils.getUser();
@@ -26,6 +28,7 @@ public class EventUpdateUseCase {
         if (eventInfo.getEventStaffs().stream()
                         .anyMatch(eventStaff -> eventStaff.getStaff().getId().equals(user.getId()))){
             eventInfoService.suspensionEventApplication(eventInfo);
+            eventIndexService.updateEventIndexToClose(eventInfo);
         } else {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }

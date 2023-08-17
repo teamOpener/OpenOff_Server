@@ -34,4 +34,9 @@ public class EventIndexService {
     public EventIndex findById(Long eventIndexId) {
         return eventIndexRepository.findById(eventIndexId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
     }
+
+    public void updateEventIndexToClose(EventInfo eventInfo){
+        eventInfo.getEventIndexes().stream().forEach(eventIndex -> eventIndex.updateEventIndexIsClose(true));
+        eventIndexRepository.saveAll(eventInfo.getEventIndexes());
+    }
 }
