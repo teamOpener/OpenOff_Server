@@ -57,7 +57,11 @@ public enum Error {
     INVALID_QR_CODE("유효한 QR 코드가 아닙니다.", 1304),
     NOT_ACCEPTED("승인된 신청이 아닙니다.", 1305),
     EVENT_APPLICANT_NOT_ACCEPT("승인되지 않은 인원입니다.", 1306),
-    EVENT_CLOSED("해당 날짜는 더이상 신청할 수 없습니다.", 1307);
+    EVENT_CLOSED("해당 날짜는 더이상 신청할 수 없습니다.", 1307),
+
+    // Comment
+    NOT_DELETE_AUTHORITY("댓글 삭제 권한이 없습니다.", 1400),
+    ;
 
 
     private final String message;

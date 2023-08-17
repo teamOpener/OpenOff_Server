@@ -41,13 +41,8 @@ public class CommentService {
         return eventCommentRepository.getChildEventComments(eventInfoId, commentId);
     }
 
-    public void deleteComment(String userId, Long commentId) {
-        eventCommentRepository.findEventCommentByIdAndWriter_Id(commentId, userId)
-                .ifPresentOrElse(eventCommentRepository::delete,
-                        // 댓글 삭제 권한이 없는 예외 처리 추가해야함
-                        () -> {throw BusinessException.of(Error.DATA_NOT_FOUND);}
-                );
-
+    public void deleteComment(Long commentId) {
+        eventCommentRepository.deleteById(commentId);
     }
 
     public EventComment updateCommentByUser(User user, CommentChangeRequestDto commentChangeRequestDto) {
