@@ -44,7 +44,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
                         QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
-                        distanceJudgment(eventSearchRequestDto.getLongitude(), eventSearchRequestDto.getLatitude()),
+                        distanceJudgment(eventSearchRequestDto.getLatitude(), eventSearchRequestDto.getLongitude()),
                         eventDateJudgment(eventSearchRequestDto.getStartDate(), eventSearchRequestDto.getEndDate()),
                         keywordContains(eventSearchRequestDto.getKeyword()),
                         fieldJudgment(eventSearchRequestDto.getField()),
