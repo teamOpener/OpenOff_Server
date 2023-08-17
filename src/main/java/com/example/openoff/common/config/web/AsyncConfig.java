@@ -16,8 +16,9 @@ public class AsyncConfig {
         executor.setCorePoolSize(4);
         executor.setMaxPoolSize(10);
         executor.setQueueCapacity(100);
-        executor.setAllowCoreThreadTimeOut(true);
-        executor.setKeepAliveSeconds(1200);
+        executor.setThreadNamePrefix("BatchExecutor-");
+//        executor.setAllowCoreThreadTimeOut(true);
+//        executor.setKeepAliveSeconds(1200);
         executor.initialize();
         return executor;
     }
