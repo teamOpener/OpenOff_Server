@@ -39,64 +39,64 @@ public class EventStaffBatchConfig {
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job eventLeft1DayJob()
+    public Job eventStaffLeft1DayJob()
     {
         LocalDate now = LocalDate.now();
         return jobBuilderFactory.get("EventLeft1DayStaffStep_"+now)
                 .preventRestart()
-                .start(EventLeft1DayStep())
+                .start(EventStaffLeft1DayStep())
                 .build();
     }
 
     @Bean
-    public Job eventLeftDDayJob()
+    public Job eventStaffLeftDDayJob()
     {
         LocalDate now = LocalDate.now();
         return jobBuilderFactory.get("EventLeftDDayStaffStep_"+now)
                 .preventRestart()
-                .start(EventLeftDDayStep())
+                .start(EventStaffLeftDDayStep())
                 .build();
     }
 
     @Bean
-    public Step EventLeft1DayStep()
+    public Step EventStaffLeft1DayStep()
     {
         LocalDate now = LocalDate.now();
         return stepBuilderFactory.get("EventLeft1DayStaffStep_"+now)
                 .<EventIndex, List<Notification>> chunk(10)
-                .reader(event1DayLeftReader())
-                .processor(event1DayLeftNotificationProcessor())
-                .writer(notificationWriter())
+                .reader(eventStaff1DayLeftReader())
+                .processor(eventStaff1DayLeftNotificationProcessor())
+                .writer(staffNotificationWriter())
                 .build();
     }
 
     @Bean
-    public Step EventLeftDDayStep()
+    public Step EventStaffLeftDDayStep()
     {
         LocalDate now = LocalDate.now();
         return stepBuilderFactory.get("EventLeftDDayStaffStep_"+now)
                 .<EventIndex, List<Notification>> chunk(10)
-                .reader(eventDDayLeftReader())
-                .processor(eventDDayLeftNotificationProcessor())
-                .writer(notificationWriter())
+                .reader(eventStaffDDayLeftReader())
+                .processor(eventStaffDDayLeftNotificationProcessor())
+                .writer(staffNotificationWriter())
                 .build();
     }
 
     @Bean
     @StepScope
-    public ListItemReader<EventIndex> event1DayLeftReader() {
+    public ListItemReader<EventIndex> eventStaff1DayLeftReader() {
         List<EventIndex> eventIndexList = eventIndexRepository.find1DayLeftEventIndex();
         return new ListItemReader<>(eventIndexList);
     }
 
     @Bean
     @StepScope
-    public ListItemReader<EventIndex> eventDDayLeftReader() {
+    public ListItemReader<EventIndex> eventStaffDDayLeftReader() {
         List<EventIndex> eventIndexList = eventIndexRepository.findDDayLeftEventIndex();
         return new ListItemReader<>(eventIndexList);
     }
 
-    public ItemProcessor<EventIndex, List<Notification>> event1DayLeftNotificationProcessor() {
+    public ItemProcessor<EventIndex, List<Notification>> eventStaff1DayLeftNotificationProcessor() {
         return new ItemProcessor<EventIndex, List<Notification>>() {
             @Override
             public List<Notification> process(EventIndex item) throws Exception {
@@ -114,7 +114,7 @@ public class EventStaffBatchConfig {
         };
     }
 
-    public ItemProcessor<EventIndex, List<Notification>> eventDDayLeftNotificationProcessor() {
+    public ItemProcessor<EventIndex, List<Notification>> eventStaffDDayLeftNotificationProcessor() {
         return new ItemProcessor<EventIndex, List<Notification>>() {
             @Override
             public List<Notification> process(EventIndex item) throws Exception {
@@ -132,7 +132,7 @@ public class EventStaffBatchConfig {
         };
     }
 
-    public ItemWriter<List<Notification>> notificationWriter() {
+    public ItemWriter<List<Notification>> staffNotificationWriter() {
         return list -> {
             List<Notification> flattenNotifications = list.stream()
                     .flatMap(Collection::stream)

@@ -42,7 +42,7 @@ public class BatchScheduler {
         try {
             asyncConfig.taskExecutor().execute(() -> {
                 try {
-                    jobLauncher.run(eventStaffBatchConfig.eventLeft1DayJob(), jobParameters);
+                    jobLauncher.run(eventStaffBatchConfig.eventStaffLeft1DayJob(), jobParameters);
                 } catch (Exception e) {
                     log.error("Error running eventLeft1DayJob : {}", e.getMessage());
                 }
@@ -50,7 +50,7 @@ public class BatchScheduler {
 
             asyncConfig.taskExecutor().execute(() -> {
                 try {
-                    jobLauncher.run(eventStaffBatchConfig.eventLeftDDayJob(), jobParameters);
+                    jobLauncher.run(eventStaffBatchConfig.eventStaffLeftDDayJob(), jobParameters);
                 } catch (Exception e) {
                     log.error("Error running eventLeftDDayJob : {}", e.getMessage());
                 }
