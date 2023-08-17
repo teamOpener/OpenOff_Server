@@ -20,6 +20,7 @@ public class DetailEventInfoResponseDto {
     private Integer eventFee;
     private Integer maxCapacity;
     private String description;
+    private Boolean isBookmarked;
     private List<ImageInfo> imageList;
     private List<IndexInfo> indexList;
     private List<ExtraQuestionInfo> extraQuestionList;
@@ -75,7 +76,7 @@ public class DetailEventInfoResponseDto {
 
     @Builder
     public DetailEventInfoResponseDto(Long eventId, String title, String streetLoadAddress, String detailAddress,
-                                      Integer eventFee, String description, Integer maxCapacity,
+                                      Integer eventFee, String description, Integer maxCapacity, Boolean isBookmarked,
                                       List<ImageInfo> imageList, List<IndexInfo> indexList, List<ExtraQuestionInfo> extraQuestionList) {
         this.eventId = eventId;
         this.title = title;
@@ -83,6 +84,7 @@ public class DetailEventInfoResponseDto {
         this.detailAddress = detailAddress;
         this.eventFee = eventFee;
         this.description = description;
+        this.isBookmarked = isBookmarked;
         this.maxCapacity = maxCapacity;
         this.imageList = imageList;
         this.indexList = indexList;

@@ -66,6 +66,7 @@ public class EventInstanceMapper {
                 .detailAddress(eventInfo.getLocation().getDetailAddress())
                 .eventFee(eventInfo.getEventFee())
                 .description(eventInfo.getEventDescription())
+                .isBookmarked((long) eventInfo.getEventBookmarks().size() > 0)
                 .maxCapacity(eventInfo.getEventMaxPeople())
                 .imageList(eventInfo.getEventImages().stream()
                         .map(eventImage -> DetailEventInfoResponseDto.ImageInfo.of(eventImage.getEventImageUrl(), eventImage.getIsMain()))
