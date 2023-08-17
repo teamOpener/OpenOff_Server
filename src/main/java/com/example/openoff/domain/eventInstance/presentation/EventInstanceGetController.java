@@ -41,6 +41,14 @@ public class EventInstanceGetController {
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "검색 조건에 따라 지도에 이벤트 정보를 불러오는데 성공하였습니다.", searchMapEventInfoResponseDtoList));
     }
 
+    @GetMapping(value = "/search/one")
+    public ResponseEntity<ResponseDto<SearchMapEventInfoResponseDto>> searchMapOnlyOneEventInfo
+            (@RequestParam Long eventInfoId)
+    {
+        SearchMapEventInfoResponseDto searchMapEventInfoResponseDto = eventSearchUseCase.searchMapEventInfoOnlyOne(eventInfoId);
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "지도에 이벤트 정보를 불러오는데 성공하였습니다.", searchMapEventInfoResponseDto));
+    }
+
     @GetMapping(value = "/main/personal")
     public ResponseEntity<ResponseDto<List<MainTapEventInfoResponse>>> getMainTapListByMyInterestField
             ()

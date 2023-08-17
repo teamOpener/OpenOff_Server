@@ -42,6 +42,13 @@ public class EventSearchUseCase {
         return EventInstanceMapper.mapToSearchMapEventInfoResponseList(eventMapList);
     }
 
+    public SearchMapEventInfoResponseDto searchMapEventInfoOnlyOne(Long eventInfoId)
+    {
+        userUtils.getUser();
+        EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
+        return EventInstanceMapper.mapToSearchMapEventInfoResponse(eventInfo);
+    }
+
     public DetailEventInfoResponseDto getDetailEventInfo(Long eventInfoId){
         User user = userUtils.getUser();
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
