@@ -12,4 +12,5 @@ public interface EventIndexRepositoryCustom {
     Map<Long, LocalDateTime> findEventDateByEventInfoId(List<Long> eventInfoIdList);
     List<EventIndex> find1DayLeftEventIndex();
     List<EventIndex> findDDayLeftEventIndex();
+    List<EventIndex> findNotClosedEventIndex();
 }

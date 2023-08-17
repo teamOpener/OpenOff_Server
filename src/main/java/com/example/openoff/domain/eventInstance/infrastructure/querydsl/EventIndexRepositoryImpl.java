@@ -112,4 +112,16 @@ public class EventIndexRepositoryImpl implements EventIndexRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<EventIndex> findNotClosedEventIndex() {
+        QEventIndex qEventIndex = QEventIndex.eventIndex;
+        return queryFactory
+                .select(qEventIndex)
+                .from(qEventIndex)
+                .where(
+                        qEventIndex.isClose.isFalse()
+                                .and(qEventIndex.eventDate.after(LocalDateTime.now()))
+                )
+                .fetch();
+    }
 }
