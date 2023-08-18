@@ -33,4 +33,8 @@ public class BookmarkService {
     public Page<EventBookmark> findMyBookmarkEvents(String userId, Long bookmarkId, Pageable pageable) {
         return eventBookmarkRepository.findMyBookmarkEvent(userId, bookmarkId, pageable);
     }
+
+    public boolean existsByEventInfo_IdAndUser_Id(Long eventInfoId, String userId) {
+        return eventBookmarkRepository.existsByEventInfo_IdAndUser_Id(eventInfoId, userId);
+    }
 }
