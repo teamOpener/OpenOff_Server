@@ -66,7 +66,6 @@ public class EventInstanceMapper {
                 .detailAddress(eventInfo.getLocation().getDetailAddress())
                 .eventFee(eventInfo.getEventFee())
                 .description(eventInfo.getEventDescription())
-                .isBookmarked((long) eventInfo.getEventBookmarks().size() > 0)
                 .maxCapacity(eventInfo.getEventMaxPeople())
                 .longitude(eventInfo.getLocation().getLongitude())
                 .latitude(eventInfo.getLocation().getLatitude())
@@ -92,7 +91,6 @@ public class EventInstanceMapper {
                             .mainImageUrl(data.getEventImages().stream()
                                     .filter(image -> image.getIsMain().equals(true))
                                     .map(EventImage::getEventImageUrl).findFirst().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)))
-                            .isBookmarked((long) data.getEventBookmarks().size() > 0)
                             .build()
                 ).collect(Collectors.toList());
 
@@ -124,7 +122,6 @@ public class EventInstanceMapper {
                                 .mainImageUrl(data.getEventImages().stream()
                                         .filter(image -> image.getIsMain().equals(true))
                                         .map(EventImage::getEventImageUrl).findFirst().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)))
-                                .isBookmarked((long) data.getEventBookmarks().size() > 0)
                                 .build()
                 ).collect(Collectors.toList());
     }

@@ -3,6 +3,7 @@ package com.example.openoff.domain.eventInstance.application.service;
 import com.example.openoff.common.annotation.UseCase;
 import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.bookmark.domain.service.BookmarkService;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
@@ -33,6 +34,7 @@ public class EventSearchUseCase {
     private final UserUtils userUtils;
     private final EventInfoService eventInfoService;
     private final EventIndexService eventIndexService;
+    private final BookmarkService bookmarkService;
 
 
     public List<SearchMapEventInfoResponseDto> searchMapEventInfo(EventSearchRequestDto eventSearchRequestDto)
@@ -53,24 +55,38 @@ public class EventSearchUseCase {
         User user = userUtils.getUser();
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
         List<EventIndexStatisticsDto> eventDetailInfo = eventIndexService.getEventDetailInfo(eventInfo.getId(), user.getId());
-        return EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo, eventDetailInfo);
+        DetailEventInfoResponseDto detailEventInfoResponseDto = EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo, eventDetailInfo);
+        detailEventInfoResponseDto.setIsBookmarked(bookmarkService.existsByEventInfo_IdAndUser_Id(eventInfoId, user.getId()));
+        return detailEventInfoResponseDto;
     }
 
     public List<MainTapEventInfoResponse> getPersonalEventInfoList(){
         User user = userUtils.getUser();
         List<FieldType> myInterests = user.getUserInterestFields().stream().map(UserInterestField::getFieldType).collect(Collectors.toList());
         List<EventInfo> eventInfoByMyInterestFields = eventInfoService.findEventInfoByMyInterestFields(myInterests);
-        return EventInstanceMapper.mapToMainTapEventInfoResponseList(eventInfoByMyInterestFields);
+        List<MainTapEventInfoResponse> responses = EventInstanceMapper.mapToMainTapEventInfoResponseList(eventInfoByMyInterestFields);
+        responses.stream()
+                .forEach(mainTapEventInfoResponse -> mainTapEventInfoResponse.setIsBookmarked(
+                        bookmarkService.existsByEventInfo_IdAndUser_Id(mainTapEventInfoResponse.getEventInfoId(), user.getId())));
+        return responses;
     }
 
     public PageResponse<MainTapEventInfoResponse> getMainTapList(Long eventInfoId, FieldType fieldType, Integer count, Pageable pageable) {
         User user = userUtils.getUser();
         if (fieldType != null) {
             Page<EventInfo> mainTapEventByField = eventInfoService.getMainTapEventByField(fieldType, eventInfoId, pageable);
-            return EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByField);
+            PageResponse<MainTapEventInfoResponse> response = EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByField);
+            response.getContent().stream()
+                    .forEach(mainTapEventInfoResponse -> mainTapEventInfoResponse.setIsBookmarked(
+                            bookmarkService.existsByEventInfo_IdAndUser_Id(mainTapEventInfoResponse.getEventInfoId(), user.getId())));
+            return response;
         } else {
-            Page<EventInfo> mainTapEventByField = eventInfoService.getMainTapEventByVogue(eventInfoId, count, pageable);
-            return EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByField);
+            Page<EventInfo> mainTapEventByVogue = eventInfoService.getMainTapEventByVogue(eventInfoId, count, pageable);
+            PageResponse<MainTapEventInfoResponse> response = EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByVogue);
+            response.getContent().stream()
+                    .forEach(mainTapEventInfoResponse -> mainTapEventInfoResponse.setIsBookmarked(
+                            bookmarkService.existsByEventInfo_IdAndUser_Id(mainTapEventInfoResponse.getEventInfoId(), user.getId())));
+            return response;
         }
     }
 

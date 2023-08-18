@@ -1,16 +1,14 @@
 package com.example.openoff.domain.eventInstance.application.dto.response;
 
 import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DetailEventInfoResponseDto {
     private Long eventId;
