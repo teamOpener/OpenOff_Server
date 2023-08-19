@@ -68,9 +68,10 @@ public class EventCreateUseCase {
             firebaseService.subScribe(eventInfo.getId()+"-permit-staff", fcmTokens);
 
             eventIndexIdList.forEach(eventIndexId -> {
-                firebaseService.subScribe(eventIndexId + "-check-approve-staff-alert", fcmTokens);
+                firebaseService.subScribe(eventIndexId + "-check-approve-alert", fcmTokens);
                 firebaseService.subScribe(eventIndexId + "-1day-staff-alert", fcmTokens);
                 firebaseService.subScribe(eventIndexId + "-dday-staff-alert", fcmTokens);
+                firebaseService.subScribe(eventIndexId + "-apply-half-staffAlert", fcmTokens);
             });
         }
 

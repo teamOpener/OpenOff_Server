@@ -52,4 +52,14 @@ public class NotificationCreateService {
         firebaseService.sendFCMNotificationMulticast(user.getUserFcmTokens(), "내가 남긴 문의에 댓글이 달렸어요!", "[댓글 미리보기] "+commentWriteRequestDTO.getContent());
         notificationService.save(user, "내가 남긴 문의에 댓글이 달렸어요!", NotificationType.C, eventInfoId);
     }
+
+    public void createBookmarkHalfNotification(List<User> users, Long eventInfoId){
+        firebaseService.sendToTopic(eventInfoId+"-bookmark-half", "이벤트 신청을 서둘러 주세요!", "이벤트 신청 인원이 절반에 도달했어요!");
+        notificationService.saveBulkAfterCheck(users, "이벤트 신청을 서둘러 주세요!", NotificationType.E, eventInfoId);
+    }
+
+    public void createApplyHalfStaffNotification(List<User> staffs, Long eventIndexId){
+        firebaseService.sendToTopic(eventIndexId+"-apply-half-staffAlert", "이벤트 신청 승인을 서둘러 주세요!", "이벤트 신청 인원이 절반에 도달했어요!");
+        notificationService.saveBulkAfterCheck(staffs, "이벤트 신청 승인을 서둘러 주세요!", NotificationType.E, eventIndexId);
+    }
 }
