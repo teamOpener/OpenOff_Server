@@ -43,7 +43,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .leftJoin(QEventInfo.eventInfo.eventIndexes, QEventIndex.eventIndex)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
-                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now()),
                         distanceJudgment(eventSearchRequestDto.getLatitude(), eventSearchRequestDto.getLongitude()),
                         eventDateJudgment(eventSearchRequestDto.getStartDate(), eventSearchRequestDto.getEndDate()),
                         keywordContains(eventSearchRequestDto.getKeyword()),
@@ -59,11 +59,13 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
     @Override
     public Page<EventInfo> findMainTapEventInfoByFieldType2(FieldType fieldType, final Long eventInfoId, final Pageable pageable) {
         List<EventInfo> data = queryFactory
-                .select(QEventInfo.eventInfo)
+                .selectDistinct(QEventInfo.eventInfo)
                 .from(QEventInfo.eventInfo)
+                .leftJoin(QEventInfo.eventInfo.eventIndexes).fetchJoin()
+
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
-                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now()),
                         ltEventInfoId(eventInfoId),
                         eventInfoMappedField(fieldType)
                 )
@@ -76,7 +78,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
-                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now()),
                         ltEventInfoId(eventInfoId),
                         eventInfoMappedField(fieldType)
                 );
@@ -87,11 +89,12 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
     @Override
     public Page<EventInfo> findMainTapEventInfoByVogue2(Long eventInfoId, Integer count, final Pageable pageable) {
         List<EventInfo> data = queryFactory
-                .select(QEventInfo.eventInfo)
+                .selectDistinct(QEventInfo.eventInfo)
                 .from(QEventInfo.eventInfo)
+                .leftJoin(QEventInfo.eventInfo.eventIndexes).fetchJoin()
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
-                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now()),
                         ltVogueEventInfo(eventInfoId, count)
                 )
                 .orderBy(QEventInfo.eventInfo.totalRegisterCount.desc(), QEventInfo.eventInfo.createdDate.desc())
@@ -103,7 +106,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .from(QEventInfo.eventInfo)
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
-                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now()),
                         ltVogueEventInfo(eventInfoId, count)
                 );
 
@@ -139,17 +142,19 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
     @Override
     public List<EventInfo> findEventInfosByFieldTypes(List<FieldType> fieldTypes) {
         return queryFactory
-                .select(QEventInfo.eventInfo)
+                .selectDistinct(QEventInfo.eventInfo)  // 중복 제거를 위한 distinct 추가
                 .from(QEventInfo.eventInfo)
+                .leftJoin(QEventInfo.eventInfo.eventIndexes).fetchJoin()
                 .where(
                         QEventInfo.eventInfo.isApproval.eq(true),
-                        QEventInfo.eventInfo.eventApplyEndDate.after(LocalDateTime.now()),
+                        QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now()),
                         eventInfoMappedFields(fieldTypes)
                 )
                 .orderBy(QEventInfo.eventInfo.createdDate.desc())
                 .limit(6)
                 .fetch();
     }
+
 
     private BooleanExpression ltEventInfoId(Long eventInfoId) {
         if (eventInfoId == null) return null;
@@ -247,5 +252,4 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                                 .from(QEventApplicantLadger.eventApplicantLadger)
                                 .groupBy(QEventApplicantLadger.eventApplicantLadger.eventIndex.id), null);
     }
-
 }
