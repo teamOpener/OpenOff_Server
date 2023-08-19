@@ -181,7 +181,7 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                         QEventInfo.eventInfo.location.longitude,
                         QEventInfo.eventInfo.location.latitude
                 )
-        ).loe(String.valueOf(20000)); // 20km 이내면 true 반환
+        ).loe(String.valueOf(10000)); // 10km 이내면 true 반환
     }
 
     private BooleanExpression eventDateJudgment(LocalDateTime startDate, LocalDateTime endDate) {
