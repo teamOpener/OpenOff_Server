@@ -5,6 +5,7 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.ladger.application.dto.request.QRCheckRequestDto;
 import com.example.openoff.domain.ladger.application.dto.response.QRCheckResponseDto;
 import com.example.openoff.domain.ladger.application.handler.EventApplicationLadgerHandler;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LadgerUpdateUseCase {
     private final UserUtils userUtils;
+    private final EventIndexService eventIndexService;
     private final EncryptionUtils encryptionUtils;
     private final EventStaffService eventStaffService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
@@ -44,7 +46,8 @@ public class LadgerUpdateUseCase {
 
     public void permitAndUpdateQRImageUrlAllApplicant(Long eventIndexId) {
         User user = userUtils.getUser();
-        eventStaffService.checkEventStaff(user.getId(), eventIndexId);
+        Long eventInfoId = eventIndexService.findById(eventIndexId).getEventInfo().getId();
+        eventStaffService.checkEventStaff(user.getId(), eventInfoId);
         List<EventApplicantLadger> notAcceptedLadgersByEventIndex = eventApplicantLadgerService.findNotAcceptedLadgersByEventIndex(eventIndexId);
         eventApplicationLadgerHandler.totalLadgerPermitAndCreateQRImage(notAcceptedLadgersByEventIndex);
 
