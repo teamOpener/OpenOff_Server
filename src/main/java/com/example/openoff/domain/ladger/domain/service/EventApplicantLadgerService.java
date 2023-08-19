@@ -85,4 +85,12 @@ public class EventApplicantLadgerService {
     public List<EventApplicantLadger> findNotAcceptedLadgersByEventIndex(Long eventIndexId) {
         return eventApplicantLadgerRepository.findNotAcceptedApplicantInEventIndex(eventIndexId);
     }
+
+    public List<Long> countEventInfoApplicant(Long eventInfoId) {
+        return eventApplicantLadgerRepository.countEventInfoApplicant(eventInfoId);
+    }
+
+    public Long countLadgerInEventIndex(Long eventIndexId) {
+        return eventApplicantLadgerRepository.countApplicantInEventIndex(eventIndexId);
+    }
 }

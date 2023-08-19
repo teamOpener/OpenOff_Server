@@ -101,6 +101,17 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
     }
 
     @Override
+    public Long countApplicantInEventIndex(Long eventIndexId) {
+        Long count = queryFactory
+                .select(eventApplicantLadger.count())
+                .from(eventApplicantLadger)
+                .where(eventApplicantLadger.eventIndex.id.eq(eventIndexId))
+                .fetchOne();
+
+        return (count != null) ? count : 0L;  // 결과가 없을 경우 0 반환
+    }
+
+    @Override
     public List<EventApplicantLadger> findNotAcceptedApplicantInEventIndex(Long eventIndexId) {
         return queryFactory
                 .select(eventApplicantLadger)
@@ -123,6 +134,16 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                         eventApplicantLadger.isAccept.isTrue()
                 )
                 .fetch();
+    }
+
+    @Override
+    public List<Long> countEventInfoApplicant(Long eventInfoId) {
+        return queryFactory
+                .select(eventApplicantLadger.count())
+                .from(eventApplicantLadger)
+                .where(
+                        eventApplicantLadger.eventInfo.id.eq(eventInfoId)
+                ).fetch();
     }
 
     private BooleanExpression ltUsernameAndCreatedDate(String username, LocalDateTime time) {

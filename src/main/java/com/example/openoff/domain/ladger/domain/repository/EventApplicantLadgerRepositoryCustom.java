@@ -16,6 +16,8 @@ public interface EventApplicantLadgerRepositoryCustom {
     Page<EventApplicantLadger> findAllByEventIndex_Id(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable);
 
     List<EventApplicantLadger> findApplicantInEventIndex(Long eventIndexId);
+    Long countApplicantInEventIndex(Long eventIndexId);
     List<EventApplicantLadger> findNotAcceptedApplicantInEventIndex(Long eventIndexId);
     List<User> findAcceptedApplicantInEventIndex(Long eventIndexId);
+    List<Long> countEventInfoApplicant(Long eventInfoId);
 }
