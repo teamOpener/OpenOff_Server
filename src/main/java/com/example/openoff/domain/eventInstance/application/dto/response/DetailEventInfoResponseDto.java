@@ -21,6 +21,8 @@ public class DetailEventInfoResponseDto {
     private Boolean isBookmarked;
     private Double longitude;
     private Double latitude;
+    private LocalDateTime eventApplyStartDate;
+    private LocalDateTime eventApplyEndDate;
     private List<ImageInfo> imageList;
     private List<IndexInfo> indexList;
     private List<ExtraQuestionInfo> extraQuestionList;
@@ -77,7 +79,7 @@ public class DetailEventInfoResponseDto {
     @Builder
     public DetailEventInfoResponseDto(Long eventId, String title, String streetLoadAddress, String detailAddress,
                                       Integer eventFee, String description, Integer maxCapacity, Boolean isBookmarked,
-                                      Double longitude, Double latitude,
+                                      Double longitude, Double latitude, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate,
                                       List<ImageInfo> imageList, List<IndexInfo> indexList, List<ExtraQuestionInfo> extraQuestionList) {
         this.eventId = eventId;
         this.title = title;
@@ -89,6 +91,8 @@ public class DetailEventInfoResponseDto {
         this.maxCapacity = maxCapacity;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.eventApplyStartDate = eventApplyStartDate;
+        this.eventApplyEndDate = eventApplyEndDate;
         this.imageList = imageList;
         this.indexList = indexList;
         this.extraQuestionList = extraQuestionList;
