@@ -58,6 +58,7 @@ public enum Error {
     NOT_ACCEPTED("승인된 신청이 아닙니다.", 1305),
     EVENT_APPLICANT_NOT_ACCEPT("승인되지 않은 인원입니다.", 1306),
     EVENT_CLOSED("해당 날짜는 더이상 신청할 수 없습니다.", 1307),
+    NOT_MAIN_STAFF("해당 이벤트의 메인 스테프가 아닙니다.", 1308),
 
     // Comment
     NOT_DELETE_AUTHORITY("댓글 삭제 권한이 없습니다.", 1400),
