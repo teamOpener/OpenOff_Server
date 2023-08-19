@@ -34,4 +34,9 @@ public class EventIndexService {
         eventInfo.getEventIndexes().stream().forEach(eventIndex -> eventIndex.updateEventIndexIsClose(true));
         eventIndexRepository.saveAll(eventInfo.getEventIndexes());
     }
+
+    public void updateOneEventIndexToClose(EventIndex eventIndex){
+        eventIndex.updateEventIndexIsClose(true);
+        eventIndexRepository.save(eventIndex);
+    }
 }

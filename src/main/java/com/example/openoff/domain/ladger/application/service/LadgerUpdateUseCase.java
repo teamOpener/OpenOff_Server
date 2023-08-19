@@ -5,6 +5,7 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.ladger.application.dto.request.QRCheckRequestDto;
 import com.example.openoff.domain.ladger.application.dto.response.QRCheckResponseDto;
@@ -36,12 +37,18 @@ public class LadgerUpdateUseCase {
     public void permitAndUpdateQRImageUrl(Long ladgerId) {
         User user = userUtils.getUser();
         EventApplicantLadger eventApplicantLadger = eventApplicantLadgerService.findLadgerInfo(ladgerId);
+        EventInfo eventInfo = eventApplicantLadger.getEventInfo();
         if (eventApplicantLadger.getQrCodeImageUrl() != null) throw BusinessException.of(Error.ALREADY_PERMIT);
         // 처리하는 사람이 스탭인지 체크
-        eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
-        eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
+        eventStaffService.checkEventStaff(user.getId(), eventInfo.getId());
 
+        eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
         notificationCreateService.createApplyPermitNotification(eventApplicantLadger);
+
+        Long approvedApplicantCount = eventApplicantLadgerService.countByEventIndex_IdAndIsAcceptTrue(eventApplicantLadger.getEventIndex().getId());
+        if (eventInfo.getEventMaxPeople().longValue() == (approvedApplicantCount+1)) {
+            eventIndexService.updateOneEventIndexToClose(eventApplicantLadger.getEventIndex());
+        }
     }
 
     public void permitAndUpdateQRImageUrlAllApplicant(Long eventIndexId) {
