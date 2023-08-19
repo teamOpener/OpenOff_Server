@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,5 +37,9 @@ public class BookmarkService {
 
     public boolean existsByEventInfo_IdAndUser_Id(Long eventInfoId, String userId) {
         return eventBookmarkRepository.existsByEventInfo_IdAndUser_Id(eventInfoId, userId);
+    }
+
+    public List<EventBookmark> findBookmarkByEventInfoId(Long eventInfoId) {
+        return eventBookmarkRepository.findEventBookmarkByEventInfo_Id(eventInfoId);
     }
 }
