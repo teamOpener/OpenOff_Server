@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 public class EventStaffService {
     private final EventStaffRepository eventStaffRepository;
 
+    public void saveSubEventStaff(User newStaff, EventInfo eventInfo, String nickname) {
+        eventStaffRepository.save(EventStaff.toEntity(newStaff, eventInfo, StaffType.SUB, null, null, nickname));
+    }
+
     public List<EventStaff> saveEventStaffs(User user, List<User> staffs, EventInfo eventInfo, String phoneNumber, String email, String name) {
         EventStaff mainStaff = EventStaff.toEntity(user, eventInfo, StaffType.MAIN, phoneNumber, email, name);
         List<EventStaff> eventStaffs = staffs.stream().map(staff -> EventStaff.toEntity(staff, eventInfo, StaffType.SUB, null, null, staff.getNickname())).collect(Collectors.toList());
@@ -39,5 +43,20 @@ public class EventStaffService {
 
     public List<EventStaff> getEventStaffs(Long eventInfoId){
         return eventStaffRepository.findEventStaffByEventInfo_Id(eventInfoId);
+    }
+
+    public void checkIsMainEventStaff(String userId, Long eventInfoId) {
+        eventStaffRepository.findEventStaffByEventInfo_IdAndStaff_Id(eventInfoId, userId)
+                .ifPresentOrElse(eventStaff -> {
+                    if (!eventStaff.getStaffType().equals(StaffType.MAIN)){
+                        throw BusinessException.of(Error.NOT_MAIN_STAFF);
+                    }
+                }, () -> {
+                    throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
+                });
+    }
+
+    public void deleteSubEventStaff(String userId, Long eventInfoId) {
+        eventStaffRepository.deleteEventStaffByStaff_IdAndEventInfo_IdAndStaffType(userId, eventInfoId, StaffType.SUB);
     }
 }
