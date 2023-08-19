@@ -71,6 +71,7 @@ public class EventInstanceMapper {
                 .latitude(eventInfo.getLocation().getLatitude())
                 .eventApplyStartDate(eventInfo.getEventApplyStartDate())
                 .eventApplyEndDate(eventInfo.getEventApplyEndDate())
+                .isApplyPermit(eventInfo.getEventApplyPermit())
                 .imageList(eventInfo.getEventImages().stream()
                         .map(eventImage -> DetailEventInfoResponseDto.ImageInfo.of(eventImage.getEventImageUrl(), eventImage.getIsMain()))
                         .collect(Collectors.toList()))

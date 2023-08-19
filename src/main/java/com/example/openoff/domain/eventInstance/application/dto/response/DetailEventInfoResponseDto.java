@@ -21,6 +21,7 @@ public class DetailEventInfoResponseDto {
     private Double latitude;
     private LocalDateTime eventApplyStartDate;
     private LocalDateTime eventApplyEndDate;
+    private Boolean isApplyPermit;
     private Boolean isEnded; // eventIndex date 다 지나갔으면 true
     private List<ImageInfo> imageList;
     private List<IndexInfo> indexList;
@@ -66,7 +67,8 @@ public class DetailEventInfoResponseDto {
     @Builder
     public DetailEventInfoResponseDto(Long eventId, String title, String streetLoadAddress, String detailAddress,
                                       Integer eventFee, String description, Integer maxCapacity, Boolean isBookmarked,
-                                      Double longitude, Double latitude, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate, Boolean isEnded,
+                                      Double longitude, Double latitude, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate,
+                                      Boolean isApplyPermit, Boolean isEnded,
                                       List<ImageInfo> imageList, List<IndexInfo> indexList, List<ExtraQuestionInfo> extraQuestionList) {
         this.eventId = eventId;
         this.title = title;
@@ -80,6 +82,7 @@ public class DetailEventInfoResponseDto {
         this.latitude = latitude;
         this.eventApplyStartDate = eventApplyStartDate;
         this.eventApplyEndDate = eventApplyEndDate;
+        this.isApplyPermit = isApplyPermit;
         this.isEnded = isEnded;
         this.imageList = imageList;
         this.indexList = indexList;
