@@ -36,4 +36,8 @@ public class EventStaffService {
     public List<String> getEventStaffIds(Long eventInfoId){
         return eventStaffRepository.findEventStaffByEventInfo_Id(eventInfoId).stream().map(staff -> staff.getStaff().getId()).collect(Collectors.toList());
     }
+
+    public List<EventStaff> getEventStaffs(Long eventInfoId){
+        return eventStaffRepository.findEventStaffByEventInfo_Id(eventInfoId);
+    }
 }
