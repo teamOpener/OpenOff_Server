@@ -9,7 +9,6 @@ import com.example.openoff.domain.eventInstance.application.dto.response.*;
 import com.example.openoff.domain.eventInstance.domain.entity.EventImage;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
-import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
 import com.example.openoff.domain.interest.domain.entity.EventInterestField;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -58,7 +57,8 @@ public class EventInstanceMapper {
         return eventInfoList.stream().map(EventInstanceMapper::mapToSearchMapEventInfoResponse).collect(Collectors.toList());
     }
 
-    public static DetailEventInfoResponseDto mapToDetailEventInfoResponse(EventInfo eventInfo, List<EventIndexStatisticsDto> eventIndexStatisticsDtos) {
+
+    public static DetailEventInfoResponseDto mapToDetailEventInfoResponse(EventInfo eventInfo) {
         return DetailEventInfoResponseDto.builder()
                 .eventId(eventInfo.getId())
                 .title(eventInfo.getEventTitle())
@@ -74,7 +74,6 @@ public class EventInstanceMapper {
                 .imageList(eventInfo.getEventImages().stream()
                         .map(eventImage -> DetailEventInfoResponseDto.ImageInfo.of(eventImage.getEventImageUrl(), eventImage.getIsMain()))
                         .collect(Collectors.toList()))
-                .indexList(DetailEventInfoResponseDto.IndexInfo.of(eventIndexStatisticsDtos))
                 .extraQuestionList(eventInfo.getEventExtraQuestions().stream()
                         .map(eventQuestion -> DetailEventInfoResponseDto.ExtraQuestionInfo.of(eventQuestion.getId(), eventQuestion.getQuestion()))
                         .collect(Collectors.toList()))

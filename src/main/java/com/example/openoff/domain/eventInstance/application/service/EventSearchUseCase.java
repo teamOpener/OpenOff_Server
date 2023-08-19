@@ -10,12 +10,13 @@ import com.example.openoff.domain.eventInstance.application.dto.response.HostEve
 import com.example.openoff.domain.eventInstance.application.dto.response.MainTapEventInfoResponse;
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.mapper.EventInstanceMapper;
+import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.eventInstance.domain.service.EventInfoService;
-import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.interest.domain.entity.UserInterestField;
+import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,6 +38,7 @@ public class EventSearchUseCase {
     private final EventInfoService eventInfoService;
     private final EventIndexService eventIndexService;
     private final BookmarkService bookmarkService;
+    private final EventApplicantLadgerService eventApplicantLadgerService;
 
 
     public List<SearchMapEventInfoResponseDto> searchMapEventInfo(EventSearchRequestDto eventSearchRequestDto)
@@ -52,11 +56,28 @@ public class EventSearchUseCase {
     }
 
     public DetailEventInfoResponseDto getDetailEventInfo(Long eventInfoId){
+        LocalDateTime now = LocalDateTime.now();
         User user = userUtils.getUser();
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
-        List<EventIndexStatisticsDto> eventDetailInfo = eventIndexService.getEventDetailInfo(eventInfo.getId(), user.getId());
-        DetailEventInfoResponseDto detailEventInfoResponseDto = EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo, eventDetailInfo);
+        DetailEventInfoResponseDto detailEventInfoResponseDto = EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo);
         detailEventInfoResponseDto.setIsBookmarked(bookmarkService.existsByEventInfo_IdAndUser_Id(eventInfoId, user.getId()));
+        detailEventInfoResponseDto.setIsEnded(eventInfo.getEventIndexes().stream().map(EventIndex::getEventDate).anyMatch(eventDate -> eventDate.isAfter(now)));
+        List<Map<Long, Long>> countEventInfoApprovedApplicant = eventApplicantLadgerService.countEventInfoApprovedApplicant(eventInfoId);
+        List<DetailEventInfoResponseDto.IndexInfo> indexInfoList = eventInfo.getEventIndexes().stream()
+                .map(eventIndex -> DetailEventInfoResponseDto.IndexInfo.builder()
+                        .eventIndexId(eventIndex.getId())
+                        .eventDate(eventIndex.getEventDate())
+                        .approvedUserCount(
+                                countEventInfoApprovedApplicant.stream()
+                                        .mapToInt(data -> Math.toIntExact(data.getOrDefault(eventIndex.getId(), 0L)))
+                                        .findFirst()
+                                        .orElse(0)
+
+                        )
+                        .isApply(eventIndex.getEventDate().isAfter(now) && eventApplicantLadgerService.existsByEventIndex_IdAndEventApplicant_Id(eventIndex.getId(), user.getId()))
+                        .build()
+                ).collect(Collectors.toList());
+        detailEventInfoResponseDto.setIndexList(indexInfoList);
         return detailEventInfoResponseDto;
     }
 

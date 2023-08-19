@@ -1,11 +1,9 @@
 package com.example.openoff.domain.eventInstance.application.dto.response;
 
-import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -23,6 +21,7 @@ public class DetailEventInfoResponseDto {
     private Double latitude;
     private LocalDateTime eventApplyStartDate;
     private LocalDateTime eventApplyEndDate;
+    private Boolean isEnded; // eventIndex date 다 지나갔으면 true
     private List<ImageInfo> imageList;
     private List<IndexInfo> indexList;
     private List<ExtraQuestionInfo> extraQuestionList;
@@ -47,19 +46,7 @@ public class DetailEventInfoResponseDto {
         private Long eventIndexId;
         private Integer approvedUserCount;
         private LocalDateTime eventDate;
-        private Boolean isApply;
-
-        public static List<IndexInfo> of(List<EventIndexStatisticsDto> eventIndexStatisticsDtoList) {
-            return eventIndexStatisticsDtoList.stream()
-                    .map(eventIndexStatisticsDto -> IndexInfo.builder()
-                            .eventIndexId(eventIndexStatisticsDto.getEventIndexId())
-                            .approvedUserCount(eventIndexStatisticsDto.getApprovedUserCount())
-                            .eventDate(eventIndexStatisticsDto.getEventDate())
-                            .isApply(!eventIndexStatisticsDto.getIsApply())
-                            .build()
-                    )
-                    .collect(Collectors.toList());
-        }
+        private Boolean isApply; // 내가 신청안했고 날짜가 안지났으면 true
     }
 
     @Getter
@@ -79,7 +66,7 @@ public class DetailEventInfoResponseDto {
     @Builder
     public DetailEventInfoResponseDto(Long eventId, String title, String streetLoadAddress, String detailAddress,
                                       Integer eventFee, String description, Integer maxCapacity, Boolean isBookmarked,
-                                      Double longitude, Double latitude, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate,
+                                      Double longitude, Double latitude, LocalDateTime eventApplyStartDate, LocalDateTime eventApplyEndDate, Boolean isEnded,
                                       List<ImageInfo> imageList, List<IndexInfo> indexList, List<ExtraQuestionInfo> extraQuestionList) {
         this.eventId = eventId;
         this.title = title;
@@ -93,6 +80,7 @@ public class DetailEventInfoResponseDto {
         this.latitude = latitude;
         this.eventApplyStartDate = eventApplyStartDate;
         this.eventApplyEndDate = eventApplyEndDate;
+        this.isEnded = isEnded;
         this.imageList = imageList;
         this.indexList = indexList;
         this.extraQuestionList = extraQuestionList;
