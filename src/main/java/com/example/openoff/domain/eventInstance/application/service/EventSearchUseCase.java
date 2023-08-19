@@ -61,7 +61,7 @@ public class EventSearchUseCase {
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
         DetailEventInfoResponseDto detailEventInfoResponseDto = EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo);
         detailEventInfoResponseDto.setIsBookmarked(bookmarkService.existsByEventInfo_IdAndUser_Id(eventInfoId, user.getId()));
-        detailEventInfoResponseDto.setIsEnded(eventInfo.getEventIndexes().stream().map(EventIndex::getEventDate).anyMatch(eventDate -> eventDate.isAfter(now)));
+        detailEventInfoResponseDto.setIsEnded(eventInfo.getEventIndexes().stream().map(EventIndex::getEventDate).noneMatch(eventDate -> eventDate.isAfter(now)));
         List<Map<Long, Long>> countEventInfoApprovedApplicant = eventApplicantLadgerService.countEventInfoApprovedApplicant(eventInfoId);
         List<DetailEventInfoResponseDto.IndexInfo> indexInfoList = eventInfo.getEventIndexes().stream()
                 .map(eventIndex -> DetailEventInfoResponseDto.IndexInfo.builder()
@@ -72,9 +72,8 @@ public class EventSearchUseCase {
                                         .mapToInt(data -> Math.toIntExact(data.getOrDefault(eventIndex.getId(), 0L)))
                                         .findFirst()
                                         .orElse(0)
-
                         )
-                        .isApply(eventIndex.getEventDate().isAfter(now) && eventApplicantLadgerService.existsByEventIndex_IdAndEventApplicant_Id(eventIndex.getId(), user.getId()))
+                        .isApply(eventIndex.getEventDate().isAfter(now) && !eventApplicantLadgerService.existsByEventIndex_IdAndEventApplicant_Id(eventIndex.getId(), user.getId()))
                         .build()
                 ).collect(Collectors.toList());
         detailEventInfoResponseDto.setIndexList(indexInfoList);
