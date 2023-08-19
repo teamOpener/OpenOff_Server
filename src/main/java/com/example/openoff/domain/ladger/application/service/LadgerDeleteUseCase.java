@@ -42,6 +42,7 @@ public class LadgerDeleteUseCase {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }
         ladgerInfo.getEventInfo().updateTotalRegisterCount();
+        eventExtraAnswerService.deleteEventExtraAnswers(ladgerInfo.getEventIndex().getId());
         eventApplicantLadgerService.deleteEventApplicantLadger(ladgerId);
     }
 }
