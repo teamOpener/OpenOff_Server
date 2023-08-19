@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @DomainService
@@ -86,11 +87,15 @@ public class EventApplicantLadgerService {
         return eventApplicantLadgerRepository.findNotAcceptedApplicantInEventIndex(eventIndexId);
     }
 
-    public List<Long> countEventInfoApplicant(Long eventInfoId) {
-        return eventApplicantLadgerRepository.countEventInfoApplicant(eventInfoId);
+    public List<Map<Long, Long>> countEventInfoApprovedApplicant(Long eventInfoId) {
+        return eventApplicantLadgerRepository.countEventInfoApprovedApplicant(eventInfoId);
     }
 
     public Long countLadgerInEventIndex(Long eventIndexId) {
         return eventApplicantLadgerRepository.countApplicantInEventIndex(eventIndexId);
+    }
+
+    public Boolean existsByEventIndex_IdAndEventApplicant_Id(Long eventIndexId, String userId) {
+        return eventApplicantLadgerRepository.existsByEventIndex_IdAndEventApplicant_Id(eventIndexId, userId);
     }
 }

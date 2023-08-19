@@ -6,7 +6,6 @@ import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventIndexRepository;
-import com.example.openoff.domain.eventInstance.infrastructure.dto.EventIndexStatisticsDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,10 +24,6 @@ public class EventIndexService {
                 .map(date -> EventIndex.toEntity(eventInfo, date))
                 .collect(Collectors.toList());
         return eventIndexRepository.saveAll(eventIndexList).stream().map(EventIndex::getId).collect(Collectors.toList());
-    }
-
-    public List<EventIndexStatisticsDto> getEventDetailInfo(Long eventInfoId, String userId){
-        return eventIndexRepository.statisticsEventIndexByEventInfoId(eventInfoId, userId);
     }
 
     public EventIndex findById(Long eventIndexId) {

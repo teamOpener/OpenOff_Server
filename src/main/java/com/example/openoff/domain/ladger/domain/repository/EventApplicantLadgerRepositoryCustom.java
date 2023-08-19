@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface EventApplicantLadgerRepositoryCustom {
     Page<EventInfo> findAllApplyInfos(Long eventInfoId, FieldType fieldType, String userId, Pageable pageable);
@@ -19,5 +20,5 @@ public interface EventApplicantLadgerRepositoryCustom {
     Long countApplicantInEventIndex(Long eventIndexId);
     List<EventApplicantLadger> findNotAcceptedApplicantInEventIndex(Long eventIndexId);
     List<User> findAcceptedApplicantInEventIndex(Long eventIndexId);
-    List<Long> countEventInfoApplicant(Long eventInfoId);
+    List<Map<Long, Long>> countEventInfoApprovedApplicant(Long eventInfoId);
 }

@@ -6,6 +6,7 @@ import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.repository.EventApplicantLadgerRepositoryCustom;
 import com.example.openoff.domain.ladger.presentation.SortType;
 import com.example.openoff.domain.user.domain.entity.User;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.example.openoff.domain.ladger.domain.entity.QEventApplicantLadger.eventApplicantLadger;
 
@@ -137,14 +141,27 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
     }
 
     @Override
-    public List<Long> countEventInfoApplicant(Long eventInfoId) {
-        return queryFactory
-                .select(eventApplicantLadger.count())
+    public List<Map<Long, Long>> countEventInfoApprovedApplicant(Long eventInfoId) {
+        List<Tuple> result = queryFactory
+                .select(eventApplicantLadger.eventIndex.id, eventApplicantLadger.count())
                 .from(eventApplicantLadger)
                 .where(
                         eventApplicantLadger.eventInfo.id.eq(eventInfoId)
-                ).fetch();
+                                .and(eventApplicantLadger.isAccept.isTrue())
+                )
+                .groupBy(eventApplicantLadger.eventIndex.id)
+                .fetch();
+
+        // Tuple 결과를 Map 형식으로 변환
+        return result.stream()
+                .map(tuple -> {
+                    Map<Long, Long> map = new HashMap<>();
+                    map.put(tuple.get(eventApplicantLadger.eventIndex.id), tuple.get(eventApplicantLadger.count()));
+                    return map;
+                })
+                .collect(Collectors.toList());
     }
+
 
     private BooleanExpression ltUsernameAndCreatedDate(String username, LocalDateTime time) {
         if (username == null || time == null) return null;
