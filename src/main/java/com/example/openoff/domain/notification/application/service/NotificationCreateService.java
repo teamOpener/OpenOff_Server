@@ -24,7 +24,9 @@ public class NotificationCreateService {
 
     public void createApplyPermitNotification(EventApplicantLadger eventApplicantLadger) {
         User eventApplicant = eventApplicantLadger.getEventApplicant();
-        firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 완료", "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!");
+        if (eventApplicant.getUserFcmTokens().size() > 0){
+            firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 완료", "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!");
+        }
         notificationService.save(eventApplicant, "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!", NotificationType.E, eventApplicantLadger.getEventInfo().getId());
     }
 
@@ -33,13 +35,17 @@ public class NotificationCreateService {
                 .map(EventApplicantLadger::getEventApplicant).collect(Collectors.toList());
         List<UserFcmToken> userFcmTokens = users.stream()
                 .map(User::getUserFcmTokens).flatMap(List::stream).collect(Collectors.toList());
-        firebaseService.sendFCMNotificationMulticast(userFcmTokens, "이벤트 신청 완료", "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!");
+        if (userFcmTokens.size() > 0){
+            firebaseService.sendFCMNotificationMulticast(userFcmTokens, "이벤트 신청 완료", "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!");
+        }
         notificationService.saveBulk(users, "이벤트 신청 승인이 완료되었습니다.\n생성된 QR 티켓을 확인해보세요!", NotificationType.E, eventApplicantLadgers.get(0).getEventInfo().getId());
     }
 
     public void createCancelPermitNotification(EventApplicantLadger eventApplicantLadger) {
         User eventApplicant = eventApplicantLadger.getEventApplicant();
-        firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 취소", "이벤트 신청 취소되었습니다...\n사유를 확인해주세요");
+        if (eventApplicant.getUserFcmTokens().size() > 0){
+            firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 취소", "이벤트 신청 취소되었습니다...\n사유를 확인해주세요");
+        }
         notificationService.save(eventApplicant, "이벤트 신청 취소되었습니다...\n사유를 확인해주세요", NotificationType.E, eventApplicantLadger.getEventInfo().getId());
     }
 
@@ -49,7 +55,9 @@ public class NotificationCreateService {
     }
 
     public void createAnswerCommentNotificationToUser(User user, Long eventInfoId, CommentWriteRequestDto commentWriteRequestDTO){
-        firebaseService.sendFCMNotificationMulticast(user.getUserFcmTokens(), "내가 남긴 문의에 댓글이 달렸어요!", "[댓글 미리보기] "+commentWriteRequestDTO.getContent());
+        if (user.getUserFcmTokens().size() > 0){
+            firebaseService.sendFCMNotificationMulticast(user.getUserFcmTokens(), "내가 남긴 문의에 댓글이 달렸어요!", "[댓글 미리보기] "+commentWriteRequestDTO.getContent());
+        }
         notificationService.save(user, "내가 남긴 문의에 댓글이 달렸어요!", NotificationType.C, eventInfoId);
     }
 
