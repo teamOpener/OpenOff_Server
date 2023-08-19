@@ -33,4 +33,9 @@ public class EventExtraAnswerService {
                 }).collect(Collectors.toList());
         eventExtraAnswerRepository.saveAll(extraAnswers);
     }
+
+    public void deleteEventExtraAnswers(Long eventIndexId) {
+        List<EventExtraAnswer> allByEventIndexId = eventExtraAnswerRepository.findAllByEventIndex_Id(eventIndexId);
+        eventExtraAnswerRepository.deleteAll(allByEventIndexId);
+    }
 }
