@@ -36,4 +36,9 @@ public class UserFindService {
         return userRepository.findByPhoneNumber(phoneNum)
                 .orElseThrow(() -> new UserNotFoundException(Error.USER_NOT_FOUND));
     }
+
+    public User findByNickname(String nickname) {
+        return userRepository.findUserByNickname(nickname)
+                .orElseThrow(() -> UserNotFoundException.of(Error.USER_NOT_FOUND));
+    }
 }
