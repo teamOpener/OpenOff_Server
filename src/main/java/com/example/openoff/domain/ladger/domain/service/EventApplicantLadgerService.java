@@ -87,7 +87,7 @@ public class EventApplicantLadgerService {
         return eventApplicantLadgerRepository.findNotAcceptedApplicantInEventIndex(eventIndexId);
     }
 
-    public List<Map<Long, Long>> countEventInfoApprovedApplicant(Long eventInfoId) {
+    public Map<Long, Long> countEventInfoApprovedApplicant(Long eventInfoId) {
         return eventApplicantLadgerRepository.countEventInfoApprovedApplicant(eventInfoId);
     }
 
@@ -97,5 +97,9 @@ public class EventApplicantLadgerService {
 
     public Boolean existsByEventIndex_IdAndEventApplicant_Id(Long eventIndexId, String userId) {
         return eventApplicantLadgerRepository.existsByEventIndex_IdAndEventApplicant_Id(eventIndexId, userId);
+    }
+
+    public Long countByEventIndex_IdAndIsAcceptTrue(Long eventIndexId) {
+        return eventApplicantLadgerRepository.countByEventIndex_IdAndIsAcceptTrue(eventIndexId);
     }
 }

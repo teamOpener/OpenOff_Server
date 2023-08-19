@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -141,7 +140,7 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
     }
 
     @Override
-    public List<Map<Long, Long>> countEventInfoApprovedApplicant(Long eventInfoId) {
+    public Map<Long, Long> countEventInfoApprovedApplicant(Long eventInfoId) {
         List<Tuple> result = queryFactory
                 .select(eventApplicantLadger.eventIndex.id, eventApplicantLadger.count())
                 .from(eventApplicantLadger)
@@ -152,14 +151,27 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 .groupBy(eventApplicantLadger.eventIndex.id)
                 .fetch();
 
-        // Tuple 결과를 Map 형식으로 변환
+        // Tuple 결과를 하나의 Map 형식으로 변환
         return result.stream()
-                .map(tuple -> {
-                    Map<Long, Long> map = new HashMap<>();
-                    map.put(tuple.get(eventApplicantLadger.eventIndex.id), tuple.get(eventApplicantLadger.count()));
-                    return map;
-                })
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(eventApplicantLadger.eventIndex.id),
+                        tuple -> tuple.get(eventApplicantLadger.count())
+                ));
+    }
+
+
+    @Override
+    public Long countEventInfoApprovedApplicantByEventIndexId(Long eventIndexId) {
+        Long count = queryFactory
+                .select(eventApplicantLadger.count())
+                .from(eventApplicantLadger)
+                .where(
+                        eventApplicantLadger.eventIndex.id.eq(eventIndexId)
+                                .and(eventApplicantLadger.isAccept.isTrue())
+                )
+                .fetchOne();
+
+        return (count != null) ? count : 0L;  // 결과가 없을 경우 0 반환
     }
 
 

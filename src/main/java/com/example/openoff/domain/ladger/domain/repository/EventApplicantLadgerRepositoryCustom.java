@@ -20,5 +20,6 @@ public interface EventApplicantLadgerRepositoryCustom {
     Long countApplicantInEventIndex(Long eventIndexId);
     List<EventApplicantLadger> findNotAcceptedApplicantInEventIndex(Long eventIndexId);
     List<User> findAcceptedApplicantInEventIndex(Long eventIndexId);
-    List<Map<Long, Long>> countEventInfoApprovedApplicant(Long eventInfoId);
+    Map<Long, Long> countEventInfoApprovedApplicant(Long eventInfoId);
+    Long countEventInfoApprovedApplicantByEventIndexId(Long eventIndexId);
 }
