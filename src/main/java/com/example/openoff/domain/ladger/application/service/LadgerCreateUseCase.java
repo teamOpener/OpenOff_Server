@@ -11,6 +11,7 @@ import com.example.openoff.domain.eventInstance.domain.service.EventExtraQuestio
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.ladger.application.dto.request.ApplyEventRequestDto;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
+import com.example.openoff.domain.notification.application.handler.NotificationEventPublisher;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,17 +30,19 @@ public class LadgerCreateUseCase {
     private final EventApplicantLadgerService eventApplicantLadgerService;
     private final EventExtraQuestionService eventExtraQuestionService;
     private final EventExtraAnswerService eventExtraAnswerService;
+    private final NotificationEventPublisher notificationEventPublisher;
 
     public void createEventApplicationLadger(ApplyEventRequestDto applyEventRequestDto) {
         User user = userUtils.getUser();
         EventIndex eventIndex = eventIndexService.findById(applyEventRequestDto.getEventIndexId());
         if (!eventIndex.getIsClose() && eventIndex.getEventInfo().getEventApplyPermit()){
-            int applicantNum = eventApplicantLadgerService.findInEventIndex(eventIndex.getId()).size();
-            int totalRegisterCount = eventIndex.getEventInfo().getTotalRegisterCount();
-            // TODO: 정책 논의 후 topic 정의
-//            if (applicantNum + 1 >= (totalRegisterCount/2)) {
-//
-//            }
+            Long eventIndexLadgerCount = eventApplicantLadgerService.countLadgerInEventIndex(eventIndex.getId());
+            Long maxTotalRegisterCnt = eventIndex.getEventInfo().getEventMaxPeople().longValue();
+
+            if ((eventIndexLadgerCount+1) == (maxTotalRegisterCnt/2)) {
+                notificationEventPublisher.publishApplyHalfEvent(eventIndex);
+            }
+
             eventApplicantLadgerService.createEventApplicantLadger(eventIndex, userUtils.getUser());
 
             List<ApplyEventRequestDto.AnswerInfo> answerInfoList = applyEventRequestDto.getAnswerInfoList();
