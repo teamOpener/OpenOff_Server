@@ -27,4 +27,16 @@ public class NotificationService {
                 .collect(Collectors.toList());
         notificationRepository.saveAll(notifications);
     }
+
+    public boolean existsNotificationInSpecificCase(User user, String content, Long notificationParameter) {
+        return notificationRepository.existsNotificationInSpecificCase(user.getId(), content, notificationParameter);
+    }
+
+    public void saveBulkAfterCheck(List<User> users, String content, NotificationType notificationType, Long notificationParameter) {
+        List<Notification> notifications = users.stream()
+                .filter(user -> !existsNotificationInSpecificCase(user, content, notificationParameter))
+                .map(user -> Notification.toEntity(user, content, notificationType, notificationParameter))
+                .collect(Collectors.toList());
+        notificationRepository.saveAll(notifications);
+    }
 }
