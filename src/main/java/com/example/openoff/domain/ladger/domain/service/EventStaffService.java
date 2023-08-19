@@ -22,7 +22,7 @@ public class EventStaffService {
 
     public List<EventStaff> saveEventStaffs(User user, List<User> staffs, EventInfo eventInfo, String phoneNumber, String email, String name) {
         EventStaff mainStaff = EventStaff.toEntity(user, eventInfo, StaffType.MAIN, phoneNumber, email, name);
-        List<EventStaff> eventStaffs = staffs.stream().map(staff -> EventStaff.toEntity(staff, eventInfo, StaffType.SUB, phoneNumber, email, name)).collect(Collectors.toList());
+        List<EventStaff> eventStaffs = staffs.stream().map(staff -> EventStaff.toEntity(staff, eventInfo, StaffType.SUB, null, null, staff.getNickname())).collect(Collectors.toList());
         eventStaffs.add(0, mainStaff);
         return eventStaffRepository.saveAll(eventStaffs);
     }
