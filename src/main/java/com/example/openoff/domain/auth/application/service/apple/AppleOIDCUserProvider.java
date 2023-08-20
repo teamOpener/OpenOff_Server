@@ -28,7 +28,7 @@ public class AppleOIDCUserProvider {
 
         Claims claims = appleJwtParser.parsePublicKeyAndGetClaims(identityToken, publicKey);
         validateClaims(claims);
-        return new AppleUserInfoResponseDto(claims.getSubject(), claims.get("email", String.class));
+        return new AppleUserInfoResponseDto(claims.getSubject(), claims.get("email", String.class), claims.get("name", String.class));
     }
 
     private void validateClaims(Claims claims) {

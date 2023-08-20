@@ -12,4 +12,5 @@ public class AppleUserInfoResponseDto {
 
     private String platformId;
     private String email;
+    private String name;
 }

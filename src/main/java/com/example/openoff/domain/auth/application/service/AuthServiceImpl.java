@@ -84,7 +84,8 @@ public class AuthServiceImpl implements AuthService{
                         AccountType.APPLE,
                         appleUserInfoResponseDto.getPlatformId(),
                         appleUserInfoResponseDto.getEmail(),
-                        UUID.randomUUID().toString()); // name으로 변경해야함
+                        UUID.randomUUID().toString()); // apple name은 없음
+//                        appleUserInfoResponseDto.getName());
                 break;
             default:
                 throw new OAuthException(Error.OAUTH_FAILED);
