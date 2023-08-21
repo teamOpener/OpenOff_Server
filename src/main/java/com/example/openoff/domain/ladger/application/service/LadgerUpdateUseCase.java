@@ -73,12 +73,18 @@ public class LadgerUpdateUseCase {
     }
 
     public QRCheckResponseDto checkQRCode(QRCheckRequestDto qrCheckRequestDto) {
+        User user = userUtils.getUser();
+        Long eventInfoId = eventIndexService.findById(qrCheckRequestDto.getEventIndexId()).getEventInfo().getId();
+        // 처리하는 사람이 스탭인지 체크
+        eventStaffService.checkEventStaff(user.getId(), eventInfoId);
+
         String decryptedContent = encryptionUtils.decrypt(qrCheckRequestDto.getContent());
         String[] parts = decryptedContent.split("\\.", 2);
         if (parts.length != 2) throw BusinessException.of(Error.INVALID_QR_CODE);
         String userId = parts[0];
         String ticketIndex = parts[1];
-        EventApplicantLadger applicantLadger = eventApplicantLadgerService.findUserIdAndTicketIndexUpdateJoinAt(userId, ticketIndex);
+
+        EventApplicantLadger applicantLadger = eventApplicantLadgerService.findUserIdAndTicketIndexUpdateJoinAt(userId, qrCheckRequestDto.getEventIndexId(), ticketIndex);
         return QRCheckResponseDto.builder()
                 .eventApplicantLadgerId(applicantLadger.getId())
                 .userId(applicantLadger.getEventApplicant().getId())

@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class QRCheckRequestDto {
+    private Long eventIndexId;
     private String content;
 
     @Builder
-    public QRCheckRequestDto(String content) {
+    public QRCheckRequestDto(Long eventIndexId, String content) {
+        this.eventIndexId = eventIndexId;
         this.content = content;
     }
 }
