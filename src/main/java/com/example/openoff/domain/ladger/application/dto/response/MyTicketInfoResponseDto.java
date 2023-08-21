@@ -14,6 +14,7 @@ public class MyTicketInfoResponseDto {
     private String birth;
     private Long eventInfoId;
     private Long eventIndexId;
+    private Long ladgerId;
     private String eventTitle;
     private String streetRoadAddress;
     private String ticketIndex;
@@ -24,13 +25,14 @@ public class MyTicketInfoResponseDto {
     private String qrImageUrl;
 
     @Builder
-    public MyTicketInfoResponseDto(String username, String birth, Long eventInfoId, Long eventIndexId, String eventTitle,
+    public MyTicketInfoResponseDto(String username, String birth, Long eventInfoId, Long eventIndexId, Long ladgerId, String eventTitle,
                                    String streetRoadAddress, String ticketIndex, TicketType ticketType,
                                    LocalDateTime eventDate, Boolean isAccepted, Boolean isJoined, String qrImageUrl) {
         this.username = username;
         this.birth = birth;
         this.eventInfoId = eventInfoId;
         this.eventIndexId = eventIndexId;
+        this.ladgerId = ladgerId;
         this.eventTitle = eventTitle;
         this.streetRoadAddress = streetRoadAddress;
         this.ticketIndex = ticketIndex;
