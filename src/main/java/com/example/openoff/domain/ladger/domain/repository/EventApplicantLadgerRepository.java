@@ -11,7 +11,7 @@ public interface EventApplicantLadgerRepository extends JpaRepository<EventAppli
     List<EventApplicantLadger> findAllByEventApplicant_IdAndEventInfo_Id(String userId, Long eventInfoId);
     List<EventApplicantLadger> findAllByEventApplicant_IdAndEventInfo_IdIn(String userId, List<Long> eventInfoIds);
     Optional<EventApplicantLadger> findByIdAndEventApplicant_Id(Long ladgerId, String userId);
-    Optional<EventApplicantLadger> findByEventApplicant_IdAndTicketIndex(String userId, String ticketIndex);
+    Optional<EventApplicantLadger> findByEventApplicant_IdAndEventIndex_IdAndTicketIndex(String userId, Long eventIndexId, String ticketIndex);
 
     Boolean existsByEventIndex_IdAndEventApplicant_Id(Long eventIndexId, String userId);
 }

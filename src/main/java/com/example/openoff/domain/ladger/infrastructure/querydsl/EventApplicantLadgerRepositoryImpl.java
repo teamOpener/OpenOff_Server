@@ -46,10 +46,8 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 )
                 .groupBy(eventApplicantLadger.eventInfo.id)
                 .orderBy(eventApplicantLadger.eventInfo.createdDate.desc())
-                .limit(pageable.getPageSize() + 1)
+                .limit(pageable.getPageSize())
                 .fetch();
-        boolean hasNext = eventInfos.size() > pageable.getPageSize();
-        if (hasNext) { eventInfos.remove(eventInfos.size()-1); }
 
         JPAQuery<Long> countQuery = queryFactory
                 .select(eventApplicantLadger.eventInfo.count())
@@ -58,9 +56,7 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                         eventApplicantLadger.eventApplicant.id.eq(userId),
                         ltEventInfoId(eventInfoId),
                         eventInfoMappedField(fieldType)
-                ).groupBy(eventApplicantLadger.eventInfo.id)
-                .orderBy(eventApplicantLadger.eventInfo.createdDate.desc());
-//        return new PageImpl<>(eventInfos, pageable, countQuery::fetchOne);
+                );
         return PageableExecutionUtils.getPage(eventInfos, pageable, countQuery::fetchOne);
     }
 
