@@ -26,9 +26,9 @@ public class LadgerDeleteController {
     }
 
     @DeleteMapping(value = "/reject/{ladgerId}")
-    public ResponseEntity<ResponseDto<Void>> deleteRejectLadger(@PathVariable Long ladgerId)
+    public ResponseEntity<ResponseDto<Void>> deleteRejectLadger(@PathVariable Long ladgerId, @PathVariable String rejectReason)
     {
-        ladgerDeleteUseCase.deleteRejectLadger(ladgerId);
+        ladgerDeleteUseCase.deleteRejectLadger(ladgerId, rejectReason);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청이 거부되었습니다.", null));
     }
 }

@@ -44,9 +44,17 @@ public class NotificationCreateService {
     public void createCancelPermitNotification(EventApplicantLadger eventApplicantLadger) {
         User eventApplicant = eventApplicantLadger.getEventApplicant();
         if (eventApplicant.getUserFcmTokens().size() > 0){
-            firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 취소", "이벤트 신청 취소되었습니다...\n사유를 확인해주세요");
+            firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 취소", "이벤트 신청 승인이 취소되었습니다...");
         }
-        notificationService.save(eventApplicant, "이벤트 신청 취소되었습니다...\n사유를 확인해주세요", NotificationType.E, eventApplicantLadger.getEventInfo().getId());
+        notificationService.save(eventApplicant, "이벤트 신청 승인이 취소되었습니다...", NotificationType.E, eventApplicantLadger.getEventInfo().getId());
+    }
+
+    public void createRejectApplyNotification(EventApplicantLadger eventApplicantLadger, String rejectReason) {
+        User eventApplicant = eventApplicantLadger.getEventApplicant();
+        if (eventApplicant.getUserFcmTokens().size() > 0){
+            firebaseService.sendFCMNotificationMulticast(eventApplicant.getUserFcmTokens(), "이벤트 신청 거절", "이벤트 신청이 거절되었습니다.\n[사유] "+rejectReason);
+        }
+        notificationService.save(eventApplicant, "이벤트 신청이 거절되었습니다.\n[사유] "+rejectReason, NotificationType.E, eventApplicantLadger.getEventInfo().getId());
     }
 
     public void createCommentNotificationToStaff(List<User> staffs, Long eventInfoId, CommentWriteRequestDto commentWriteRequestDTO){

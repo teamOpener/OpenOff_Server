@@ -7,6 +7,7 @@ import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.eventInstance.domain.service.EventExtraAnswerService;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
+import com.example.openoff.domain.notification.application.service.NotificationCreateService;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LadgerDeleteUseCase {
     private final UserUtils userUtils;
+    private final NotificationCreateService notificationCreateService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
     private final EventExtraAnswerService eventExtraAnswerService;
 
@@ -33,7 +35,7 @@ public class LadgerDeleteUseCase {
         eventApplicantLadgerService.deleteEventApplicantLadger(myEventTicketInfo.getId());
     }
 
-    public void deleteRejectLadger(Long ladgerId) {
+    public void deleteRejectLadger(Long ladgerId, String rejectReason) {
         User user = userUtils.getUser();
         EventApplicantLadger ladgerInfo = eventApplicantLadgerService.findLadgerInfo(ladgerId);
         List<String> staffId = ladgerInfo.getEventInfo().getEventStaffs().stream()
@@ -44,5 +46,6 @@ public class LadgerDeleteUseCase {
         ladgerInfo.getEventInfo().updateTotalRegisterCount();
         eventExtraAnswerService.deleteEventExtraAnswers(ladgerInfo.getEventIndex().getId());
         eventApplicantLadgerService.deleteEventApplicantLadger(ladgerId);
+        notificationCreateService.createRejectApplyNotification(ladgerInfo, rejectReason);
     }
 }
