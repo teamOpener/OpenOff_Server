@@ -21,6 +21,7 @@ import com.example.openoff.domain.user.domain.exception.UserNotCorrectSMSNumExce
 import com.example.openoff.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,8 @@ import java.util.stream.Stream;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserQueryService {
+    @Value("${tester.phoneNum}")
+    private String testerPhoneNum;
     private final UserUtils userUtils;
     private final NCPSmsService ncpSmsService;
     private final SocialAccountService socialAccountService;
@@ -95,6 +98,12 @@ public class UserQueryService {
     public ResponseDto<UserInfoResponseDto> checkSmsNum(UserSmsCheckRequestDto userSmsCheckRequestDto) {
         Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(userSmsCheckRequestDto.getPhoneNum());
         User user = userUtils.getUser();
+
+        if (userSmsCheckRequestDto.getPhoneNum().equals(testerPhoneNum)) { // TESTER 휴대폰 인증을 위한 코드
+            user.updatePhoneNumber(userSmsCheckRequestDto.getPhoneNum());
+            return ResponseDto.of(HttpStatus.OK.value(), "휴대폰 인증에 성공하였습니다.", UserInfoResponseDto.from(user));
+        }
+
         if (byPhoneNumber.isPresent() && !byPhoneNumber.get().getId().equals(user.getId())) {
             throw UserException.of(Error.USER_PHONE_NUM_DUPLICATION);
         }
