@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @UseCase
 @RequiredArgsConstructor
-public class NotificationCreateService {
+public class NotificationCreateUseCase {
     private final NotificationService notificationService;
     private final FirebaseService firebaseService;
 

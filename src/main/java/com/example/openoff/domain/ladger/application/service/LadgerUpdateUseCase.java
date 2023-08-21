@@ -13,7 +13,7 @@ import com.example.openoff.domain.ladger.application.handler.EventApplicationLad
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
 import com.example.openoff.domain.ladger.domain.service.EventStaffService;
-import com.example.openoff.domain.notification.application.service.NotificationCreateService;
+import com.example.openoff.domain.notification.application.service.NotificationCreateUseCase;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class LadgerUpdateUseCase {
     private final EventStaffService eventStaffService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
     private final EventApplicationLadgerHandler eventApplicationLadgerHandler;
-    private final NotificationCreateService notificationCreateService;
+    private final NotificationCreateUseCase notificationCreateUseCase;
 
     public void permitAndUpdateQRImageUrl(Long ladgerId) {
         User user = userUtils.getUser();
@@ -43,7 +43,7 @@ public class LadgerUpdateUseCase {
         eventStaffService.checkEventStaff(user.getId(), eventInfo.getId());
 
         eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
-        notificationCreateService.createApplyPermitNotification(eventApplicantLadger);
+        notificationCreateUseCase.createApplyPermitNotification(eventApplicantLadger);
 
         Long approvedApplicantCount = eventApplicantLadgerService.countByEventIndex_IdAndIsAcceptTrue(eventApplicantLadger.getEventIndex().getId());
         if (eventInfo.getEventMaxPeople().longValue() == (approvedApplicantCount+1)) {
@@ -58,7 +58,7 @@ public class LadgerUpdateUseCase {
         List<EventApplicantLadger> notAcceptedLadgersByEventIndex = eventApplicantLadgerService.findNotAcceptedLadgersByEventIndex(eventIndexId);
         eventApplicationLadgerHandler.totalLadgerPermitAndCreateQRImage(notAcceptedLadgersByEventIndex);
 
-        notificationCreateService.createApplyPermitNotifications(notAcceptedLadgersByEventIndex);
+        notificationCreateUseCase.createApplyPermitNotifications(notAcceptedLadgersByEventIndex);
     }
 
     public void cancelPermitedApplicantion(Long ladgerId) {
@@ -69,7 +69,7 @@ public class LadgerUpdateUseCase {
         eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
         eventApplicationLadgerHandler.removeQRImageAndUpdateIsAccepted(eventApplicantLadger);
 
-        notificationCreateService.createCancelPermitNotification(eventApplicantLadger);
+        notificationCreateUseCase.createCancelPermitNotification(eventApplicantLadger);
     }
 
     public QRCheckResponseDto checkQRCode(QRCheckRequestDto qrCheckRequestDto) {

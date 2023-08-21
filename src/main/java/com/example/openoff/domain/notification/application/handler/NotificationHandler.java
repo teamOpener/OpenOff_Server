@@ -5,7 +5,7 @@ import com.example.openoff.domain.bookmark.domain.entity.EventBookmark;
 import com.example.openoff.domain.bookmark.domain.service.BookmarkService;
 import com.example.openoff.domain.ladger.domain.entity.EventStaff;
 import com.example.openoff.domain.ladger.domain.service.EventStaffService;
-import com.example.openoff.domain.notification.application.service.NotificationCreateService;
+import com.example.openoff.domain.notification.application.service.NotificationCreateUseCase;
 import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.entity.UserFcmToken;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class NotificationHandler {
     private final BookmarkService bookmarkService;
     private final EventStaffService eventStaffService;
     private final FirebaseService firebaseService;
-    private final NotificationCreateService notificationCreateService;
+    private final NotificationCreateUseCase notificationCreateUseCase;
 
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -53,8 +53,8 @@ public class NotificationHandler {
     }
 
     private void sendNotifications(List<User> bookmarkers, List<User> staffs, ApplyHalfEvent applyHalfEvent) {
-        notificationCreateService.createApplyHalfStaffNotification(staffs, applyHalfEvent.getEventIndex().getId());
-        notificationCreateService.createBookmarkHalfNotification(bookmarkers, applyHalfEvent.getEventIndex().getEventInfo().getId());
+        notificationCreateUseCase.createApplyHalfStaffNotification(staffs, applyHalfEvent.getEventIndex().getId());
+        notificationCreateUseCase.createBookmarkHalfNotification(bookmarkers, applyHalfEvent.getEventIndex().getEventInfo().getId());
     }
 
     private void unsubscribeUsersFromFirebase(List<User> users, String topic) {
