@@ -24,6 +24,9 @@ public class UserFcmToken extends BaseEntity {
     @Column(name = "user_fcm_token_id")
     private Long id;
 
+    @Column(name = "device_id", unique = true)
+    private String deviceId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -32,8 +35,13 @@ public class UserFcmToken extends BaseEntity {
     private String fcmToken;
 
     @Builder
-    public UserFcmToken(User user, String fcmToken) {
+    public UserFcmToken(String deviceId, User user, String fcmToken) {
+        this.deviceId = deviceId;
         this.user = user;
+        this.fcmToken = fcmToken;
+    }
+
+    public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
     }
 }
