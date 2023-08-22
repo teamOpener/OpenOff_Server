@@ -5,12 +5,14 @@ import com.example.openoff.domain.ladger.application.dto.response.EventStaffInfo
 import com.example.openoff.domain.ladger.domain.service.EventStaffService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @UseCase
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StaffSearchUseCase {
     private final EventStaffService eventStaffService;
