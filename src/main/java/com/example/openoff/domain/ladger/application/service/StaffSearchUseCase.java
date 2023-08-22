@@ -17,7 +17,7 @@ public class StaffSearchUseCase {
 
     public List<EventStaffInfoResponseDto> getEventStaffList(Long eventInfoId){
         return eventStaffService.getEventStaffs(eventInfoId).stream()
-                .map(staff -> EventStaffInfoResponseDto.from(staff.getId(), staff.getStaffType(), staff.getStaff().getId(), staff.getName()))
+                .map(staff -> EventStaffInfoResponseDto.from(staff.getId(), staff.getStaffType(), staff.getStaff().getId(), staff.getStaff().getNickname()))
                 .collect(Collectors.toList());
     }
 }
