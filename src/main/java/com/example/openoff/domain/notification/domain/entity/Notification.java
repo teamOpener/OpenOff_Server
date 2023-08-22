@@ -54,4 +54,8 @@ public class Notification extends BaseEntity {
                 .notificationParameter(notificationParameter)
                 .build();
     }
+
+    public void read() {
+        this.isRead = true;
+    }
 }
