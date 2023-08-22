@@ -158,7 +158,7 @@ public class UserQueryService {
     @Transactional
     public ResponseDto<UserInfoResponseDto> permitAlert(UserFcmTokenUploadRequestDto userFcmTokenUploadRequestDto) {
         User user = userUtils.getUser();
-        userFcmTokenService.save(user, userFcmTokenUploadRequestDto.getFcmToken());
+        userFcmTokenService.save(user, userFcmTokenUploadRequestDto);
         return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
     }
 }
