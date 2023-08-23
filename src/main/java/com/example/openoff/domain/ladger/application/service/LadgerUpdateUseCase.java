@@ -5,8 +5,10 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.EncryptionUtils;
 import com.example.openoff.common.util.UserUtils;
+import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
+import com.example.openoff.domain.eventInstance.domain.service.EventInfoService;
 import com.example.openoff.domain.ladger.application.dto.request.QRCheckRequestDto;
 import com.example.openoff.domain.ladger.application.dto.response.QRCheckResponseDto;
 import com.example.openoff.domain.ladger.application.handler.EventApplicationLadgerHandler;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @UseCase
@@ -27,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LadgerUpdateUseCase {
     private final UserUtils userUtils;
+    private final EventInfoService eventInfoService;
     private final EventIndexService eventIndexService;
     private final EncryptionUtils encryptionUtils;
     private final EventStaffService eventStaffService;
@@ -37,18 +41,24 @@ public class LadgerUpdateUseCase {
     public void permitAndUpdateQRImageUrl(Long ladgerId) {
         User user = userUtils.getUser();
         EventApplicantLadger eventApplicantLadger = eventApplicantLadgerService.findLadgerInfo(ladgerId);
+        EventIndex eventIndex = eventApplicantLadger.getEventIndex();
         EventInfo eventInfo = eventApplicantLadger.getEventInfo();
         if (eventApplicantLadger.getQrCodeImageUrl() != null) throw BusinessException.of(Error.ALREADY_PERMIT);
         // 처리하는 사람이 스탭인지 체크
         eventStaffService.checkEventStaff(user.getId(), eventInfo.getId());
 
+        Long approvedApplicantCount = eventApplicantLadgerService.countByEventIndex_IdAndIsAcceptTrue(eventIndex.getId());
+        if (eventInfo.getEventMaxPeople().longValue() == (approvedApplicantCount+1)) {
+            eventIndexService.updateOneEventIndexToClose(eventIndex);
+            if (eventInfo.getEventIndexes().stream()
+                    .filter(data -> !Objects.equals(data.getId(), eventIndex.getId()))
+                    .allMatch(EventIndex::getIsClose)) {
+                eventInfoService.suspensionEventApplication(eventInfo);
+            }
+        }
+
         eventApplicationLadgerHandler.ladgerPermitAndCreateQRImage(eventApplicantLadger);
         notificationCreateUseCase.createApplyPermitNotification(eventApplicantLadger);
-
-        Long approvedApplicantCount = eventApplicantLadgerService.countByEventIndex_IdAndIsAcceptTrue(eventApplicantLadger.getEventIndex().getId());
-        if (eventInfo.getEventMaxPeople().longValue() == (approvedApplicantCount+1)) {
-            eventIndexService.updateOneEventIndexToClose(eventApplicantLadger.getEventIndex());
-        }
     }
 
     public void permitAndUpdateQRImageUrlAllApplicant(Long eventIndexId) {
