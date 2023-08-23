@@ -39,4 +39,9 @@ public class EventIndexService {
         eventIndex.updateEventIndexIsClose(true);
         eventIndexRepository.save(eventIndex);
     }
+
+    public void updateOneEventIndexToOpen(EventIndex eventIndex){
+        eventIndex.updateEventIndexIsClose(false);
+        eventIndexRepository.save(eventIndex);
+    }
 }

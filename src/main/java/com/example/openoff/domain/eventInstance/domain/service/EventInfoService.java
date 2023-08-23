@@ -64,4 +64,14 @@ public class EventInfoService {
         eventInfo.updateApplyPermit(false);
         eventInfoRepository.save(eventInfo);
     }
+
+    public void resumeEventApplication(EventInfo eventInfo) {
+        eventInfo.updateApplyPermit(true);
+        eventInfoRepository.save(eventInfo);
+    }
+
+    public void minusTotalRegisterCount(EventInfo eventInfo) {
+        eventInfo.updateTotalRegisterCountMinus();
+        eventInfoRepository.save(eventInfo);
+    }
 }
