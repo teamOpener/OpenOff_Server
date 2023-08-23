@@ -10,13 +10,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Table(name = "openoff_user_fcm_token",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_user_id_fcm_token",
-                        columnNames = {"user_id", "fcm_token"}
-                )
-        })
+@Table(name = "openoff_user_fcm_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFcmToken extends BaseEntity {
     @Id
@@ -24,7 +18,7 @@ public class UserFcmToken extends BaseEntity {
     @Column(name = "user_fcm_token_id")
     private Long id;
 
-    @Column(name = "device_id", unique = true)
+    @Column(name = "device_id")
     private String deviceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
