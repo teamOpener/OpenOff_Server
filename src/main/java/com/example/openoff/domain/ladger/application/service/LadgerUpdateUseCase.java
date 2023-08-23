@@ -77,8 +77,15 @@ public class LadgerUpdateUseCase {
         if (!eventApplicantLadger.getIsAccept()) throw BusinessException.of(Error.NOT_ACCEPTED);
         // 처리하는 사람이 스탭인지 체크
         eventStaffService.checkEventStaff(user.getId(), eventApplicantLadger.getEventInfo().getId());
-        eventApplicationLadgerHandler.removeQRImageAndUpdateIsAccepted(eventApplicantLadger);
 
+        if (eventApplicantLadger.getIsAccept() && eventApplicantLadger.getEventIndex().getIsClose()) {
+            eventIndexService.updateOneEventIndexToOpen(eventApplicantLadger.getEventIndex());
+            if (!eventApplicantLadger.getEventInfo().getEventApplyPermit()) {
+                eventInfoService.resumeEventApplication(eventApplicantLadger.getEventInfo());
+            }
+        }
+        eventInfoService.minusTotalRegisterCount(eventApplicantLadger.getEventInfo());
+        eventApplicationLadgerHandler.removeQRImageAndUpdateIsAccepted(eventApplicantLadger);
         notificationCreateUseCase.createCancelPermitNotification(eventApplicantLadger);
     }
 

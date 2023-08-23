@@ -5,6 +5,8 @@ import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
 import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.eventInstance.domain.service.EventExtraAnswerService;
+import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
+import com.example.openoff.domain.eventInstance.domain.service.EventInfoService;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
 import com.example.openoff.domain.notification.application.service.NotificationCreateUseCase;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LadgerDeleteUseCase {
     private final UserUtils userUtils;
+    private final EventInfoService eventInfoService;
+    private final EventIndexService eventIndexService;
     private final NotificationCreateUseCase notificationCreateUseCase;
     private final EventApplicantLadgerService eventApplicantLadgerService;
     private final EventExtraAnswerService eventExtraAnswerService;
@@ -30,7 +34,11 @@ public class LadgerDeleteUseCase {
     public void deleteMyApplyLadger(Long ladgerId){
         User user = userUtils.getUser();
         EventApplicantLadger myEventTicketInfo = eventApplicantLadgerService.getApplicationInfo(ladgerId, user.getId());
-        myEventTicketInfo.getEventInfo().updateTotalRegisterCountMinus();
+        if (myEventTicketInfo.getIsAccept()) {
+            eventIndexService.updateOneEventIndexToOpen(myEventTicketInfo.getEventIndex());
+        } else {
+            eventInfoService.minusTotalRegisterCount(myEventTicketInfo.getEventInfo());
+        }
         eventExtraAnswerService.deleteEventExtraAnswers(myEventTicketInfo.getEventIndex().getId());
         eventApplicantLadgerService.deleteEventApplicantLadger(myEventTicketInfo.getId());
     }
@@ -43,7 +51,8 @@ public class LadgerDeleteUseCase {
         if (!staffId.contains(user.getId())) {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }
-        ladgerInfo.getEventInfo().updateTotalRegisterCount();
+
+        eventInfoService.minusTotalRegisterCount(ladgerInfo.getEventInfo());
         eventExtraAnswerService.deleteEventExtraAnswers(ladgerInfo.getEventIndex().getId());
         eventApplicantLadgerService.deleteEventApplicantLadger(ladgerId);
         notificationCreateUseCase.createRejectApplyNotification(ladgerInfo, rejectReason);
