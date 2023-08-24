@@ -35,6 +35,9 @@ import java.util.stream.Stream;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserQueryService {
+    @Value("${default.profileImageUrl}")
+    private String defaultProfileImageUrl;
+
     @Value("${tester.phoneNum}")
     private String testerPhoneNum;
     private final UserUtils userUtils;
@@ -48,13 +51,13 @@ public class UserQueryService {
                 .orElseGet(() -> {
                     switch (socialType){
                         case "kakao":
-                            return userRepository.save(User.builder().kakaoAccount(socialAccount).isActive(true).build());
+                            return userRepository.save(User.builder().kakaoAccount(socialAccount).profileImageUrl(defaultProfileImageUrl).isActive(true).build());
                         case "google":
-                            return userRepository.save(User.builder().googleAccount(socialAccount).isActive(true).build());
+                            return userRepository.save(User.builder().googleAccount(socialAccount).profileImageUrl(defaultProfileImageUrl).isActive(true).build());
                         case "apple":
-                            return userRepository.save(User.builder().appleAccount(socialAccount).isActive(true).build());
+                            return userRepository.save(User.builder().appleAccount(socialAccount).profileImageUrl(defaultProfileImageUrl).isActive(true).build());
                         case "normal":
-                            return userRepository.save(User.builder().normalAccount(socialAccount).isActive(true).build());
+                            return userRepository.save(User.builder().normalAccount(socialAccount).profileImageUrl(defaultProfileImageUrl).isActive(true).build());
                         default:
                             throw UserException.of(Error.OAUTH_FAILED);
                     }
