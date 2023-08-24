@@ -14,7 +14,7 @@ import java.util.Map;
 
 public interface EventApplicantLadgerRepositoryCustom {
     Page<EventInfo> findAllApplyInfos(Long eventInfoId, FieldType fieldType, String userId, Pageable pageable);
-    Page<EventApplicantLadger> findAllByEventIndex_Id(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable);
+    Page<EventApplicantLadger> findAllByEventIndex_Id(Long eventIndexId, Long ladgerId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable);
 
     List<EventApplicantLadger> findApplicantInEventIndex(Long eventIndexId);
     Long countApplicantInEventIndex(Long eventIndexId);

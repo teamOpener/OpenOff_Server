@@ -61,14 +61,15 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
     }
 
     @Override
-    public Page<EventApplicantLadger> findAllByEventIndex_Id(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
+    public Page<EventApplicantLadger> findAllByEventIndex_Id(Long eventIndexId, Long ladgerId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
         List<OrderSpecifier<?>> orders = sortApplicant(sort);
         List<EventApplicantLadger> results = queryFactory
                 .select(eventApplicantLadger)
                 .from(eventApplicantLadger)
                 .where(
                         eventApplicantLadger.eventIndex.id.eq(eventIndexId),
-                        ltUsernameAndCreatedDate(username, time),
+                        gtLadgerId(ladgerId),
+                        gtUsernameAndCreatedDate(username, time),
                         applicantNameLike(keyword)
                 )
                 .orderBy(orders.toArray(new OrderSpecifier[0]))
@@ -80,7 +81,8 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
                 .from(eventApplicantLadger)
                 .where(
                         eventApplicantLadger.eventIndex.id.eq(eventIndexId),
-                        ltUsernameAndCreatedDate(username, time),
+                        gtLadgerId(ladgerId),
+                        gtUsernameAndCreatedDate(username, time),
                         applicantNameLike(keyword)
                 );
 
@@ -170,8 +172,12 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
         return (count != null) ? count : 0L;  // 결과가 없을 경우 0 반환
     }
 
+    private BooleanExpression gtLadgerId(Long ladgerId) {
+        if (ladgerId == null) return null;
+        return eventApplicantLadger.id.gt(ladgerId);
+    }
 
-    private BooleanExpression ltUsernameAndCreatedDate(String username, LocalDateTime time) {
+    private BooleanExpression gtUsernameAndCreatedDate(String username, LocalDateTime time) {
         if (username == null || time == null) return null;
         return eventApplicantLadger.eventApplicant.userName.gt(username)
                 .or(eventApplicantLadger.eventApplicant.userName.eq(username)
