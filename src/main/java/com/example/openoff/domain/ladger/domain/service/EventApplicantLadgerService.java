@@ -56,7 +56,7 @@ public class EventApplicantLadgerService {
     }
 
     public EventApplicantLadger getApplicationInfo(Long ladgerId, String userId) {
-        return eventApplicantLadgerRepository.findByIdAndEventApplicant_Id(ladgerId, userId)
+        return eventApplicantLadgerRepository.findById(ladgerId)
                 .orElseThrow(() -> BusinessException.of(Error.EVENT_APPLICANT_NOT_FOUND));
     }
 

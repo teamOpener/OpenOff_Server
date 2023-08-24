@@ -65,11 +65,12 @@ public class LadgerMapper {
         return PageResponse.of(new PageImpl<>(responseDtos, ladgerInfoList.getPageable(), ladgerInfoList.getTotalElements()));
     }
 
-    public static ApplicantApplyDetailResponseDto mapToApplicantApplyDetailResponseDto(User user, EventApplicantLadger ladgerInfo) {
+    public static ApplicantApplyDetailResponseDto mapToApplicantApplyDetailResponseDto(EventApplicantLadger ladgerInfo) {
+        User eventApplicant = ladgerInfo.getEventApplicant();
         return ApplicantApplyDetailResponseDto.builder()
-                .username(user.getUserName())
-                .birth(user.getBirth().getYear().toString() + "." + user.getBirth().getMonth() + "." + user.getBirth().getDay())
-                .genderType(user.getGender())
+                .username(eventApplicant.getUserName())
+                .birth(eventApplicant.getBirth().getYear().toString() + "." + eventApplicant.getBirth().getMonth() + "." + eventApplicant.getBirth().getDay())
+                .genderType(eventApplicant.getGender())
                 .eventInfoId(ladgerInfo.getEventInfo().getId())
                 .eventIndexId(ladgerInfo.getEventIndex().getId())
                 .eventTitle(ladgerInfo.getEventInfo().getEventTitle())
@@ -77,8 +78,8 @@ public class LadgerMapper {
                 .eventDate(ladgerInfo.getEventIndex().getEventDate())
                 .isAccepted(ladgerInfo.getIsAccept())
                 .isJoined(ladgerInfo.getIsJoin())
-                .qnAInfoList(user.getEventExtraAnswerList().stream()
-                        .filter(eventExtraAnswer -> eventExtraAnswer.getEventIndex().getId().equals(ladgerInfo.getEventIndex().getId()))
+                .qnAInfoList(eventApplicant.getEventExtraAnswerList().stream()
+                        .filter(eventExtraAnswer -> eventExtraAnswer != null && eventExtraAnswer.getEventIndex().getId().equals(ladgerInfo.getEventIndex().getId()))
                         .map(eventExtraAnswer -> ApplicantApplyDetailResponseDto.QnAInfo.of(eventExtraAnswer.getQuestion().getQuestion(), eventExtraAnswer.getAnswer())).collect(Collectors.toList()))
                 .build();
     }

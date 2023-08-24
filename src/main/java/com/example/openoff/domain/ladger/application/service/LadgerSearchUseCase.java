@@ -13,6 +13,7 @@ import com.example.openoff.domain.ladger.application.dto.response.*;
 import com.example.openoff.domain.ladger.application.mapper.LadgerMapper;
 import com.example.openoff.domain.ladger.domain.entity.EventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
+import com.example.openoff.domain.ladger.domain.service.EventStaffService;
 import com.example.openoff.domain.ladger.presentation.SortType;
 import com.example.openoff.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LadgerSearchUseCase {
     private final UserUtils userUtils;
+    private final EventStaffService eventStaffService;
     private final EventIndexService eventIndexService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
 
@@ -52,8 +54,9 @@ public class LadgerSearchUseCase {
 
     public ApplicantApplyDetailResponseDto getApplicationInfo(Long ladgerId) {
         User user = userUtils.getUser();
-        EventApplicantLadger ladgerInfo = eventApplicantLadgerService.getApplicationInfo(ladgerId, user.getId());
-        return LadgerMapper.mapToApplicantApplyDetailResponseDto(user, ladgerInfo);
+        EventApplicantLadger ladgerInfo = eventApplicantLadgerService.findLadgerInfo(ladgerId);
+        eventStaffService.checkEventStaff(user.getId(), ladgerInfo.getEventInfo().getId());
+        return LadgerMapper.mapToApplicantApplyDetailResponseDto(ladgerInfo);
     }
 
     public PageResponse<EventApplicantInfoResponseDto> getEventApplicantList(Long eventIndexId, Long ladgerId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
