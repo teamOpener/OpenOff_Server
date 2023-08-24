@@ -56,12 +56,12 @@ public class LadgerSearchUseCase {
         return LadgerMapper.mapToApplicantApplyDetailResponseDto(user, ladgerInfo);
     }
 
-    public PageResponse<EventApplicantInfoResponseDto> getEventApplicantList(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
+    public PageResponse<EventApplicantInfoResponseDto> getEventApplicantList(Long eventIndexId, Long ladgerId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
         User user = userUtils.getUser();
         if (eventIndexService.findById(eventIndexId).getEventInfo().getEventStaffs().stream().noneMatch(staff -> staff.getStaff().getId().equals(user.getId()))) {
             throw BusinessException.of(Error.EVENT_STAFF_NOT_FOUND);
         }
-        Page<EventApplicantLadger> ladgerInfoList = eventApplicantLadgerService.findAllEventApplicants(eventIndexId, username, time, keyword, sort, pageable);
+        Page<EventApplicantLadger> ladgerInfoList = eventApplicantLadgerService.findAllEventApplicants(eventIndexId, ladgerId, username, time, keyword, sort, pageable);
         return LadgerMapper.mapToEventApplicantInfoResponseDto(ladgerInfoList);
     }
 

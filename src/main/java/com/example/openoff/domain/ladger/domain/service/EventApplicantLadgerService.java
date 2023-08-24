@@ -51,8 +51,8 @@ public class EventApplicantLadgerService {
         return eventApplicantLadgerRepository.findAllByEventApplicant_IdAndEventInfo_Id(userId, eventInfoId);
     }
 
-    public Page<EventApplicantLadger> findAllEventApplicants(Long eventIndexId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
-        return eventApplicantLadgerRepository.findAllByEventIndex_Id(eventIndexId, username, time, keyword, sort, pageable);
+    public Page<EventApplicantLadger> findAllEventApplicants(Long eventIndexId, Long ladgerId, String username, LocalDateTime time, String keyword, SortType sort, Pageable pageable) {
+        return eventApplicantLadgerRepository.findAllByEventIndex_Id(eventIndexId, ladgerId, username, time, keyword, sort, pageable);
     }
 
     public EventApplicantLadger getApplicationInfo(Long ladgerId, String userId) {

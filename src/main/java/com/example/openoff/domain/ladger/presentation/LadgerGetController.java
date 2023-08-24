@@ -54,6 +54,7 @@ public class LadgerGetController {
     public ResponseEntity<ResponseDto<PageResponse<EventApplicantInfoResponseDto>>> getApplicantInfos
             (
                     @RequestParam Long eventIndexId,
+                    @RequestParam(required = false) Long ladgerId,
                     @RequestParam(required = false) String username,
                     @RequestParam(required = false) String time,
                     @RequestParam(required = false) String keyword,
@@ -64,7 +65,7 @@ public class LadgerGetController {
         DateTimeFormatter parse = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
         LocalDateTime convertedTime = null;
         if (time != null) { convertedTime = LocalDateTime.parse(time, parse); }
-        PageResponse<EventApplicantInfoResponseDto> eventApplicantInfoResponseDtoPageResponse = ladgerSearchUseCase.getEventApplicantList(eventIndexId, username, convertedTime, keyword, sort, pageable);
+        PageResponse<EventApplicantInfoResponseDto> eventApplicantInfoResponseDtoPageResponse = ladgerSearchUseCase.getEventApplicantList(eventIndexId, ladgerId, username, convertedTime, keyword, sort, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 신청자 목록 조회가 완료되었습니다.", eventApplicantInfoResponseDtoPageResponse));
     }
 
