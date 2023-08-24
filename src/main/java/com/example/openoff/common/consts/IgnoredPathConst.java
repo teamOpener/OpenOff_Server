@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 public final class IgnoredPathConst {
 
     public static final String[] IGNORED_PATHS = {
-            "/", "/auth/**",
+            "/", "/auth/**", "/banner",
             "/reissue",
            };
 }
