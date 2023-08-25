@@ -74,4 +74,9 @@ public class EventInfoService {
         eventInfo.updateTotalRegisterCountMinus();
         eventInfoRepository.save(eventInfo);
     }
+
+    public void deleteEventInfo(Long eventInfoId){
+        EventInfo eventInfo = eventInfoRepository.findById(eventInfoId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
+        eventInfoRepository.delete(eventInfo);
+    }
 }
