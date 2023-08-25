@@ -15,7 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.*;
 
@@ -93,7 +96,7 @@ public class S3UploadService {
     }
 
     private ByteArrayOutputStream resizeImage(MultipartFile file) throws IOException {
-        BufferedImage originalImage = ImageIO.read(multipartFileToFile(file));
+        BufferedImage originalImage = ImageIO.read(file.getInputStream());
         BufferedImage resizedImage = Thumbnails.of(originalImage)
                 .size(320, 396)
                 .asBufferedImage();
@@ -143,18 +146,5 @@ public class S3UploadService {
             throw BusinessException.of(Error.FILE_UPLOAD_ERROR);
         }
         return amazonS3.getUrl(bucket, ticketIndex).toString();
-    }
-
-    private File multipartFileToFile(MultipartFile file) {
-        try {
-            File convFile = new File(file.getOriginalFilename());
-            convFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-            return convFile;
-        } catch (IOException e) {
-            throw BusinessException.of(Error.FILE_UPLOAD_ERROR);
-        }
     }
 }
