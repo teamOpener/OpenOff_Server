@@ -46,6 +46,8 @@ dependencyManagement {
 }
 
 dependencies {
+    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.20'
+
     implementation("org.springframework.boot:spring-boot-starter-batch")
 //    implementation("org.springframework.boot:spring-boot-starter-quartz")
 
