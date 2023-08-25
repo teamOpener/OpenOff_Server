@@ -109,7 +109,8 @@ public class EventApplicantBatchConfig {
                 List<String> userIds = acceptedApplicantInEventIndex.stream().map(User::getId).collect(Collectors.toList());
                 List<String> allFcmTokens = userFcmTokenRepository.findAllFcmTokens(userIds);
                 firebaseService.sendToTopic(eventInfo.getId()+"-1day-applicant-alert", "["+eventInfo.getEventTitle()+"] 이벤트 하루 전이에요!", "이벤트 날짜가 하루 전으로 다가왔어요!");
-                firebaseService.unSubscribe(eventInfo.getId()+"-1day-applicant-alert", allFcmTokens);
+                if (!allFcmTokens.isEmpty())
+                    firebaseService.unSubscribe(eventInfo.getId()+"-1day-applicant-alert", allFcmTokens);
                 return acceptedApplicantInEventIndex.stream().map(user -> Notification.builder()
                         .user(user)
                         .content("이벤트 날짜가 하루 전으로 다가왔어요!")
@@ -130,7 +131,8 @@ public class EventApplicantBatchConfig {
                 List<String> userIds = acceptedApplicantInEventIndex.stream().map(User::getId).collect(Collectors.toList());
                 List<String> allFcmTokens = userFcmTokenRepository.findAllFcmTokens(userIds);
                 firebaseService.sendToTopic(eventInfo.getId()+"-dday-applicant-alert", "["+eventInfo.getEventTitle()+"] 이벤트 날이에요!", "이벤트 참여 당일입니다!!");
-                firebaseService.unSubscribe(eventInfo.getId()+"-dday-applicant-alert", allFcmTokens);
+                if (!allFcmTokens.isEmpty())
+                    firebaseService.unSubscribe(eventInfo.getId()+"-dday-applicant-alert", allFcmTokens);
                 return acceptedApplicantInEventIndex.stream().map(user -> Notification.builder()
                                 .user(user)
                                 .content("이벤트 참여 당일입니다!!")

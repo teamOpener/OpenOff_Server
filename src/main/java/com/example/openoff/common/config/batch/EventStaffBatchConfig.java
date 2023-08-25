@@ -2,8 +2,11 @@ package com.example.openoff.common.config.batch;
 
 import com.example.openoff.common.infrastructure.fcm.FirebaseService;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
+import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventIndexRepository;
-import com.example.openoff.domain.ladger.domain.entity.EventStaff;
+import com.example.openoff.domain.eventInstance.domain.repository.EventInfoRepository;
+import com.example.openoff.domain.ladger.domain.repository.EventApplicantLadgerRepository;
+import com.example.openoff.domain.ladger.domain.repository.EventStaffRepository;
 import com.example.openoff.domain.notification.domain.entity.Notification;
 import com.example.openoff.domain.notification.domain.entity.NotificationType;
 import com.example.openoff.domain.notification.domain.repository.NotificationRepository;
@@ -32,7 +35,10 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class EventStaffBatchConfig {
+    private final EventInfoRepository eventInfoRepository;
     private final EventIndexRepository eventIndexRepository;
+    private final EventStaffRepository eventStaffRepository;
+    private final EventApplicantLadgerRepository eventApplicantLadgerRepository;
     private final NotificationRepository notificationRepository;
     private final FirebaseService firebaseService;
     private final JobBuilderFactory jobBuilderFactory;
@@ -128,8 +134,10 @@ public class EventStaffBatchConfig {
         return new ItemProcessor<EventIndex, List<Notification>>() {
             @Override
             public List<Notification> process(EventIndex item) throws Exception {
-                String eventTitle = item.getEventInfo().getEventTitle();
-                List<User> staffs = item.getEventInfo().getEventStaffs().stream().map(EventStaff::getStaff).collect(Collectors.toList());
+                EventInfo eventInfo = eventIndexRepository.findEventInfoByEventIndexId(item.getId());
+                if (eventInfo == null) { return null; }
+                String eventTitle = eventInfo.getEventTitle();
+                List<User> staffs = eventStaffRepository.findEventStaffUsersByEventInfo_Id(eventInfo.getId());
                 firebaseService.sendToTopic(item.getId()+"-1day-staff-alert", "["+eventTitle+"] 이벤트 하루 전이에요!", "이벤트 날짜가 하루 전으로 다가왔어요! ");
                 return staffs.stream().map(user -> Notification.builder()
                         .user(user)
@@ -146,8 +154,10 @@ public class EventStaffBatchConfig {
         return new ItemProcessor<EventIndex, List<Notification>>() {
             @Override
             public List<Notification> process(EventIndex item) throws Exception {
-                String eventTitle = item.getEventInfo().getEventTitle();
-                List<User> staffs = item.getEventInfo().getEventStaffs().stream().map(EventStaff::getStaff).collect(Collectors.toList());
+                EventInfo eventInfo = eventIndexRepository.findEventInfoByEventIndexId(item.getId());
+                if (eventInfo == null) { return null; }
+                String eventTitle = eventInfo.getEventTitle();
+                List<User> staffs = eventStaffRepository.findEventStaffUsersByEventInfo_Id(eventInfo.getId());
                 firebaseService.sendToTopic(item.getId()+"-dday-staff-alert", "["+eventTitle+"] 이벤트 당일이에요!", "이벤트 당일이 되었습니다!\n참석 명단을 다시 한 번 체크해주세요.");
                 return staffs.stream().map(user -> Notification.builder()
                                 .user(user)
@@ -164,9 +174,11 @@ public class EventStaffBatchConfig {
         return new ItemProcessor<EventIndex, List<Notification>>() {
             @Override
             public List<Notification> process(EventIndex item) throws Exception {
-                String eventTitle = item.getEventInfo().getEventTitle();
-                List<User> staffs = item.getEventInfo().getEventStaffs().stream().map(EventStaff::getStaff).collect(Collectors.toList());
-                long count = item.getEventApplicantLadgers().stream().filter(eventApplicantLadger -> !eventApplicantLadger.getIsAccept()).count();
+                EventInfo eventInfo = eventIndexRepository.findEventInfoByEventIndexId(item.getId());
+                if (eventInfo == null) { return null; }
+                String eventTitle = eventInfo.getEventTitle();
+                List<User> staffs = eventStaffRepository.findEventStaffUsersByEventInfo_Id(eventInfo.getId());
+                long count = eventApplicantLadgerRepository.countEventInfoNotApprovedApplicantByEventIndexId(item.getId());
                 firebaseService.sendToTopic(item.getId()+"-check-approve-staff-alert", "["+eventTitle+"] 이벤트 미확인 신청자를 확인해주세요!", "미승인한 이벤트 참여자가 " + String.valueOf(count) +  " 명 있습니다.\n서둘러 승인을 완료해주세요.");
                 return staffs.stream().map(user -> Notification.builder()
                                 .user(user)
