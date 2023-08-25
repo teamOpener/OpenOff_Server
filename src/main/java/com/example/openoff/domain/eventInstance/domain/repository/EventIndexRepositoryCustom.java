@@ -1,6 +1,7 @@
 package com.example.openoff.domain.eventInstance.domain.repository;
 
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
+import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,4 +12,6 @@ public interface EventIndexRepositoryCustom {
     List<EventIndex> find1DayLeftEventIndex();
     List<EventIndex> findDDayLeftEventIndex();
     List<EventIndex> findNotClosedEventIndex();
+
+    EventInfo findEventInfoByEventIndexId(Long eventIndexId);
 }

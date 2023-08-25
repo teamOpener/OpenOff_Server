@@ -127,14 +127,17 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
     @Override
     public List<User> findAcceptedApplicantInEventIndex(Long eventIndexId) {
         return queryFactory
-                .select(eventApplicantLadger.eventApplicant)
+                .select(eventApplicantLadger)
                 .from(eventApplicantLadger)
                 .innerJoin(eventApplicantLadger.eventApplicant).fetchJoin()
                 .where(
                         eventApplicantLadger.eventIndex.id.eq(eventIndexId),
                         eventApplicantLadger.isAccept.isTrue()
                 )
-                .fetch();
+                .fetch()
+                .stream()
+                .map(EventApplicantLadger::getEventApplicant)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -159,13 +162,13 @@ public class EventApplicantLadgerRepositoryImpl implements EventApplicantLadgerR
 
 
     @Override
-    public Long countEventInfoApprovedApplicantByEventIndexId(Long eventIndexId) {
+    public Long countEventInfoNotApprovedApplicantByEventIndexId(Long eventIndexId) {
         Long count = queryFactory
                 .select(eventApplicantLadger.count())
                 .from(eventApplicantLadger)
                 .where(
                         eventApplicantLadger.eventIndex.id.eq(eventIndexId)
-                                .and(eventApplicantLadger.isAccept.isTrue())
+                                .and(eventApplicantLadger.isAccept.isFalse())
                 )
                 .fetchOne();
 

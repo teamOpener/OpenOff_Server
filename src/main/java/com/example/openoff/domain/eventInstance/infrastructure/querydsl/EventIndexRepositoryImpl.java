@@ -1,6 +1,7 @@
 package com.example.openoff.domain.eventInstance.infrastructure.querydsl;
 
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
+import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.entity.QEventIndex;
 import com.example.openoff.domain.eventInstance.domain.repository.EventIndexRepositoryCustom;
 import com.querydsl.core.Tuple;
@@ -81,5 +82,14 @@ public class EventIndexRepositoryImpl implements EventIndexRepositoryCustom {
                                 .and(qEventIndex.eventDate.after(LocalDateTime.now()))
                 )
                 .fetch();
+    }
+
+    @Override
+    public EventInfo findEventInfoByEventIndexId(Long eventIndexId) {
+        return queryFactory
+                .select(QEventIndex.eventIndex)
+                .from(QEventIndex.eventIndex)
+                .where(QEventIndex.eventIndex.id.eq(eventIndexId))
+                .fetch().stream().map(EventIndex::getEventInfo).findFirst().orElse(null);
     }
 }

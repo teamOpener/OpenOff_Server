@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface EventStaffRepository extends JpaRepository<EventStaff, Long> {
+public interface EventStaffRepository extends JpaRepository<EventStaff, Long>, EventStaffRepositoryCustom {
     boolean existsByEventInfo_IdAndStaff_Id(Long eventInfoId, String staffId);
     List<EventStaff> findEventStaffByEventInfo_Id(Long eventInfoId);
     Optional<EventStaff> findEventStaffByEventInfo_IdAndStaff_Id(Long eventInfoId, String userId);
