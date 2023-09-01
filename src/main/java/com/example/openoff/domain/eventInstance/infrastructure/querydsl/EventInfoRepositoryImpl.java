@@ -9,13 +9,9 @@ import com.example.openoff.domain.eventInstance.domain.repository.EventInfoRepos
 import com.example.openoff.domain.eventInstance.presentation.CapacityRange;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.interest.domain.entity.QEventInterestField;
-import com.example.openoff.domain.ladger.domain.entity.QEventApplicantLadger;
 import com.example.openoff.domain.ladger.domain.entity.QEventStaff;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -244,12 +240,14 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
         }
     }
 
-    private OrderSpecifier<Long> createVogueOrderSpec() {
-        return new OrderSpecifier<>
-                (Order.DESC,
-                        JPAExpressions
-                                .select(QEventApplicantLadger.eventApplicantLadger.count())
-                                .from(QEventApplicantLadger.eventApplicantLadger)
-                                .groupBy(QEventApplicantLadger.eventApplicantLadger.eventIndex.id), null);
-    }
+//    private <T> Slice<T> checkLastPage(Pageable pageable, List<T> results) {
+//        boolean hasNext = false;
+//        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
+//        if (results.size() > pageable.getPageSize()) {
+//            hasNext = true;
+//            results.remove(pageable.getPageSize());
+//        }
+//        return new SliceImpl<>(results, pageable, hasNext);
+//    }
+
 }
