@@ -105,7 +105,7 @@ public class EventInfo extends BaseEntity {
                 .eventApplyPermit(true)
                 .eventApplyStartDate(eventApplyStartDate)
                 .eventApplyEndDate(eventApplyEndDate)
-                .isApproval(false)
+                .isApproval(true)
                 .latitude(latitude).longitude(longitude).streetNameAddress(streetNameAddress).detailAddress(detailAddress)
                 .build();
     }
