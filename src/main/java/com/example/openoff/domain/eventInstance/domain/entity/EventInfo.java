@@ -38,7 +38,7 @@ public class EventInfo extends BaseEntity {
     @Column(name = "total_register_count")
     private Integer totalRegisterCount;
 
-    @Column(name = "event_description", length = 1000)
+    @Column(name = "event_description", length = 3000)
     private String eventDescription;
 
     @Column(name = "event_apply_permit")
