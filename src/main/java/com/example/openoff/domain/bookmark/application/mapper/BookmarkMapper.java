@@ -2,6 +2,7 @@ package com.example.openoff.domain.bookmark.application.mapper;
 
 import com.example.openoff.common.annotation.Mapper;
 import com.example.openoff.common.dto.PageResponse;
+import com.example.openoff.common.util.CommonUtils;
 import com.example.openoff.domain.bookmark.application.dto.response.MyBookmarkEventResponseDto;
 import com.example.openoff.domain.bookmark.domain.entity.EventBookmark;
 import com.example.openoff.domain.eventInstance.domain.entity.EventImage;
@@ -33,13 +34,13 @@ public class BookmarkMapper {
                             .map(EventImage::getEventImageUrl)
                             .findFirst()
                             .orElse(null);
-
+                    List<String> eventDate = List.of(CommonUtils.formatLocalDateTimes(eventIndexes.stream().map(EventIndex::getEventDate).collect(Collectors.toList())));
                     return MyBookmarkEventResponseDto.builder()
                             .bookmarkId(data.getId())
                             .eventInfoId(eventInfo.getId())
                             .eventTitle(eventInfo.getEventTitle())
                             .streetRoadAddress(location.getStreetNameAddress())
-                            .eventDateList(eventIndexes.stream().map(EventIndex::getEventDate).collect(Collectors.toList()))
+                            .eventDateList(eventDate)
                             .fieldTypeList(eventInterestFields.stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
                             .eventMainImageUrl(eventMainImageUrl)
                             .totalApplicantCount(eventInfo.getTotalRegisterCount())

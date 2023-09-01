@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -16,12 +15,12 @@ public class MyBookmarkEventResponseDto {
     private String eventTitle;
     private String streetRoadAddress;
     private List<FieldType> fieldTypeList;
-    private List<LocalDateTime> eventDateList;
+    private List<String> eventDateList;
     private String eventMainImageUrl;
     private Integer totalApplicantCount;
 
     @Builder
-    public MyBookmarkEventResponseDto(Long bookmarkId, Long eventInfoId, String eventTitle, String streetRoadAddress, List<FieldType> fieldTypeList, List<LocalDateTime> eventDateList, String eventMainImageUrl, Integer totalApplicantCount) {
+    public MyBookmarkEventResponseDto(Long bookmarkId, Long eventInfoId, String eventTitle, String streetRoadAddress, List<FieldType> fieldTypeList, List<String> eventDateList, String eventMainImageUrl, Integer totalApplicantCount) {
         this.bookmarkId = bookmarkId;
         this.eventInfoId = eventInfoId;
         this.eventTitle = eventTitle;
