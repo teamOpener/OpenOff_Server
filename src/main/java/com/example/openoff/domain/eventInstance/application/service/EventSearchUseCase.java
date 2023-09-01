@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,6 +65,7 @@ public class EventSearchUseCase {
         detailEventInfoResponseDto.setIsEnded(eventInfo.getEventIndexes().stream().map(EventIndex::getEventDate).noneMatch(eventDate -> eventDate.isAfter(now)));
         Map<Long, Long> countEventInfoApprovedApplicant = eventApplicantLadgerService.countEventInfoApprovedApplicant(eventInfoId);
         List<DetailEventInfoResponseDto.IndexInfo> indexInfoList = eventInfo.getEventIndexes().stream()
+                .sorted(Comparator.comparing(EventIndex::getEventDate))
                 .map(eventIndex -> DetailEventInfoResponseDto.IndexInfo.builder()
                         .eventIndexId(eventIndex.getId())
                         .eventDate(eventIndex.getEventDate())

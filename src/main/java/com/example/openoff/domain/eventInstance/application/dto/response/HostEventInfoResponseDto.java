@@ -15,6 +15,7 @@ public class HostEventInfoResponseDto {
     private Boolean isApproved;
     private String eventTitle;
     private List<FieldType> fieldTypeList;
+    private String eventPeriod;
     private List<EventIndexInfo> eventIndexInfoList;
 
     @Getter
@@ -32,11 +33,12 @@ public class HostEventInfoResponseDto {
     }
 
     @Builder
-    public HostEventInfoResponseDto(Long eventInfoId, Boolean isApproved, String eventTitle,
+    public HostEventInfoResponseDto(Long eventInfoId, Boolean isApproved, String eventTitle, String eventPeriod,
                                     List<EventIndexInfo> eventIndexInfoList, List<FieldType> fieldTypeList) {
         this.eventInfoId = eventInfoId;
         this.isApproved = isApproved;
         this.eventTitle = eventTitle;
+        this.eventPeriod = eventPeriod;
         this.eventIndexInfoList = eventIndexInfoList;
         this.fieldTypeList = fieldTypeList;
     }

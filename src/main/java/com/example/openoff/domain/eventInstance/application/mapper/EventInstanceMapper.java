@@ -4,6 +4,7 @@ import com.example.openoff.common.annotation.Mapper;
 import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.exception.BusinessException;
 import com.example.openoff.common.exception.Error;
+import com.example.openoff.common.util.CommonUtils;
 import com.example.openoff.domain.eventInstance.application.dto.request.CreateNewEventRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.*;
 import com.example.openoff.domain.eventInstance.domain.entity.EventImage;
@@ -13,6 +14,7 @@ import com.example.openoff.domain.interest.domain.entity.EventInterestField;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,19 +84,21 @@ public class EventInstanceMapper {
     }
 
     public static PageResponse<MainTapEventInfoResponse> mapToMainTapEventInfoResponse(Page<EventInfo> eventInfos) {
-        List<MainTapEventInfoResponse> responses = eventInfos.stream().map(data ->
-                    MainTapEventInfoResponse.builder()
-                            .eventInfoId(data.getId())
-                            .eventTitle(data.getEventTitle())
-                            .streetRoadAddress(data.getLocation().getStreetNameAddress())
-                            .totalApplicantCount(data.getTotalRegisterCount())
-                            .fieldTypes(data.getEventInterestFields().stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
-                            .eventDate(data.getEventIndexes().stream().findFirst().get().getEventDate())
-                            .mainImageUrl(data.getEventImages().stream()
-                                    .filter(image -> image.getIsMain().equals(true))
-                                    .map(EventImage::getEventImageUrl).findFirst().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)))
-                            .build()
-                ).collect(Collectors.toList());
+        List<MainTapEventInfoResponse> responses = eventInfos.stream().map(data -> {
+            List<LocalDateTime> dateTimeList = data.getEventIndexes().stream().map(EventIndex::getEventDate).collect(Collectors.toList()).stream().sorted().collect(Collectors.toList());
+            return MainTapEventInfoResponse.builder()
+                    .eventInfoId(data.getId())
+                    .eventTitle(data.getEventTitle())
+                    .streetRoadAddress(data.getLocation().getStreetNameAddress())
+                    .totalApplicantCount(data.getTotalRegisterCount())
+                    .fieldTypes(data.getEventInterestFields().stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
+                    .eventPeriod(CommonUtils.formatLocalDateTimes(dateTimeList))
+                    .eventDate(dateTimeList.get(0))
+                    .mainImageUrl(data.getEventImages().stream()
+                            .filter(image -> image.getIsMain().equals(true))
+                            .map(EventImage::getEventImageUrl).findFirst().orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND)))
+                    .build();
+            }).collect(Collectors.toList());
 
         return PageResponse.of(new PageImpl<>(responses, eventInfos.getPageable(), eventInfos.getTotalElements()));
     }
@@ -105,6 +109,7 @@ public class EventInstanceMapper {
                     .eventInfoId(data.getId())
                     .eventTitle(data.getEventTitle())
                     .isApproved(data.getIsApproval())
+                    .eventPeriod(CommonUtils.formatLocalDateTimes(data.getEventIndexes().stream().map(EventIndex::getEventDate).collect(Collectors.toList()).stream().sorted().collect(Collectors.toList())))
                     .eventIndexInfoList(data.getEventIndexes().stream()
                             .map(eventIndex -> HostEventInfoResponseDto.EventIndexInfo.of(eventIndex.getId(), eventIndex.getEventDate())).collect(Collectors.toList()))
                     .fieldTypeList(data.getEventInterestFields().stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
@@ -120,6 +125,7 @@ public class EventInstanceMapper {
                                 .streetRoadAddress(data.getLocation().getStreetNameAddress())
                                 .totalApplicantCount(data.getTotalRegisterCount())
                                 .fieldTypes(data.getEventInterestFields().stream().map(EventInterestField::getFieldType).collect(Collectors.toList()))
+                                .eventPeriod(CommonUtils.formatLocalDateTimes(data.getEventIndexes().stream().map(EventIndex::getEventDate).collect(Collectors.toList()).stream().sorted().collect(Collectors.toList())))
                                 .eventDate(data.getEventIndexes().stream().findFirst().get().getEventDate())
                                 .mainImageUrl(data.getEventImages().stream()
                                         .filter(image -> image.getIsMain().equals(true))
