@@ -98,7 +98,7 @@ public class S3UploadService {
     private ByteArrayOutputStream resizeImage(MultipartFile file) throws IOException {
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
         BufferedImage resizedImage = Thumbnails.of(originalImage)
-                .size(320, 396)
+                .size(480, 480)
                 .asBufferedImage();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(resizedImage, "png", baos);
