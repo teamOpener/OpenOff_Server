@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -17,20 +16,18 @@ public class MainTapEventInfoResponse {
     private String eventTitle;
     private String streetRoadAddress;
     private Integer totalApplicantCount;
-    private String eventPeriod;
-    private LocalDateTime eventDate;
+    private String eventDate;
     private List<FieldType> fieldTypes;
     private String mainImageUrl;
     private Boolean isBookmarked;
 
     @Builder
-    public MainTapEventInfoResponse(Long eventInfoId, String eventTitle, String streetRoadAddress, Integer totalApplicantCount, List<FieldType> fieldTypes, String eventPeriod, LocalDateTime eventDate, String mainImageUrl, Boolean isBookmarked) {
+    public MainTapEventInfoResponse(Long eventInfoId, String eventTitle, String streetRoadAddress, Integer totalApplicantCount, List<FieldType> fieldTypes, String eventDate, String mainImageUrl, Boolean isBookmarked) {
         this.eventInfoId = eventInfoId;
         this.eventTitle = eventTitle;
         this.streetRoadAddress = streetRoadAddress;
         this.totalApplicantCount = totalApplicantCount;
         this.fieldTypes = fieldTypes;
-        this.eventPeriod = eventPeriod;
         this.eventDate = eventDate;
         this.mainImageUrl = mainImageUrl;
         this.isBookmarked = isBookmarked;
