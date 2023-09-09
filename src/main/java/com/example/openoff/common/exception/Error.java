@@ -62,7 +62,7 @@ public enum Error {
 
     // Comment
     NOT_DELETE_AUTHORITY("댓글 삭제 권한이 없습니다.", 1400),
-    ;
+    ALREADY_JOIN("이미 신청한 인원입니다.", 9000);
 
 
     private final String message;
