@@ -102,7 +102,6 @@ public class LadgerUpdateUseCase {
         String ticketIndex = parts[1];
 
         EventApplicantLadger applicantLadger = eventApplicantLadgerService.findUserIdAndTicketIndexUpdateJoinAt(userId, qrCheckRequestDto.getEventIndexId(), ticketIndex);
-        if (applicantLadger.getIsJoin().equals(true)) throw BusinessException.of(Error.ALREADY_JOIN);
         return QRCheckResponseDto.builder()
                 .eventApplicantLadgerId(applicantLadger.getId())
                 .userId(applicantLadger.getEventApplicant().getId())

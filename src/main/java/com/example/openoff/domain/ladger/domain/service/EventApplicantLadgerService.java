@@ -68,6 +68,8 @@ public class EventApplicantLadgerService {
     public EventApplicantLadger findUserIdAndTicketIndexUpdateJoinAt(String userId, Long eventIndexId, String ticketIndex) {
         EventApplicantLadger eventApplicantLadger = eventApplicantLadgerRepository.findByEventApplicant_IdAndEventIndex_IdAndTicketIndex(userId, eventIndexId, ticketIndex)
                 .orElseThrow(() -> BusinessException.of(Error.EVENT_APPLICANT_NOT_FOUND));
+        if (eventApplicantLadger.getIsJoin().equals(true)) throw BusinessException.of(Error.ALREADY_JOIN);
+
         if (!eventApplicantLadger.getIsAccept()) {
             throw BusinessException.of(Error.EVENT_APPLICANT_NOT_ACCEPT);
         }
