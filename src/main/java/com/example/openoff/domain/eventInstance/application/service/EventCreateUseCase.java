@@ -64,14 +64,19 @@ public class EventCreateUseCase {
                 .map(UserFcmToken::getFcmToken)
                 .collect(Collectors.toList());
 
+        log.info("fcmTokens: {}", fcmTokens);
+
         List<UserFcmToken> staffsFcmList = userList.stream()
                 .map(User::getUserFcmTokens)
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
 
-        firebaseService.sendFCMNotificationMulticast(staffsFcmList, "주최자로 선정되었습니다.", "[ "+ createNewEventRequestDto.getTitle() + " ] 이벤트 관리자로 추가되었습니다.\n참석 명단 관리 및 QR 티켓 승인이 가능합니다");
-        
+        if (!staffsFcmList.isEmpty()) {
+            fcmTokens.addAll(staffsFcmList.stream().map(UserFcmToken::getFcmToken).collect(Collectors.toList()));
+            firebaseService.sendFCMNotificationMulticast(staffsFcmList, "주최자로 선정되었습니다.", "[ "+ createNewEventRequestDto.getTitle() + " ] 이벤트 관리자로 추가되었습니다.\n참석 명단 관리 및 QR 티켓 승인이 가능합니다");
+        }
+
         if (!fcmTokens.isEmpty()) {
             firebaseService.subScribe(eventInfo.getId()+"-comment-staff-alert", fcmTokens);
             firebaseService.subScribe(eventInfo.getId()+"-permit-staff", fcmTokens);
