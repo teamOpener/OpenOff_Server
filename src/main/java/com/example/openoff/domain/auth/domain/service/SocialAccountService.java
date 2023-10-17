@@ -56,4 +56,8 @@ public class SocialAccountService {
         normalAccount.updateNormalAccountSocialId(passwordedEncrypt);
         socialAccountRepository.saveAndFlush(normalAccount);
     }
+
+    public void deleteSocialAccount(SocialAccount socialAccount) {
+        socialAccountRepository.delete(socialAccount);
+    }
 }
