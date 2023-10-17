@@ -164,4 +164,8 @@ public class UserQueryService {
         userFcmTokenService.save(user, userFcmTokenUploadRequestDto);
         return ResponseDto.of(HttpStatus.OK.value(), "SUCCESS", UserInfoResponseDto.from(user));
     }
+
+    public void deleteUserInfo(User user) {
+        userRepository.delete(user);
+    }
 }
