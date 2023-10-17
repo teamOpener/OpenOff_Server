@@ -60,6 +60,10 @@ public class JwtProvider {
                 TimeUnit.MILLISECONDS);
     }
 
+    public void removeRefreshToken(String uuid) {
+        redisTemplate.delete(uuid);
+    }
+
     private JwtBuilder buildToken(Date now) {
         final Key key = getSecretKey();
         return Jwts.builder()
