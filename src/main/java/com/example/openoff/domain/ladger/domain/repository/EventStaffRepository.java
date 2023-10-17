@@ -12,4 +12,5 @@ public interface EventStaffRepository extends JpaRepository<EventStaff, Long>, E
     List<EventStaff> findEventStaffByEventInfo_Id(Long eventInfoId);
     Optional<EventStaff> findEventStaffByEventInfo_IdAndStaff_Id(Long eventInfoId, String userId);
     void deleteEventStaffByStaff_IdAndEventInfo_IdAndStaffType(String userId, Long eventInfoId, StaffType staffType);
+    List<EventStaff> findAllByStaff_Id(String userId);
 }

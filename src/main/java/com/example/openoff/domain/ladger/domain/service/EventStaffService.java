@@ -59,4 +59,12 @@ public class EventStaffService {
     public void deleteSubEventStaff(String userId, Long eventInfoId) {
         eventStaffRepository.deleteEventStaffByStaff_IdAndEventInfo_IdAndStaffType(userId, eventInfoId, StaffType.SUB);
     }
+
+    public List<EventStaff> findAllEventStaffByUserId(String userId) {
+        return eventStaffRepository.findAllByStaff_Id(userId);
+    }
+
+    public void deleteEventStaffsByEntities(List<EventStaff> eventStaffs) {
+        eventStaffRepository.deleteAllInBatch(eventStaffs);
+    }
 }
