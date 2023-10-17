@@ -10,9 +10,11 @@ import com.example.openoff.domain.user.application.dto.request.UserProfileUpload
 import com.example.openoff.domain.user.application.dto.request.UserSmsCheckRequestDto;
 import com.example.openoff.domain.user.application.dto.response.UserInfoResponseDto;
 import com.example.openoff.domain.user.application.dto.response.UserTotalInfoResponseDto;
+import com.example.openoff.domain.user.application.service.UserDeleteUseCase;
 import com.example.openoff.domain.user.domain.service.UserQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/user")
 @RequiredArgsConstructor
 public class UserInfoController {
+    private final UserDeleteUseCase userDeleteUseCase;
     private final UserQueryService userQueryService;
     private final NCPSmsService ncpSmsService;
 
@@ -76,6 +79,12 @@ public class UserInfoController {
     public ResponseEntity<ResponseDto<UserInfoResponseDto>> permitAlert(@RequestBody UserFcmTokenUploadRequestDto userFcmTokenUploadRequestDto) {
         ResponseDto<UserInfoResponseDto> userInfoResponseDto = userQueryService.permitAlert(userFcmTokenUploadRequestDto);
         return ResponseEntity.ok().body(userInfoResponseDto);
+    }
+
+    @DeleteMapping("/withdrawal")
+    public ResponseEntity<ResponseDto<Void>> withdrawal() {
+        userDeleteUseCase.withdrawal();
+        return ResponseEntity.ok().body(ResponseDto.of(HttpStatus.OK.value(), "회원탈퇴가 완료되었습니다.", null));
     }
 
 }
