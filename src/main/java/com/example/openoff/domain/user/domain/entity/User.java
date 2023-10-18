@@ -44,7 +44,7 @@ public class User extends BaseEntity {
     @Column(name = "gender")
     private GenderType gender;
 
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number")
     @Pattern(regexp = "^010-?\\d{4}-?\\d{4}$", message = "올바른 한국 휴대폰 번호 형식이 아닙니다.")
     private String phoneNumber;
 
