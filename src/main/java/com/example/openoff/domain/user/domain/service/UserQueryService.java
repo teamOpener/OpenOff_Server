@@ -99,13 +99,14 @@ public class UserQueryService {
 
     @Transactional
     public ResponseDto<UserInfoResponseDto> checkSmsNum(UserSmsCheckRequestDto userSmsCheckRequestDto) {
-        Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(userSmsCheckRequestDto.getPhoneNum());
         User user = userUtils.getUser();
 
         if (userSmsCheckRequestDto.getPhoneNum().equals(testerPhoneNum)) { // TESTER 휴대폰 인증을 위한 코드
             user.updatePhoneNumber(userSmsCheckRequestDto.getPhoneNum());
             return ResponseDto.of(HttpStatus.OK.value(), "휴대폰 인증에 성공하였습니다.", UserInfoResponseDto.from(user));
         }
+
+        Optional<User> byPhoneNumber = userRepository.findByPhoneNumber(userSmsCheckRequestDto.getPhoneNum());
 
         if (byPhoneNumber.isPresent() && !byPhoneNumber.get().getId().equals(user.getId())) {
             throw UserException.of(Error.USER_PHONE_NUM_DUPLICATION);
