@@ -44,38 +44,53 @@ public class EventSearchUseCase {
 
     public List<SearchMapEventInfoResponseDto> searchMapEventInfo(EventSearchRequestDto eventSearchRequestDto)
     {
-        userUtils.getUser();
         List<EventInfo> eventMapList = eventInfoService.getEventMapList(eventSearchRequestDto);
         return EventInstanceMapper.mapToSearchMapEventInfoResponseList(eventMapList);
     }
 
     public SearchMapEventInfoResponseDto searchMapEventInfoOnlyOne(Long eventInfoId)
     {
-        userUtils.getUser();
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
         return EventInstanceMapper.mapToSearchMapEventInfoResponse(eventInfo);
     }
 
-    public DetailEventInfoResponseDto getDetailEventInfo(Long eventInfoId){
+    public DetailEventInfoResponseDto getDetailEventInfo(Long eventInfoId, Boolean isLogin){
         LocalDateTime now = LocalDateTime.now();
-        User user = userUtils.getUser();
         EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
         DetailEventInfoResponseDto detailEventInfoResponseDto = EventInstanceMapper.mapToDetailEventInfoResponse(eventInfo);
-        detailEventInfoResponseDto.setIsBookmarked(bookmarkService.existsByEventInfo_IdAndUser_Id(eventInfoId, user.getId()));
         detailEventInfoResponseDto.setIsEnded(eventInfo.getEventIndexes().stream().map(EventIndex::getEventDate).noneMatch(eventDate -> eventDate.isAfter(now)));
         Map<Long, Long> countEventInfoApprovedApplicant = eventApplicantLadgerService.countEventInfoApprovedApplicant(eventInfoId);
-        List<DetailEventInfoResponseDto.IndexInfo> indexInfoList = eventInfo.getEventIndexes().stream()
-                .sorted(Comparator.comparing(EventIndex::getEventDate))
-                .map(eventIndex -> DetailEventInfoResponseDto.IndexInfo.builder()
-                        .eventIndexId(eventIndex.getId())
-                        .eventDate(eventIndex.getEventDate())
-                        .approvedUserCount(
-                                Math.toIntExact(countEventInfoApprovedApplicant.getOrDefault(eventIndex.getId(), 0L))
-                        )
-                        .isApply(eventIndex.getEventDate().isAfter(now) && !eventApplicantLadgerService.existsByEventIndex_IdAndEventApplicant_Id(eventIndex.getId(), user.getId()))
-                        .build()
-                ).collect(Collectors.toList());
-        detailEventInfoResponseDto.setIndexList(indexInfoList);
+
+        if (isLogin) {
+            User user = userUtils.getUser();
+            detailEventInfoResponseDto.setIsBookmarked(bookmarkService.existsByEventInfo_IdAndUser_Id(eventInfoId, user.getId()));
+            List<DetailEventInfoResponseDto.IndexInfo> indexInfoList = eventInfo.getEventIndexes().stream()
+                    .sorted(Comparator.comparing(EventIndex::getEventDate))
+                    .map(eventIndex -> DetailEventInfoResponseDto.IndexInfo.builder()
+                            .eventIndexId(eventIndex.getId())
+                            .eventDate(eventIndex.getEventDate())
+                            .approvedUserCount(
+                                    Math.toIntExact(countEventInfoApprovedApplicant.getOrDefault(eventIndex.getId(), 0L))
+                            )
+                            .isApply(eventIndex.getEventDate().isAfter(now) && !eventApplicantLadgerService.existsByEventIndex_IdAndEventApplicant_Id(eventIndex.getId(), user.getId()))
+                            .build()
+                    ).collect(Collectors.toList());
+            detailEventInfoResponseDto.setIndexList(indexInfoList);
+        } else {
+            detailEventInfoResponseDto.setIsBookmarked(false);
+            List<DetailEventInfoResponseDto.IndexInfo> indexInfoList = eventInfo.getEventIndexes().stream()
+                    .sorted(Comparator.comparing(EventIndex::getEventDate))
+                    .map(eventIndex -> DetailEventInfoResponseDto.IndexInfo.builder()
+                            .eventIndexId(eventIndex.getId())
+                            .eventDate(eventIndex.getEventDate())
+                            .approvedUserCount(
+                                    Math.toIntExact(countEventInfoApprovedApplicant.getOrDefault(eventIndex.getId(), 0L))
+                            )
+                            .isApply(eventIndex.getEventDate().isAfter(now))
+                            .build()
+                    ).collect(Collectors.toList());
+            detailEventInfoResponseDto.setIndexList(indexInfoList);
+        }
         return detailEventInfoResponseDto;
     }
 
@@ -105,6 +120,22 @@ public class EventSearchUseCase {
             response.getContent().stream()
                     .forEach(mainTapEventInfoResponse -> mainTapEventInfoResponse.setIsBookmarked(
                             bookmarkService.existsByEventInfo_IdAndUser_Id(mainTapEventInfoResponse.getEventInfoId(), user.getId())));
+            return response;
+        }
+    }
+
+    public PageResponse<MainTapEventInfoResponse> getNotLoginMainTapList(Long eventInfoId, FieldType fieldType, Integer count, Pageable pageable) {
+        if (fieldType != null) {
+            Page<EventInfo> mainTapEventByField = eventInfoService.getMainTapEventByField(fieldType, eventInfoId, pageable);
+            PageResponse<MainTapEventInfoResponse> response = EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByField);
+            response.getContent()
+                    .forEach(mainTapEventInfoResponse -> mainTapEventInfoResponse.setIsBookmarked(false));
+            return response;
+        } else {
+            Page<EventInfo> mainTapEventByVogue = eventInfoService.getMainTapEventByVogue(eventInfoId, count, pageable);
+            PageResponse<MainTapEventInfoResponse> response = EventInstanceMapper.mapToMainTapEventInfoResponse(mainTapEventByVogue);
+            response.getContent()
+                    .forEach(mainTapEventInfoResponse -> mainTapEventInfoResponse.setIsBookmarked(false));
             return response;
         }
     }

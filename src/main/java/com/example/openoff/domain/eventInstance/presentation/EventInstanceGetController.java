@@ -11,6 +11,7 @@ import com.example.openoff.domain.eventInstance.application.service.EventSearchU
 import com.example.openoff.domain.interest.domain.entity.FieldType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,24 @@ import java.util.List;
 @RequestMapping(value = "/event-instance")
 @RequiredArgsConstructor
 public class EventInstanceGetController {
+    @Value("${passkeyword}")
+    private String passKeyword;
+
     private final EventSearchUseCase eventSearchUseCase;
 
     @GetMapping(value = "/detail/{eventInfoId}")
-    public ResponseEntity<ResponseDto<DetailEventInfoResponseDto>> getEventInfoDetail(@PathVariable Long eventInfoId)
+    public ResponseEntity<ResponseDto<DetailEventInfoResponseDto>> getEventInfoDetail
+            (
+                    @RequestHeader(value="openoff", required=false) String superPass,
+                    @PathVariable Long eventInfoId)
     {
-        DetailEventInfoResponseDto detailEventInfo = eventSearchUseCase.getDetailEventInfo(eventInfoId);
-        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 상세정보 불러오기를 성공하였습니다.", detailEventInfo));
+        if (superPass != null && superPass.equals(passKeyword)) {
+            DetailEventInfoResponseDto detailEventInfo = eventSearchUseCase.getDetailEventInfo(eventInfoId, false);
+            return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 이벤트 상세정보 불러오기를 성공하였습니다.", detailEventInfo));
+        } else {
+            DetailEventInfoResponseDto detailEventInfo = eventSearchUseCase.getDetailEventInfo(eventInfoId, true);
+            return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "이벤트 상세정보 불러오기를 성공하였습니다.", detailEventInfo));
+        }
     }
 
     @GetMapping(value = "/search")
@@ -43,7 +55,9 @@ public class EventInstanceGetController {
 
     @GetMapping(value = "/search/one")
     public ResponseEntity<ResponseDto<SearchMapEventInfoResponseDto>> searchMapOnlyOneEventInfo
-            (@RequestParam Long eventInfoId)
+            (
+                    @RequestParam Long eventInfoId
+            )
     {
         SearchMapEventInfoResponseDto searchMapEventInfoResponseDto = eventSearchUseCase.searchMapEventInfoOnlyOne(eventInfoId);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "지도에 이벤트 정보를 불러오는데 성공하였습니다.", searchMapEventInfoResponseDto));
@@ -60,11 +74,16 @@ public class EventInstanceGetController {
     @GetMapping(value = "/main/{fieldType}")
     public ResponseEntity<ResponseDto<PageResponse<MainTapEventInfoResponse>>> getMainTapListByFieldType
             (
+                    @RequestHeader(value="openoff", required=false) String superPass,
                     @PathVariable FieldType fieldType,
                     @RequestParam(required = false) Long eventInfoId,
                     @PageableDefault(size = 8) Pageable pageable
             )
     {
+        if (superPass != null && superPass.equals(passKeyword)) {
+            PageResponse<MainTapEventInfoResponse> mainTapNotLoginEventInfoResponsePage = eventSearchUseCase.getNotLoginMainTapList(eventInfoId, fieldType, null, pageable);
+            return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapNotLoginEventInfoResponsePage));
+        }
         PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, fieldType, null, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
     }
@@ -72,11 +91,16 @@ public class EventInstanceGetController {
     @GetMapping(value = "/main/vogue")
     public ResponseEntity<ResponseDto<PageResponse<MainTapEventInfoResponse>>> getMainTapListByVogue
             (
+                    @RequestHeader(value="openoff", required=false) String superPass,
                     @RequestParam(required = false) Integer count,
                     @RequestParam(required = false) Long eventInfoId,
                     @PageableDefault(size = 8) Pageable pageable
             )
     {
+        if (superPass != null && superPass.equals(passKeyword)) {
+            PageResponse<MainTapEventInfoResponse> mainTapNotLoginEventInfoResponsePage = eventSearchUseCase.getNotLoginMainTapList(eventInfoId, null, count, pageable);
+            return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapNotLoginEventInfoResponsePage));
+        }
         PageResponse<MainTapEventInfoResponse> mainTapEventInfoResponsePage = eventSearchUseCase.getMainTapList(eventInfoId, null, count, pageable);
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "메인 탭에 띄울 이벤트 정보를 불러오는데 성공하였습니다.", mainTapEventInfoResponsePage));
     }
