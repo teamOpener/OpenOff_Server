@@ -3,10 +3,9 @@ package com.example.openoff.domain.eventInstance.domain.repository;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 public interface EventInfoRepositoryCustom {
     List<EventInfo> searchAllEventInfosInMap(EventSearchRequestDto eventSearchRequestDto);
@@ -15,4 +14,6 @@ public interface EventInfoRepositoryCustom {
 
     Page<EventInfo> findHostEventInfo(String userId, Long eventInfoId, FieldType fieldType, Pageable pageable);
     List<EventInfo> findEventInfosByFieldTypes(List<FieldType> fieldTypes);
+
+    List<Long> findOpenEventInfoIds();
 }
