@@ -9,12 +9,11 @@ import com.example.openoff.domain.eventInstance.application.dto.response.KakaoAd
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventInfoRepository;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 @Slf4j
 @DomainService
@@ -78,5 +77,9 @@ public class EventInfoService {
     public void deleteEventInfo(Long eventInfoId){
         EventInfo eventInfo = eventInfoRepository.findById(eventInfoId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
         eventInfoRepository.delete(eventInfo);
+    }
+
+    public List<Long> getOpenEventIdList() {
+        return eventInfoRepository.findOpenEventInfoIds();
     }
 }

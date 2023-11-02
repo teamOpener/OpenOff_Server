@@ -6,12 +6,11 @@ import com.example.openoff.common.exception.Error;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventIndexRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @DomainService
@@ -28,6 +27,10 @@ public class EventIndexService {
 
     public EventIndex findById(Long eventIndexId) {
         return eventIndexRepository.findById(eventIndexId).orElseThrow(() -> BusinessException.of(Error.DATA_NOT_FOUND));
+    }
+
+    public List<EventIndex> findEventIndexByEventInfoId(Long eventInfoId) {
+        return eventIndexRepository.findAllByEventInfo_Id(eventInfoId);
     }
 
     public void updateEventIndexToClose(EventInfo eventInfo){

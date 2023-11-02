@@ -5,11 +5,10 @@ import com.example.openoff.domain.eventInstance.application.dto.request.CreateNe
 import com.example.openoff.domain.eventInstance.domain.entity.EventImage;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
 import com.example.openoff.domain.eventInstance.domain.repository.EventImageRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @DomainService
@@ -22,5 +21,9 @@ public class EventImageService {
                 .map(imageData -> EventImage.toEntity(imageData.getImageUrl(), imageData.getIsMain(), eventInfo))
                 .collect(Collectors.toList());
         return eventImageRepository.saveAll(eventImageList).stream().map(EventImage::getId).collect(Collectors.toList());
+    }
+
+    public String getMainEventImageByEventInfoId(Long eventInfoId) {
+        return eventImageRepository.findMainImageUrlByEventInfoId(eventInfoId);
     }
 }
