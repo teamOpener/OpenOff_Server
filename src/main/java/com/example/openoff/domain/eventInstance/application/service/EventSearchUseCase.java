@@ -6,29 +6,31 @@ import com.example.openoff.common.util.UserUtils;
 import com.example.openoff.domain.bookmark.domain.service.BookmarkService;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.EventIdListResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.MainTapEventInfoResponse;
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.SeoEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.mapper.EventInstanceMapper;
 import com.example.openoff.domain.eventInstance.domain.entity.EventIndex;
 import com.example.openoff.domain.eventInstance.domain.entity.EventInfo;
+import com.example.openoff.domain.eventInstance.domain.service.EventImageService;
 import com.example.openoff.domain.eventInstance.domain.service.EventIndexService;
 import com.example.openoff.domain.eventInstance.domain.service.EventInfoService;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
 import com.example.openoff.domain.interest.domain.entity.UserInterestField;
 import com.example.openoff.domain.ladger.domain.service.EventApplicantLadgerService;
 import com.example.openoff.domain.user.domain.entity.User;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @UseCase
@@ -38,6 +40,7 @@ public class EventSearchUseCase {
     private final UserUtils userUtils;
     private final EventInfoService eventInfoService;
     private final EventIndexService eventIndexService;
+    private final EventImageService eventImageService;
     private final BookmarkService bookmarkService;
     private final EventApplicantLadgerService eventApplicantLadgerService;
 
@@ -144,5 +147,26 @@ public class EventSearchUseCase {
         User user = userUtils.getUser();
         Page<EventInfo> hostEventList = eventInfoService.getHostEventList(user.getId(), eventInfoId, fieldType, pageable);
         return EventInstanceMapper.mapToHostEventInfoResponseList(hostEventList);
+    }
+
+    public EventIdListResponseDto getOpenEventIdsDto(){
+        List<Long> openEventIdList = eventInfoService.getOpenEventIdList();
+        return EventIdListResponseDto.builder().eventIdList(openEventIdList).build();
+    }
+
+    public SeoEventInfoResponseDto getSeoEventInfo(Long eventInfoId){
+        EventInfo eventInfo = eventInfoService.findEventInfoById(eventInfoId);
+        String mainImageUrl = eventImageService.getMainEventImageByEventInfoId(eventInfoId);
+        List<LocalDateTime> dateList = eventIndexService.findEventIndexByEventInfoId(eventInfoId)
+            .stream().map(EventIndex::getEventDate).collect(Collectors.toList())
+            .stream().sorted().collect(Collectors.toList());
+        return SeoEventInfoResponseDto.builder()
+            .eventId(eventInfo.getId())
+            .title(eventInfo.getEventTitle())
+            .streetLoadAddress(eventInfo.getLocation().getStreetNameAddress())
+            .detailAddress(eventInfo.getLocation().getDetailAddress())
+            .imageUrl(mainImageUrl)
+            .eventDateList(dateList)
+            .build();
     }
 }
