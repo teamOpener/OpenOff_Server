@@ -14,14 +14,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -151,6 +150,19 @@ public class EventInfoRepositoryImpl implements EventInfoRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Long> findOpenEventInfoIds() {
+        return queryFactory
+            .selectDistinct(QEventInfo.eventInfo.id)
+            .from(QEventInfo.eventInfo)
+            .leftJoin(QEventInfo.eventInfo.eventIndexes, QEventIndex.eventIndex)
+            .where(
+                QEventInfo.eventInfo.isApproval.eq(true),
+                QEventInfo.eventInfo.eventIndexes.any().eventDate.after(LocalDateTime.now())
+            )
+            .orderBy(QEventInfo.eventInfo.createdDate.desc())
+            .fetch();
+    }
 
     private BooleanExpression ltEventInfoId(Long eventInfoId) {
         if (eventInfoId == null) return null;
