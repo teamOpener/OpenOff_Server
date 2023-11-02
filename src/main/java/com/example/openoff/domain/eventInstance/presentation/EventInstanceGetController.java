@@ -4,11 +4,14 @@ import com.example.openoff.common.dto.PageResponse;
 import com.example.openoff.common.dto.ResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.request.EventSearchRequestDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.DetailEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.EventIdListResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.HostEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.dto.response.MainTapEventInfoResponse;
 import com.example.openoff.domain.eventInstance.application.dto.response.SearchMapEventInfoResponseDto;
+import com.example.openoff.domain.eventInstance.application.dto.response.SeoEventInfoResponseDto;
 import com.example.openoff.domain.eventInstance.application.service.EventSearchUseCase;
 import com.example.openoff.domain.interest.domain.entity.FieldType;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +19,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -117,5 +124,31 @@ public class EventInstanceGetController {
         return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "주최한 이벤트 목록 조회가 완료되었습니다.", hostEventInfoResponseDtoPage));
     }
 
+    @GetMapping(value = "/seo/ids")
+    public ResponseEntity<ResponseDto<EventIdListResponseDto>> getOpenEventIdList
+        (
+            @RequestHeader(value="openoff", required=false) String superPass
+        )
+    {
+        if (superPass != null && superPass.equals(passKeyword)) {
+            EventIdListResponseDto openEventIdsDto = eventSearchUseCase.getOpenEventIdsDto();
+            return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 오픈 이벤트 id 리스트 불러오기를 성공하였습니다.", openEventIdsDto));
+        }
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 헤더 값을 확인해주세요.", null));
+    }
+
+    @GetMapping(value = "/seo/{id}")
+    public ResponseEntity<ResponseDto<SeoEventInfoResponseDto>> getOpenEventInfo
+        (
+            @RequestHeader(value="openoff", required=false) String superPass,
+            @PathVariable(name = "id") Long eventInfoId
+        )
+    {
+        if (superPass != null && superPass.equals(passKeyword)) {
+            SeoEventInfoResponseDto seoEventInfo = eventSearchUseCase.getSeoEventInfo(eventInfoId);
+            return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 이벤트 정보 불러오기를 성공하였습니다.", seoEventInfo));
+        }
+        return ResponseEntity.ok(ResponseDto.of(HttpStatus.OK.value(), "[비로그인] 헤더 값을 확인해주세요.", null));
+    }
 
 }
