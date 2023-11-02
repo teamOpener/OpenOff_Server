@@ -4,12 +4,11 @@ import com.example.openoff.domain.eventInstance.domain.entity.QEventImage;
 import com.example.openoff.domain.eventInstance.domain.repository.EventImageRepositoryCustom;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,5 +31,17 @@ public class EventImageRepositoryImpl implements EventImageRepositoryCustom {
                         tuple -> tuple.get(QEventImage.eventImage.eventInfo.id),
                         tuple -> tuple.get(QEventImage.eventImage.eventImageUrl)
                 ));
+    }
+
+    @Override
+    public String findMainImageUrlByEventInfoId(Long eventInfoId) {
+        String imageUrl = queryFactory
+            .select(QEventImage.eventImage.eventImageUrl)
+            .from(QEventImage.eventImage)
+            .where(
+                QEventImage.eventImage.eventInfo.id.eq(eventInfoId),
+                QEventImage.eventImage.isMain.isTrue()
+            ).fetchFirst();
+        return imageUrl.isEmpty() ? null : imageUrl;
     }
 }
