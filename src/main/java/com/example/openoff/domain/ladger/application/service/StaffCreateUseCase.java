@@ -11,13 +11,12 @@ import com.example.openoff.domain.ladger.domain.service.EventStaffService;
 import com.example.openoff.domain.user.domain.entity.User;
 import com.example.openoff.domain.user.domain.entity.UserFcmToken;
 import com.example.openoff.domain.user.domain.service.UserFindService;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @UseCase
@@ -44,6 +43,7 @@ public class StaffCreateUseCase {
     @Async
     public void newSubStaffSubscribeTopic(User newStaff, EventInfo eventInfo){
         List<UserFcmToken> userFcmTokens = newStaff.getUserFcmTokens();
+        if (userFcmTokens.isEmpty()) return;
         List<String> fcmTokens = userFcmTokens.stream().map(UserFcmToken::getFcmToken).collect(Collectors.toList());
 
         firebaseService.sendFCMNotificationMulticast(userFcmTokens, "주최자로 선정되었습니다.", "[ "+ eventInfo.getEventTitle() + " ] 이벤트 관리자로 추가되었습니다.\n참석 명단 관리 및 QR 티켓 승인이 가능합니다");
